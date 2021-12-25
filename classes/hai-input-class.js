@@ -44,6 +44,14 @@ class HaiInput
                         haiInput.transformElementToHaiInput();
                         return haiInput;
                     });
+
+            case 'switch':
+                return await import('./hai-input-switch-class.js')
+                    .then((module) => {
+                        let haiInput = new module.HaiInputSwitch(element);
+                        haiInput.transformElementToHaiInput();
+                        return haiInput;
+                    });
         }
     }
 
