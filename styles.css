@@ -1,0 +1,24 @@
+*
+{
+    padding: 5px;
+    font-size: 16px;
+}
+label
+{
+    display: block;
+    text-align: left;
+    font-family: "Arial Hebrew", Arial, sans-serif;
+}
+input
+{
+    display: block;
+}
+input:invalid
+{
+    color: red;
+    border-color: #ff000096;
+}
+.alert
+{
+    color: #ff2f2f;
+}

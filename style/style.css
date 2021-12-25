@@ -1,0 +1,187 @@
+body
+{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    height: 100vh;
+    font-family: "Arial Hebrew", Arial, sans-serif;
+    font-size: 16px;
+}
+header
+{
+    background: #097b85;
+    margin-bottom: 0;
+    color: white;
+}
+h1
+{
+    margin: 0;
+    padding: 60px 20px;
+}
+pre
+{
+    height: inherit;
+    margin: 0;
+    white-space: normal;
+}
+code
+{
+    height: inherit;
+}
+#container
+{
+    display: flex;
+    flex-direction: column;
+    flex-basis: auto;
+    flex-grow: 1;
+    flex-shrink: 0;
+    align-items: center;
+}
+main
+{
+    width: 70%;
+    padding: 30px;
+    padding-bottom: 200px;
+    flex-grow: 1;
+    background: #eae8e8;
+    box-sizing: border-box;
+}
+@media (max-width: 1024px)
+{
+    main
+    {
+        width: 100%;
+    }
+}
+#container-footer
+{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+}
+hai-input
+{
+    display: flex;
+    flex-direction: column;
+}
+.example-article
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 40px;
+}
+.example-article h2
+{
+    grid-column: 1 / span 2;
+}
+.code-section
+{
+
+    background: #989898;
+    overflow: hidden;
+}
+.code-section > div
+{
+    height: 100%;
+}
+.code-section header
+{
+    display: flex;
+    background: #eae8e8;
+}
+.code-section header div
+{
+    background: #768186;
+    padding: 10px;
+    cursor: pointer;
+}
+.code-section header div.active,
+.code-section header div:hover
+{
+    background: #097b85;
+}
+.language-html
+{
+    text-align: left;
+    white-space: pre-wrap;
+}
+.input-section
+{
+
+}
+.hai-input-element
+{
+    display: flex;
+    flex-direction: column;
+}
+.hai-input-element *
+{
+    padding: 5px;
+    font-size: 16px;
+}
+.hai-input-element label
+{
+    display: block;
+    text-align: left;
+    font-family: "Arial Hebrew", Arial, sans-serif;
+}
+.hai-input-element input
+{
+    display: block;
+}
+.hai-input-element input:invalid
+{
+    color: red;
+    border-color: #ff000096;
+}
+
+[data-code-tab]
+{
+    display: none;
+}
+[data-code-tab].active
+{
+    display: block;
+}
+iframe
+{
+    width: 100%;
+    border: none;
+    background: white;
+}
+@media (max-width: 768px)
+{
+    .example-article
+    {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0 40px;
+    }
+    .example-article h2
+    {
+        grid-column: 1;
+    }
+    .code-section
+    {
+
+        margin-top: 20px;
+    }
+}
+input[type=submit]
+{
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 0;
+    background: #097b85;
+    margin: 10px;
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+}
+input[type=submit]:hover
+{
+    background: #339ca6;
+}

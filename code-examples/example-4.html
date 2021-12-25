@@ -1,0 +1,11 @@
+<div class='hai-input-element'>
+    <label>Test 4</label>
+    <input id='test4' data-hai-input='true' name='test4' type='url'>
+</div>
+
+<script type="module" async>
+    import {HaiInput} from "./classes/hai-input-class.js";
+
+    let test4 = document.getElementById('test4');
+    let haiInput = await HaiInput.returnCorrectClass('url', test4);
+</script>
