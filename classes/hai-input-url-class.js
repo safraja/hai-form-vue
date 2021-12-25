@@ -250,12 +250,6 @@ class HaiInputUrl extends HaiInputText
         {
             event.target.classList.add('invalid');
             event.target.setCustomValidity(validity.message);
-            //TODO - vyřeš problém u custom elementů.
-            /*
-            this.twin.style.display = 'none';
-            this.twin.type = 'text';
-            this.twin.setCustomValidity(validity.message);
-            */
         }
         else
         {

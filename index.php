@@ -165,6 +165,36 @@ if(empty($_POST) == false)
                         </div>
                     </section>
                 </article>
+
+                <article class='example-article'>
+                    <h2>Switch input (bez Vue)</h2>
+                    <section class='input-section'>
+                        <form method='post' target='test6-iframe'>
+                            <input id='test6' data-hai-input='true' name='test6' type='text' value='on'>
+                            <input class='submit-test' type='submit'>
+                        </form>
+                    </section>
+                    <section class='code-section'>
+                        <header>
+                            <div class='active' data-code-tab-header='html'>HTML</div>
+                            <div data-code-tab-header='data'>Data</div>
+                        </header>
+                        <div class='active' data-code-tab='html'>
+                            <pre>
+<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/example-6.html')); ?></code>
+                            </pre>
+                        </div>
+                        <div data-code-tab='data'>
+                            <iframe name='test6-iframe'></iframe>
+                        </div>
+                    </section>
+                </article>
+                <script type="module" async>
+                    import {HaiInput} from "./classes/hai-input-class.js";
+
+                    let test6 = document.getElementById('test6');
+                    let haiInput = await HaiInput.returnCorrectClass('switch', test6);
+                </script>
             </main>
             <footer id='container-footer'>
 

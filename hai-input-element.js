@@ -122,13 +122,25 @@ export default {
             this.haiInput.handleFocusOut(event);
             let validity = this.haiInput.checkValidity();
 
+            let fn = (invalidEvent) =>
+            {
+                this.$refs.input.reportValidity();
+            };
+
             if(validity.success === false)
             {
                 this.$refs.alert.textContent = validity.message;
+                this.haiInput.twin.style.display = 'none';
+                this.haiInput.twin.type = 'text';
+                this.haiInput.twin.setCustomValidity(validity.message);
+                this.haiInput.twin.addEventListener('invalid', fn);
             }
             else
             {
                 this.$refs.alert.textContent = '';
+                this.haiInput.twin.type = 'hidden';
+                this.haiInput.twin.setCustomValidity('');
+                this.haiInput.twin.removeEventListener('invalid', fn);
             }
         },
         handleKeyAction(event)
