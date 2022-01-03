@@ -6,9 +6,10 @@ class HaiInputSwitch extends HaiInput
     variant = 'on/off';
     inputs = [];
 
-    constructor(element = null)
+    constructor(element = null, parameters = {})
     {
-        super('switch', element);
+        super(element, parameters);
+        this.type = 'switch';
     }
 
     transformElementToHaiInput()
@@ -83,7 +84,7 @@ class HaiInputSwitch extends HaiInput
 
         if(this.variant === 'on/off')
         {
-            this.element.addEventListener('click', (event) =>
+            this.element.querySelector('.option-group').addEventListener('click', (event) =>
             {
                 this.handleInput(event);
             });
@@ -136,9 +137,13 @@ class HaiInputSwitch extends HaiInput
         this.value = newValue;
         this.rawValue = newValue;
 
-        this.element.setAttribute('data-state', this.rawValue);
+        if(this.element !== null)
+        {
+            this.element.setAttribute('data-state', this.rawValue);
+        }
 
         this.saveValueToTwin();
+        return {success: true};
     }
 
 }

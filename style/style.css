@@ -191,7 +191,7 @@ input[type=submit]:hover
     height: 32px;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    cursor: default;
 }
 .switch-wrapper .option-group
 {
@@ -199,6 +199,7 @@ input[type=submit]:hover
     position: relative;
     border: 2px solid blue;
     background: blue;
+    cursor: pointer;
 }
 .switch-wrapper .option-group .toggle
 {

@@ -18,9 +18,10 @@ class HaiInputUrl extends HaiInputText
         fragment: true
     };
 
-    constructor(element = null)
+    constructor(element = null, parameters = {})
     {
-        super('url', element);
+        super(element, parameters);
+        this.type = 'url';
     }
 
     handleInput(event)

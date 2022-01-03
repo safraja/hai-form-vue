@@ -11,20 +11,19 @@ class HaiInput
     /** @type {HTMLInputElement} - Associated input, which should be send with submit and which always copy value of original element.*/
     twin;
 
-    constructor(type, element = null)
+    constructor(element = null, parameters = {})
     {
-        this.type = type;
         this.element = element;
     }
 
-    static async returnCorrectClass(type, element)
+    static async returnCorrectClass(type, element, parameters)
     {
         switch (type)
         {
             case 'text':
                 return await import('./hai-input-text-class.js')
                     .then((module) => {
-                        let haiInput = new module.HaiInputText(element);
+                        let haiInput = new module.HaiInputText(element, parameters);
                         haiInput.transformElementToHaiInput();
                         return haiInput;
                     });
@@ -32,7 +31,7 @@ class HaiInput
             case 'number':
                 return await import('./hai-input-number-class.js')
                     .then((module) => {
-                        let haiInput = new module.HaiInputNumber(element);
+                        let haiInput = new module.HaiInputNumber(element, parameters);
                         haiInput.transformElementToHaiInput();
                         return haiInput;
                     });
@@ -40,7 +39,7 @@ class HaiInput
             case 'url':
                 return await import('./hai-input-url-class.js')
                     .then((module) => {
-                        let haiInput = new module.HaiInputUrl(element);
+                        let haiInput = new module.HaiInputUrl(element, parameters);
                         haiInput.transformElementToHaiInput();
                         return haiInput;
                     });
@@ -48,7 +47,7 @@ class HaiInput
             case 'switch':
                 return await import('./hai-input-switch-class.js')
                     .then((module) => {
-                        let haiInput = new module.HaiInputSwitch(element);
+                        let haiInput = new module.HaiInputSwitch(element, parameters);
                         haiInput.transformElementToHaiInput();
                         return haiInput;
                     });

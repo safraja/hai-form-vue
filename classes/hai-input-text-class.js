@@ -2,9 +2,10 @@ import {HaiInput} from './hai-input-class.js';
 
 class HaiInputText extends HaiInput
 {
-    constructor(type = 'text', element = null)
+    constructor(element = null, parameters = {})
     {
-        super(type, element);
+        super(element, parameters);
+        this.type = 'text';
     }
 
     handleInput(event)

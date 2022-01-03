@@ -12,9 +12,10 @@ class HaiInputNumber extends HaiInputText
     thousandsGroupStyle = 'thousand';
     enableValueFormation = true;
 
-    constructor(element = null)
+    constructor(element = null, parameters = {})
     {
-        super('number', element);
+        super(element, parameters);
+        this.type = 'number';
     }
 
     handleInput(event)

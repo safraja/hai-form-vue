@@ -1,4 +1,4 @@
-import {HaiInput, HaiInputText, HaiInputNumber, HaiInputUrl} from "./classes/hai-input-classes.js";
+import {HaiInput, HaiInputText, HaiInputNumber, HaiInputUrl, HaiInputSwitch} from "./classes/hai-input-classes.js";
 
 export default {
     name: 'hai-input',
@@ -36,13 +36,19 @@ export default {
         }
         ,'allow-e-notation': {
             'type': Boolean,
-        }
+        },
+        // Switch type attributes.
+        'options': {
+            'type': [String, Array, Object],
+            'default': () => []
+        },
     },
     styles: ["@import './styles.css'"],
     data()
     {
         return {
             innerType: '',
+            innerOptions: '',
             inputmode: ''
         }
     },
@@ -77,6 +83,29 @@ export default {
             this.inputmode = 'numeric';
             console.log(this.inputmode);
         }
+
+        if(this.type === 'switch')
+        {
+            if(typeof this.options === 'string')
+            {
+                this.innerOptions = JSON.parse(this.options);
+            }
+            else
+            {
+                this.innerOptions = this.options;
+            }
+
+            if(Array.isArray(this.innerOptions))
+            {
+                let help = [];
+                for(let option of this.innerOptions)
+                {
+                    help.push({value: option});
+                }
+                this.innerOptions = help;
+            }
+        }
+
     },
     methods: {
         AssignObject()
@@ -100,21 +129,32 @@ export default {
                     break;
 
                 case "url":
-                {
                     this.haiInput = new HaiInputUrl();
-                }
+                    break;
+
+                case "switch":
+                    this.haiInput = new HaiInputSwitch();
+                    break;
             }
         },
         handleInput(event)
         {
             let result = this.haiInput.handleInput(event);
-            if(result.success === true)
+
+            if(this.innerType !== 'switch')
             {
-                this.$refs.alert.textContent = '';
+                if(result.success === true)
+                {
+                    this.$refs.alert.textContent = '';
+                }
+                else
+                {
+                    this.$refs.alert.textContent = result.message;
+                }
             }
             else
             {
-                this.$refs.alert.textContent = result.message;
+                this.$refs.wrapper.setAttribute('data-state', this.haiInput.rawValue);
             }
         },
         handleFocusOut(event)
@@ -152,10 +192,25 @@ export default {
             this.haiInput.handleWheel(event);
         }
     },
-    template: `<label :for='inputId'>{{ label }}</label>
-                    <input ref='input' type='text' :name='name' :id='inputId' :value='value' :inputmode='inputmode'
-                        :placeholder='placeholder'
-                        v-on:input='handleInput($event)' v-on:focusout='handleFocusOut($event)'
-                        v-on:keydown='handleKeyAction($event)' v-on:wheel='handleWheel($event)'>
-               <span ref='alert' class='alert'></span>`
+    template: `
+        <template v-if='this.type === "switch"'>
+            <div ref='wrapper' class='switch-wrapper' data-state='on'>
+                <div class='option-group' v-on:click='handleInput($event)'>
+                    <span ref='toggle' class='toggle'></span>
+                    <label v-for='item in this.innerOptions' class='option'>
+                        <input type='radio' v-bind:VALUE='item.value'>
+                        <span></span>
+                    </label>
+                </div>
+            </div>
+        </template>
+        <template v-else>
+            <label :for='inputId'>{{ label }}</label>
+                        <input ref='input' type='text' :name='name' :id='inputId' :value='value' :inputmode='inputmode'
+                            :placeholder='placeholder'
+                            v-on:input='handleInput($event)' v-on:focusout='handleFocusOut($event)'
+                            v-on:keydown='handleKeyAction($event)' v-on:wheel='handleWheel($event)'>
+            <span ref='alert' class='alert'></span>
+        </template>
+        `
 };

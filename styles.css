@@ -1,17 +1,18 @@
 *
 {
-    padding: 5px;
     font-size: 16px;
 }
 label
 {
     display: block;
+    padding: 5px;
     text-align: left;
     font-family: "Arial Hebrew", Arial, sans-serif;
 }
 input
 {
     display: block;
+    padding: 5px;
 }
 input:invalid
 {
@@ -21,4 +22,59 @@ input:invalid
 .alert
 {
     color: #ff2f2f;
+}
+
+.switch-wrapper
+{
+    display: flex;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+}
+.switch-wrapper .option-group
+{
+    display: flex;
+    position: relative;
+    border: 2px solid blue;
+    background: blue;
+    cursor: pointer;
+}
+.switch-wrapper .option-group .toggle
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: auto;
+    width: 20px;
+    height: 20px;
+    background: white;
+    transition: left 0.5s;
+}
+.switch-wrapper[data-state='on'] .option-group .toggle
+{
+    left: calc(100% - 20px);
+}
+.switch-wrapper label.option
+{
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.switch-wrapper input
+{
+    display: none;
+}
+.switch-wrapper label
+{
+    padding: 0;
+}
+.switch-wrapper label.option input:checked+span
+{
+    width: 100%;
+    height: 100%;
+    /*background: blue;*/
 }
