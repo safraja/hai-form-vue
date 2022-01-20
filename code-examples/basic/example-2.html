@@ -1,0 +1,12 @@
+<div class='hai-input-element'>
+    <label>Test 2</label>
+    <input id='test3' name='test2' value='200' type='number'>
+</div>
+
+<script type="module" async>
+    import {HaiInput} from "./classes/hai-input-class.js";
+
+    let test2 = document.getElementById('test2');
+    let parameters = {max: 250_000}
+    let haiInput = await HaiInput.returnCorrectClass('number', test2, parameters);
+</script>

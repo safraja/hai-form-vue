@@ -17,7 +17,7 @@ header
 h1
 {
     margin: 0;
-    padding: 60px 20px;
+    padding: 60px 20px 20px;
 }
 pre
 {
@@ -28,6 +28,31 @@ pre
 code
 {
     height: inherit;
+}
+#main-menu
+{
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 0;
+    font-weight: bold;
+}
+#main-menu li
+{
+    padding: 10px;
+    list-style: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+}
+#main-menu li:hover,
+#main-menu li.active
+{
+    border-bottom: 3px solid white;
+}
+#main-menu li a:is(:active,:link,:visited)
+{
+    color: white;
+    text-decoration: none;
 }
 #container
 {

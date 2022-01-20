@@ -10,10 +10,13 @@ class HaiInput
     element;
     /** @type {HTMLInputElement} - Associated input, which should be send with submit and which always copy value of original element.*/
     twin;
+    /** @type {Object} - Object containing parameters.*/
+    parameters;
 
     constructor(element = null, parameters = {})
     {
         this.element = element;
+        this.parameters = parameters;
     }
 
     static async returnCorrectClass(type, element, parameters)
@@ -22,7 +25,8 @@ class HaiInput
         {
             case 'text':
                 return await import('./hai-input-text-class.js')
-                    .then((module) => {
+                    .then((module) =>
+                    {
                         let haiInput = new module.HaiInputText(element, parameters);
                         haiInput.transformElementToHaiInput();
                         return haiInput;
@@ -30,7 +34,8 @@ class HaiInput
 
             case 'number':
                 return await import('./hai-input-number-class.js')
-                    .then((module) => {
+                    .then((module) =>
+                    {
                         let haiInput = new module.HaiInputNumber(element, parameters);
                         haiInput.transformElementToHaiInput();
                         return haiInput;
@@ -38,7 +43,8 @@ class HaiInput
 
             case 'url':
                 return await import('./hai-input-url-class.js')
-                    .then((module) => {
+                    .then((module) =>
+                    {
                         let haiInput = new module.HaiInputUrl(element, parameters);
                         haiInput.transformElementToHaiInput();
                         return haiInput;
@@ -46,7 +52,8 @@ class HaiInput
 
             case 'switch':
                 return await import('./hai-input-switch-class.js')
-                    .then((module) => {
+                    .then((module) =>
+                    {
                         let haiInput = new module.HaiInputSwitch(element, parameters);
                         haiInput.transformElementToHaiInput();
                         return haiInput;
@@ -85,6 +92,7 @@ class HaiInput
 
         this.twin = twin;
 
+        this.processParameters();
 
         this.element.addEventListener('input', (event) =>
         {
@@ -106,9 +114,15 @@ class HaiInput
         });
     }
 
+    processParameters()
+    {
+
+    }
+
     handleInput(event)
     {
         this.saveValueToTwin();
+        return {success: true};
     }
 
     verifyEnterKey(event)

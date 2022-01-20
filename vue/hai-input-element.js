@@ -1,4 +1,4 @@
-import {HaiInput, HaiInputText, HaiInputNumber, HaiInputUrl, HaiInputSwitch} from "./classes/hai-input-classes.js";
+import {HaiInput, HaiInputText, HaiInputNumber, HaiInputUrl, HaiInputSwitch} from "../classes/hai-input-classes.js";
 
 export default {
     name: 'hai-input',
@@ -43,10 +43,11 @@ export default {
             'default': () => []
         },
     },
-    styles: ["@import './styles.css'"],
+    styles: ["@import '../vue/styles.css'"],
     data()
     {
         return {
+            id: '',
             innerType: '',
             innerOptions: '',
             inputmode: ''
@@ -60,19 +61,53 @@ export default {
         this.haiInput.rawValue = this.haiInput.extractRawValue(this.value);
         this.haiInput.value = this.haiInput.formatValue(this.value);
 
-        let twin = document.querySelector("input#" + this.inputId);
-        if (!twin)
+        if (this.$attrs.id === undefined)
+        {
+            let min = 1;
+            let max = 100000000;
+            let id = Math.floor(Math.random() * (max - min) + min);
+            this.id = `input-${id}`;
+        }
+        else
+        {
+            this.id = this.$attrs.id;
+        }
+
+        let twin;
+
+        if(this.inputId !== undefined)
+        {
+            twin = document.querySelector("input#" + this.inputId);
+            if (!twin)
+            {
+                twin = container.ownerDocument.createElement("input");
+                twin.type = "hidden";
+                //twin.classList.add("hidden-input");
+                this.$el.parentNode.host.parentElement.appendChild(twin);
+            }
+        }
+        else
         {
             twin = container.ownerDocument.createElement("input");
             twin.type = "hidden";
-            //twin.classList.add("hidden-input");
             this.$el.parentNode.host.parentElement.appendChild(twin);
         }
+
         if(this.name !== undefined)
         {
             twin.name = this.name;
         }
-        twin.id = this.inputId;
+        if(this.inputId !== undefined)
+        {
+            twin.id = this.inputId;
+        }
+        else
+        {
+            let min = 1;
+            let max = 100000000;
+            let id = Math.floor(Math.random() * (max - min) + min);
+            twin.id = `input-${id}`;
+        }
         twin.value = this.value;
         this.haiInput.twin = twin;
 
@@ -205,12 +240,14 @@ export default {
             </div>
         </template>
         <template v-else>
-            <label :for='inputId'>{{ label }}</label>
-                        <input ref='input' type='text' :name='name' :id='inputId' :value='value' :inputmode='inputmode'
+            <label>
+                <div class='label-text'>{{ label }}</div>
+                <input ref='input' type='text' :id='id' :name='name' :value='value' :inputmode='inputmode'
                             :placeholder='placeholder'
                             v-on:input='handleInput($event)' v-on:focusout='handleFocusOut($event)'
                             v-on:keydown='handleKeyAction($event)' v-on:wheel='handleWheel($event)'>
-            <span ref='alert' class='alert'></span>
+                <span ref='alert' class='alert'></span>
+            </label>
         </template>
         `
 };

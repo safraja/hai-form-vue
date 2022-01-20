@@ -4,6 +4,7 @@ class HaiInputSwitch extends HaiInput
 {
     options = ['', 'on'];
     variant = 'on/off';
+    optionOnValue = null;
     inputs = [];
 
     constructor(element = null, parameters = {})
@@ -20,7 +21,7 @@ class HaiInputSwitch extends HaiInput
 
         let twin = document.createElement('input');
 
-        if(name !== undefined)
+        if (name !== undefined)
         {
             this.element.removeAttribute('name');
             twin.name = name;
@@ -28,6 +29,33 @@ class HaiInputSwitch extends HaiInput
 
         twin.type = 'hidden';
         twin.value = this.rawValue;
+
+        this.processParameters();
+        this.convertOptionsToObjectArray();
+
+        if(this.options.length < 2)
+        {
+            console.error('There must be at least 2 options specified.');
+            return;
+        }
+
+        if (this.variant === 'on/off')
+        {
+            if(this.options.length > 2)
+            {
+                this.variant = 'multiple';
+                console.warn('Variant "on/off" is not usable with more then 2 specified ' +
+                    'options, reverting to "multiple" variant.');
+            }
+            else if(this.optionOnValue === null)
+            {
+                this.optionOnValue = this.options[this.options.length - 1].value;
+            }
+            else if(this.options[0].value === this.optionOnValue)
+            {
+                this.options = this.options.reverse();
+            }
+        }
 
 
         let wrapper = document.createElement('div');
@@ -49,16 +77,21 @@ class HaiInputSwitch extends HaiInput
 
             let optionInput = document.createElement('input');
             optionInput.type = 'radio';
-            optionInput.value = option;
+            optionInput.value = option.value;
 
             this.inputs.push(optionInput);
 
-            if(this.value === option)
+            if(this.value === option.value)
             {
                 optionInput.checked = true;
             }
 
             let spanElement = document.createElement('span');
+
+            if(option.label !== null)
+            {
+                spanElement.textContent = option.label;
+            }
 
             label.append(optionInput, spanElement);
             optionGroup.appendChild(label);
@@ -68,7 +101,6 @@ class HaiInputSwitch extends HaiInput
         this.element.remove();
         this.element = wrapper;
 
-        this.element.setAttribute('data-state', this.rawValue);
 
         this.element.haiInput = this;
 
@@ -84,6 +116,16 @@ class HaiInputSwitch extends HaiInput
 
         if(this.variant === 'on/off')
         {
+            if (this.rawValue === this.optionOnValue)
+            {
+                this.element.setAttribute('data-state', 'on');
+            }
+            else
+            {
+                this.element.setAttribute('data-state', 'off');
+            }
+
+
             this.element.querySelector('.option-group').addEventListener('click', (event) =>
             {
                 this.handleInput(event);
@@ -111,6 +153,66 @@ class HaiInputSwitch extends HaiInput
         });*/
     }
 
+    processParameters()
+    {
+        if (this.parameters.options !== null)
+        {
+            this.options = this.parameters.options;
+        }
+
+        if(this.parameters.list !== null)
+        {
+            if(typeof this.parameters.list !== 'string')
+            {
+                console.warn('HaiForm: List parameter must by a string.');
+            }
+            else
+            {
+                let datalist = document.getElementById(this.parameters.list);
+                if(datalist === null)
+                {
+                    console.warn(`HaiForm: Datalist with id ${this.parameters.list} was not found.`);
+                }
+                else
+                {
+                    let options = datalist.querySelectorAll('option');
+                    this.options = [];
+
+                    for(let option of options)
+                    {
+                        this.options.push({
+                            label: option.textContent,
+                            value: option.getAttribute('value')
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    convertOptionsToObjectArray()
+    {
+        let originalOptions = this.options;
+        let convertedOptions = originalOptions;
+
+        if (typeof convertedOptions === 'string')
+        {
+            convertedOptions = JSON.parse(convertedOptions);
+        }
+
+        if(Array.isArray(convertedOptions) && convertedOptions.length > 0 && typeof convertedOptions[0] == 'string')
+        {
+            let help = [];
+            for(let option of convertedOptions)
+            {
+                help.push({value: option});
+            }
+            convertedOptions = help;
+        }
+
+        this.options = convertedOptions;
+    }
+
     handleInput(event)
     {
         event.preventDefault();
@@ -118,9 +220,9 @@ class HaiInputSwitch extends HaiInput
 
         for(let option of this.options)
         {
-            if(this.rawValue !== option)
+            if(this.rawValue !== option.value)
             {
-                newValue = option;
+                newValue = option.value;
             }
         }
 
@@ -139,7 +241,14 @@ class HaiInputSwitch extends HaiInput
 
         if(this.element !== null)
         {
-            this.element.setAttribute('data-state', this.rawValue);
+            if (this.rawValue === this.optionOnValue)
+            {
+                this.element.setAttribute('data-state', 'on');
+            }
+            else
+            {
+                this.element.setAttribute('data-state', 'off');
+            }
         }
 
         this.saveValueToTwin();

@@ -38,13 +38,10 @@ if(empty($_POST) == false)
         <div id='container'>
             <main>
                 <article class='example-article'>
-                    <h2>Textový input</h2>
+                    <h2>Text input</h2>
                     <section class='input-section'>
                         <form method='post' target='test1-iframe'>
-                            <div class='hai-input-element'>
-                                <label for='test1'>Test 1</label>
-                                <input id='test1' name='test1' value='' type='text'>
-                            </div>
+                            <hai-input label='Test 1' input-id='test' name='test' mask='AAA-000' placeholder='Napište...'></hai-input>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -55,7 +52,7 @@ if(empty($_POST) == false)
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/basic/example-1.html')); ?></code>
+<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/vue/example-1.html')); ?></code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>
@@ -63,13 +60,6 @@ if(empty($_POST) == false)
                         </div>
                     </section>
                 </article>
-                <script type="module" async>
-                    import {HaiInput} from "./classes/hai-input-class.js";
-
-                    let test1 = document.getElementById('test1');
-                    let parameters = {mask : '000 - AAA'}
-                    let haiInput = await HaiInput.returnCorrectClass('text', test1, parameters);
-                </script>
 
 
 
@@ -77,10 +67,7 @@ if(empty($_POST) == false)
                     <h2>Číselný input</h2>
                     <section class='input-section'>
                         <form method='post' target='test2-iframe'>
-                            <div class='hai-input-element'>
-                                <label>Test 2</label>
-                                <input id='test2' name='test2' value='200' type='number'>
-                            </div>
+                            <hai-input label='Test 2' input-id='test2' name='test2' value='200' type='number' max='100000' min='100' ></hai-input>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -91,7 +78,7 @@ if(empty($_POST) == false)
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/basic/example-2.html')); ?></code>
+<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/vue/example-2.html')); ?></code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>
@@ -99,24 +86,14 @@ if(empty($_POST) == false)
                         </div>
                     </section>
                 </article>
-                <script type="module" async>
-                    import {HaiInput} from "./classes/hai-input-class.js";
-
-                    let test2 = document.getElementById('test2');
-                    let parameters = {max: 250_000}
-                    let haiInput = await HaiInput.returnCorrectClass('number', test2, parameters);
-                </script>
 
 
 
                 <article class='example-article'>
-                    <h2>URL input</h2>
+                    <h2>Url input</h2>
                     <section class='input-section'>
                         <form method='post' target='test3-iframe'>
-                            <div class='hai-input-element'>
-                                <label>Test 3</label>
-                                <input id='test3' name='test3' type='url'>
-                            </div>
+                            <hai-input label='Test 3' input-id='test3' name='test3' type='url'></hai-input>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -127,7 +104,7 @@ if(empty($_POST) == false)
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/basic/example-4.html')); ?></code>
+<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/vue/example-3.html')); ?></code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>
@@ -135,44 +112,6 @@ if(empty($_POST) == false)
                         </div>
                     </section>
                 </article>
-                <script type="module" async>
-                    import {HaiInput} from "./classes/hai-input-class.js";
-
-                    let test3 = document.getElementById('test3');
-                    let haiInput = await HaiInput.returnCorrectClass('url', test3);
-                </script>
-
-
-
-                <article class='example-article'>
-                    <h2>Switch input</h2>
-                    <section class='input-section'>
-                        <form method='post' target='test4-iframe'>
-                            <input id='test4' name='test4' type='text' value='on'>
-                            <input class='submit-test' type='submit'>
-                        </form>
-                    </section>
-                    <section class='code-section'>
-                        <header>
-                            <div class='active' data-code-tab-header='html'>HTML</div>
-                            <div data-code-tab-header='data'>Data</div>
-                        </header>
-                        <div class='active' data-code-tab='html'>
-                            <pre>
-<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/basic/example-4.html')); ?></code>
-                            </pre>
-                        </div>
-                        <div data-code-tab='data'>
-                            <iframe name='test4-iframe'></iframe>
-                        </div>
-                    </section>
-                </article>
-                <script type="module" async>
-                    import {HaiInput} from "./classes/hai-input-class.js";
-
-                    let test4 = document.getElementById('test4');
-                    let haiInput = await HaiInput.returnCorrectClass('switch', test4);
-                </script>
             </main>
             <footer id='container-footer'>
 

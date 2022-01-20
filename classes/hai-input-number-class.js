@@ -18,31 +18,111 @@ class HaiInputNumber extends HaiInputText
         this.type = 'number';
     }
 
+    processParameters()
+    {
+        if (this.parameters.min !== undefined)
+        {
+            if(isNaN(this.parameters.min) === true)
+            {
+                console.warn(`HaiForm: Parameter "min" must be a number.`);
+            }
+            else
+            {
+                this.min = this.parameters.min;
+            }
+        }
+
+        if(this.parameters.max !== undefined)
+        {
+            if(isNaN(this.parameters.max) === true)
+            {
+                console.warn(`HaiForm: Parameter "max" must be a number.`);
+            }
+            else
+            {
+                this.max = this.parameters.max;
+            }
+        }
+
+        if(this.parameters.step !== undefined)
+        {
+            if(isNaN(this.parameters.step) === true)
+            {
+                console.warn(`HaiForm: Parameter "step" must be a number, reverting back to "1".`);
+            }
+            else
+            {
+                this.max = this.parameters.step;
+            }
+        }
+
+        if(this.parameters.stripLeadingZeroes !== undefined)
+        {
+            this.stripLeadingZeroes = this.parameters.stripLeadingZeroes == true;
+        }
+
+        if(this.parameters.decimalSeparator !== undefined)
+        {
+            this.decimalSeparator = this.parameters.decimalSeparator;
+        }
+
+        if(this.parameters.delimiter !== undefined)
+        {
+            this.delimiter = this.parameters.delimiter;
+        }
+
+        if(this.parameters.thousandsGroupStyle !== undefined)
+        {
+            let supportedStyles = ['thousand', 'lakh','wan'];
+            if(supportedStyles.includes(this.parameters.thousandsGroupStyle) === false)
+            {
+                console.warn('HaiForm: Given thousands group style is not supported, reverting back to "thousand". ' +
+                    'Supported types are:', supportedStyles);
+            }
+            else
+            {
+                this.thousandsGroupStyle = this.parameters.thousandsGroupStyle;
+            }
+        }
+
+        if(this.parameters.enableValueFormation !== undefined)
+        {
+            this.enableValueFormation = this.parameters.enableValueFormation == true;
+        }
+    }
+
     handleInput(event)
     {
         let value = event.target.value;
+        let oldValue = this.value;
+        let cursorPosition = event.target.selectionEnd;
 
         let rawValue = this.extractRawValue(value);
         this.rawValue = rawValue;
-        let formatedValue = this.formatValue(rawValue);
-        this.value = formatedValue;
-        event.target.value = formatedValue;
+        let formattedValue = this.formatValue(rawValue);
+        this.value = formattedValue;
+        event.target.value = formattedValue;
 
         this.saveValueToTwin();
+
+        let newCursorPosition = this.getNextCursorPosition(cursorPosition,oldValue,
+            formattedValue, event);
+        event.target.setSelectionRange(newCursorPosition, newCursorPosition);
+
         return {success: true};
     }
 
-    extractRawValue(formatedValue = null)
+    extractRawValue(formattedValue = null)
     {
         let result = '';
 
-        if(formatedValue === null)
+        if(formattedValue === null)
         {
-            formatedValue = this.value;
+            formattedValue = this.value;
         }
 
             // Strip alphabet letters.
-        result = formatedValue.replace(/[A-Za-z]/g, '')
+        result = formattedValue.replace(/[A-Za-z]/g, '')
             // Replace the first decimal marks (dots, commas and arabic decimal separator) with reserved placeholder.
             .replace(/[.,٫]/, 'M')
 
@@ -197,6 +277,35 @@ class HaiInputNumber extends HaiInputText
         return numberString;
     }
 
+    getNextCursorPosition(prevPosition, oldValue, newValue, event)
+    {
+        if (oldValue.length === prevPosition - 1)
+        {
+            return newValue.length;
+        }
+        let oldRawValue = this.extractRawValue(oldValue);
+        let newRawValue = this.extractRawValue(newValue);
+
+        if(event.inputType === 'deleteContentForward' &&
+            oldRawValue === newRawValue)
+        {   // If user tried to delete delimiter, move the cursor position.
+            return prevPosition + 1;
+        }
+
+        return prevPosition + this.getPositionOffset(prevPosition, oldValue, newValue);
+    }
+
+    getPositionOffset (prevPosition, oldValue, newValue)
+    {
+        let oldRawValue, newRawValue, lengthOffset;
+
+        oldRawValue = this.extractRawValue(oldValue.slice(0, prevPosition));
+        newRawValue = this.extractRawValue(newValue.slice(0, prevPosition));
+        lengthOffset = oldRawValue.length - newRawValue.length;
+
+        return (lengthOffset !== 0) ? (lengthOffset / Math.abs(lengthOffset)) : 0;
+    }
+
     changeNumberValue(change)
     {
         let rawValue = Number(this.rawValue);
@@ -204,8 +313,6 @@ class HaiInputNumber extends HaiInputText
         {
             rawValue = 0;
         }
-
-
 
         let newRawValue = rawValue + Number(change);
         if((change > 0 && newRawValue > this.max) || (change < 0 && newRawValue < this.min))
@@ -222,8 +329,8 @@ class HaiInputNumber extends HaiInputText
         }
 
         this.rawValue = String(newRawValue);
-        let formatedValue = this.formatValue(this.rawValue);
-        this.value = String(formatedValue);
+        let formattedValue = this.formatValue(this.rawValue);
+        this.value = String(formattedValue);
         this.saveValueToTwin();
     }
 
