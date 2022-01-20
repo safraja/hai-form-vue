@@ -30,7 +30,7 @@ if(empty($_POST) == false)
             <h1>Hai Form - testování</h1>
             <nav>
                 <ul id='main-menu'>
-                    <li><a href='./'>Demo</a></li>
+                    <li class='active'><a href='./'>Demo</a></li>
                     <li><a href='./demo-vue.php'>Demo (Vue.js)</a></li>
                 </ul>
             </nav>
@@ -78,7 +78,7 @@ if(empty($_POST) == false)
                     <section class='input-section'>
                         <form method='post' target='test2-iframe'>
                             <div class='hai-input-element'>
-                                <label>Test 2</label>
+                                <label for='test2'>Test 2</label>
                                 <input id='test2' name='test2' value='200' type='number'>
                             </div>
                             <input class='submit-test' type='submit'>
@@ -114,7 +114,7 @@ if(empty($_POST) == false)
                     <section class='input-section'>
                         <form method='post' target='test3-iframe'>
                             <div class='hai-input-element'>
-                                <label>Test 3</label>
+                                <label for='test3'>Test 3</label>
                                 <input id='test3' name='test3' type='url'>
                             </div>
                             <input class='submit-test' type='submit'>

@@ -43,7 +43,7 @@ export default {
             'default': () => []
         },
     },
-    styles: ["@import '../vue/styles.css'"],
+    styles: ["@import './vue/styles.css'"],
     data()
     {
         return {

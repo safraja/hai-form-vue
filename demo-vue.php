@@ -31,7 +31,7 @@ if(empty($_POST) == false)
             <nav>
                 <ul id='main-menu'>
                     <li><a href='./'>Demo</a></li>
-                    <li><a href='./demo-vue.php'>Demo (Vue.js)</a></li>
+                    <li class='active'><a href='./demo-vue.php'>Demo (Vue.js)</a></li>
                 </ul>
             </nav>
         </header>

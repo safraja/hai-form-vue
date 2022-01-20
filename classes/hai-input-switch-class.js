@@ -155,12 +155,12 @@ class HaiInputSwitch extends HaiInput
 
     processParameters()
     {
-        if (this.parameters.options !== null)
+        if (this.parameters.options !== undefined)
         {
             this.options = this.parameters.options;
         }
 
-        if(this.parameters.list !== null)
+        if(this.parameters.list !== undefined)
         {
             if(typeof this.parameters.list !== 'string')
             {
