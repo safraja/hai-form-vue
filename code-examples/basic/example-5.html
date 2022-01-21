@@ -1,0 +1,14 @@
+<input id='test5' name='test5' type='text' value='on'>
+<datalist id='test5-datalist'>
+    <option value='php'>PHP</option>
+    <option value='js'>Javascript</option>
+    <option value='py'>Python</option>
+</datalist>
+
+<script type='module' async>
+    import {HaiInput} from './classes/hai-input-class.js';
+
+    let test5 = document.getElementById('test5');
+    let parameters = {list: 'test5-datalist'};
+    let haiInput = await HaiInput.returnCorrectClass('switch', test5, parameters);
+</script>

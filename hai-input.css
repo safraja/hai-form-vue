@@ -1,0 +1,123 @@
+.hai-input-element
+{
+    display: flex;
+    flex-direction: column;
+}
+.hai-input-element *
+{
+    padding: 5px;
+    font-size: 16px;
+}
+.hai-input-element label
+{
+    display: block;
+    text-align: left;
+    font-family: "Arial Hebrew", Arial, sans-serif;
+}
+.hai-input-element input
+{
+    display: block;
+}
+.hai-input-element input:invalid
+{
+    color: red;
+    border-color: #ff000096;
+}
+
+
+.switch-wrapper
+{
+    display: flex;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+}
+.switch-wrapper .option-group
+{
+    display: flex;
+    position: relative;
+    height: 100%;
+    border: 2px solid black;
+    background: white;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+.switch-wrapper[data-variant='on/off'] .option-group
+{
+    height: auto;
+    border: 2px solid blue;
+    background: blue;
+    transition: background 0.5s, border 0.5s;
+}
+.switch-wrapper[data-variant='on/off'][data-state='off'] .option-group
+{
+    border: 2px solid gray;
+    background: gray;
+}
+.switch-wrapper .option-group .toggle
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: auto;
+    width: 20px;
+    height: 20px;
+    background: white;
+    transition: left 0.5s;
+}
+.switch-wrapper[data-state='on'] .option-group .toggle
+{
+    left: calc(100% - 20px);
+}
+.switch-wrapper label.option
+{
+    display: flex;
+    width: auto;
+    height: 100%;
+    padding: 0 10px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.switch-wrapper label.option:hover
+{
+    background: gray;
+    color: white;
+}
+.switch-wrapper[data-variant='on/off'] label.option
+{
+    background: transparent;
+}
+.switch-wrapper[data-variant='on/off'][data-state='off'] label.option
+{
+    background: transparent;
+}
+.switch-wrapper label.option.selected
+{
+    background: black;
+    color: white;
+}
+.switch-wrapper[data-variant='on/off'] label.option
+{
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+}
+.switch-wrapper[data-variant='on/off'] label.option:hover
+{
+    font-weight: inherit;
+}
+.switch-wrapper input
+{
+    display: none;
+}
+.switch-wrapper label.option input:checked+span
+{
+    width: 100%;
+}
+.switch-wrapper[data-variant='on/off'] label.option input:checked+span
+{
+    height: 100%;
+}

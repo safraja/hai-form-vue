@@ -60,15 +60,27 @@ class HaiInputSwitch extends HaiInput
 
         let wrapper = document.createElement('div');
         wrapper.classList.add('switch-wrapper');
+        if(this.variant === 'on/off')
+        {
+            wrapper.setAttribute('data-variant', 'on/off');
+
+            if (this.rawValue === this.optionOnValue)
+            {
+                wrapper.setAttribute('data-state', 'on');
+            }
+        }
 
         let optionGroup = document.createElement('div');
         optionGroup.classList.add('option-group');
 
         wrapper.appendChild(optionGroup);
 
-        let toogle = document.createElement('span');
-        toogle.classList.add('toggle');
-        optionGroup.appendChild(toogle);
+        if(this.variant === 'on/off')
+        {
+            let toogle = document.createElement('span');
+            toogle.classList.add('toggle');
+            optionGroup.appendChild(toogle);
+        }
 
         for(let option of this.options)
         {
@@ -114,23 +126,10 @@ class HaiInputSwitch extends HaiInput
 
         this.twin = twin;
 
-        if(this.variant === 'on/off')
+        this.element.querySelector('.option-group').addEventListener('click', (event) =>
         {
-            if (this.rawValue === this.optionOnValue)
-            {
-                this.element.setAttribute('data-state', 'on');
-            }
-            else
-            {
-                this.element.setAttribute('data-state', 'off');
-            }
-
-
-            this.element.querySelector('.option-group').addEventListener('click', (event) =>
-            {
-                this.handleInput(event);
-            });
-        }
+            this.handleInput(event);
+        });
 
         /*
         this.element.addEventListener('input', (event) =>
@@ -214,6 +213,48 @@ class HaiInputSwitch extends HaiInput
     }
 
     handleInput(event)
+    {
+        if(this.variant === 'on/off')
+        {
+            this.handleInputOfOnOffVariant(event);
+        }
+        else
+        {
+            this.handleInputOfMultipleVariant(event);
+        }
+
+    }
+
+    handleInputOfMultipleVariant(event)
+    {
+        event.preventDefault();
+        let newValue;
+
+        let clickedOption = event.target;
+        if(clickedOption.matches('.option') === false)
+        {
+            clickedOption = clickedOption.closest('.option');
+        }
+
+        for (let input of this.inputs)
+        {
+            input.checked = false
+            input.parentElement.classList.remove('selected');
+        }
+
+        let selectedInput = clickedOption.querySelector('input');
+        selectedInput.checked = true;
+
+        this.value = selectedInput.value;
+        this.rawValue = selectedInput.value;
+
+        clickedOption.classList.add('selected');
+
+        this.saveValueToTwin();
+        return {success: true};
+    }
+
+    handleInputOfOnOffVariant(event)
     {
         event.preventDefault();
         let newValue;

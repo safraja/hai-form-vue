@@ -13,9 +13,13 @@ if(empty($_POST) == false)
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
         <link rel='stylesheet'
               href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/atom-one-light.min.css'>
+        <link rel='stylesheet'
+              href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/androidstudio.min.css'
+              media='(prefers-color-scheme: dark)'>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js'></script>
         <script>hljs.highlightAll();</script>
         <link rel='stylesheet' href='./style/style.css'>
+        <link rel='stylesheet' href='./hai-input.css'>
         <script src='./js/main.js'></script>
         <title>Hai Form</title>
         <!--<script src="https://unpkg.com/vue@next"></script>-->
@@ -172,6 +176,43 @@ if(empty($_POST) == false)
 
                     let test4 = document.getElementById('test4');
                     let haiInput = await HaiInput.returnCorrectClass('switch', test4);
+                </script>
+
+
+                <article class='example-article'>
+                    <h2>Switch input (varianta multiple)</h2>
+                    <section class='input-section'>
+                        <form method='post' target='test5-iframe'>
+                            <input id='test5' name='test5' type='text' value='on'>
+                            <datalist id='test5-datalist'>
+                                <option value='php'>PHP</option>
+                                <option value='js'>Javascript</option>
+                                <option value='py'>Python</option>
+                            </datalist>
+                            <input class='submit-test' type='submit'>
+                        </form>
+                    </section>
+                    <section class='code-section'>
+                        <header>
+                            <div class='active' data-code-tab-header='html'>HTML</div>
+                            <div data-code-tab-header='data'>Data</div>
+                        </header>
+                        <div class='active' data-code-tab='html'>
+                            <pre>
+<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/basic/example-5.html')); ?></code>
+                            </pre>
+                        </div>
+                        <div data-code-tab='data'>
+                            <iframe name='test5-iframe'></iframe>
+                        </div>
+                    </section>
+                </article>
+                <script type='module' async>
+                    import {HaiInput} from './classes/hai-input-class.js';
+
+                    let test5 = document.getElementById('test5');
+                    let parameters = {list: 'test5-datalist'};
+                    let haiInput = await HaiInput.returnCorrectClass('switch', test5, parameters);
                 </script>
             </main>
             <footer id='container-footer'>

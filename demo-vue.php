@@ -13,9 +13,13 @@ if(empty($_POST) == false)
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
         <link rel='stylesheet'
               href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/atom-one-light.min.css'>
+        <link rel='stylesheet'
+              href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/androidstudio.min.css'
+              media='(prefers-color-scheme: dark)'>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js'></script>
         <script>hljs.highlightAll();</script>
         <link rel='stylesheet' href='./style/style.css'>
+        <link rel='stylesheet' href='./hai-input.css'>
         <script src='./js/main.js'></script>
         <title>Hai Form</title>
         <!--<script src="https://unpkg.com/vue@next"></script>-->
