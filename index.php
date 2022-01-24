@@ -20,6 +20,7 @@ if(empty($_POST) == false)
         <script>hljs.highlightAll();</script>
         <link rel='stylesheet' href='./style/style.css'>
         <link rel='stylesheet' href='./hai-input.css'>
+        <link rel='stylesheet' href='./hai-input-dark.css' media='(prefers-color-scheme: dark)'>
         <script src='./js/main.js'></script>
         <title>Hai Form</title>
         <!--<script src="https://unpkg.com/vue@next"></script>-->

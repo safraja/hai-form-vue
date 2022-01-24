@@ -58,7 +58,7 @@ class HaiInputNumber extends HaiInputText
 
         if(this.parameters.stripLeadingZeroes !== undefined)
         {
-            this.stripLeadingZeroes = this.parameters.stripLeadingZeroes == true;
+            this.stripLeadingZeroes = Boolean(this.parameters.stripLeadingZeroes);
         }
 
         if(this.parameters.decimalSeparator !== undefined)
@@ -87,7 +87,7 @@ class HaiInputNumber extends HaiInputText
 
         if(this.parameters.enableValueFormation !== undefined)
         {
-            this.enableValueFormation = this.parameters.enableValueFormation == true;
+            this.enableValueFormation = Boolean(this.parameters.enableValueFormation);
         }
     }
 

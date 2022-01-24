@@ -130,26 +130,6 @@ class HaiInputSwitch extends HaiInput
         {
             this.handleInput(event);
         });
-
-        /*
-        this.element.addEventListener('input', (event) =>
-        {
-            this.handleInput(event);
-        });
-
-        this.element.addEventListener('keydown', (event) =>
-        {
-            this.handleKeyAction(event);
-        });
-
-        this.element.addEventListener('focusout', (event) =>
-        {
-            this.handleFocusOut(event);
-        });
-        this.element.addEventListener('wheel', (event) =>
-        {
-            this.handleWheel(event);
-        });*/
     }
 
     processParameters()

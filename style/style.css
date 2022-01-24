@@ -194,6 +194,11 @@ input[type=submit]:hover
         background: #131313;
         color: #10b9b7;
     }
+    iframe
+    {
+        background: #282b2e;
+        color: #dfdfdf;
+    }
     main
     {
         background: #161517;
