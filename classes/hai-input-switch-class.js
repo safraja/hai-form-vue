@@ -27,7 +27,9 @@ class HaiInputSwitch extends HaiInput
             twin.name = name;
         }
 
-        twin.type = 'hidden';
+        twin.type = 'text';
+        twin.hidden = true;
+        twin.classList.add('hidden');
         twin.value = this.rawValue;
 
         this.processParameters();
@@ -57,6 +59,15 @@ class HaiInputSwitch extends HaiInput
             }
         }
 
+        let inputWrapper = document.createElement('div');
+        inputWrapper.classList.add('hai-input-element');
+        inputWrapper.classList.add('switch');
+
+        let labelDiv = document.createElement('div');
+        labelDiv.classList.add('label-text');
+
+        let warningDiv = document.createElement('div');
+        warningDiv.classList.add('alert');
 
         let wrapper = document.createElement('div');
         wrapper.classList.add('switch-wrapper');
@@ -96,6 +107,10 @@ class HaiInputSwitch extends HaiInput
             if(this.value === option.value)
             {
                 optionInput.checked = true;
+                if(this.variant === 'multiple')
+                {
+                    label.classList.add('selected');
+                }
             }
 
             let spanElement = document.createElement('span');
@@ -109,13 +124,13 @@ class HaiInputSwitch extends HaiInput
             optionGroup.appendChild(label);
         }
 
-        this.element.after(wrapper);
+        inputWrapper.append(labelDiv, wrapper, warningDiv);
+        this.element.after(inputWrapper);
         this.element.remove();
         this.element = wrapper;
 
 
         this.element.haiInput = this;
-
 
         let min = 1;
         let max = 100000000;
@@ -125,6 +140,12 @@ class HaiInputSwitch extends HaiInput
         this.element.parentElement.appendChild(twin);
 
         this.twin = twin;
+        this.labelElement = labelDiv;
+        this.warningElement = warningDiv;
+        if(this.label !== undefined)
+        {
+            this.labelElement.textContent = this.label;
+        }
 
         this.element.querySelector('.option-group').addEventListener('click', (event) =>
         {
@@ -134,6 +155,8 @@ class HaiInputSwitch extends HaiInput
 
     processParameters()
     {
+        super.processParameters();
+
         if (this.parameters.options !== undefined)
         {
             this.options = this.parameters.options;

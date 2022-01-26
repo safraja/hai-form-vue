@@ -12,6 +12,8 @@ class HaiInputText extends HaiInput
 
     processParameters()
     {
+        super.processParameters();
+
         if (this.parameters.mask !== undefined)
         {
             if(typeof this.parameters.mask !== 'string')

@@ -187,6 +187,15 @@ input[type=submit]:hover
 }
 
 
+
+:focus
+{
+    outline: 5px solid red;
+}
+
+
+
+
 @media (prefers-color-scheme: dark)
 {
     header

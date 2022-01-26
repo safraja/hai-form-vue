@@ -29,6 +29,8 @@ input:invalid
 .alert
 {
     color: #ff2f2f;
+    font-size: 14px;
+    user-select: none;
 }
 
 .switch-wrapper

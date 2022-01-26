@@ -1,11 +1,3 @@
-<?php
-if(empty($_POST) == false)
-{
-    var_dump($_POST);
-    exit();
-}
-?>
-
 <!doctype html>
 <html>
     <head>
@@ -45,11 +37,8 @@ if(empty($_POST) == false)
                 <article class='example-article'>
                     <h2>Textový input</h2>
                     <section class='input-section'>
-                        <form method='post' target='test1-iframe'>
-                            <div class='hai-input-element'>
-                                <label for='test1'>Test 1</label>
-                                <input id='test1' name='test1' value='' type='text'>
-                            </div>
+                        <form action='submit-test.php' method='post' target='test1-iframe'>
+                            <input id='test1' name='test1' value='' type='text'>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -72,8 +61,8 @@ if(empty($_POST) == false)
                     import {HaiInput} from "./classes/hai-input-class.js";
 
                     let test1 = document.getElementById('test1');
-                    let parameters = {mask : '000 - AAA'}
-                    let haiInput = await HaiInput.returnCorrectClass('text', test1, parameters);
+                    let parameters = {mask : '000 - AAA', label: 'Test 1'}
+                    let haiInput = await HaiInput.create('text', test1, parameters);
                 </script>
 
 
@@ -81,11 +70,8 @@ if(empty($_POST) == false)
                 <article class='example-article'>
                     <h2>Číselný input</h2>
                     <section class='input-section'>
-                        <form method='post' target='test2-iframe'>
-                            <div class='hai-input-element'>
-                                <label for='test2'>Test 2</label>
-                                <input id='test2' name='test2' value='200' type='number'>
-                            </div>
+                        <form action='submit-test.php' method='post' target='test2-iframe'>
+                            <input id='test2' name='test2' value='200' type='number'>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -109,7 +95,7 @@ if(empty($_POST) == false)
 
                     let test2 = document.getElementById('test2');
                     let parameters = {max: 250_000}
-                    let haiInput = await HaiInput.returnCorrectClass('number', test2, parameters);
+                    let haiInput = await HaiInput.create('number', test2, parameters);
                 </script>
 
 
@@ -117,11 +103,8 @@ if(empty($_POST) == false)
                 <article class='example-article'>
                     <h2>URL input</h2>
                     <section class='input-section'>
-                        <form method='post' target='test3-iframe'>
-                            <div class='hai-input-element'>
-                                <label for='test3'>Test 3</label>
-                                <input id='test3' name='test3' type='url'>
-                            </div>
+                        <form action='submit-test.php' method='post' target='test3-iframe'>
+                            <input id='test3' name='test3' type='url'>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -144,7 +127,7 @@ if(empty($_POST) == false)
                     import {HaiInput} from "./classes/hai-input-class.js";
 
                     let test3 = document.getElementById('test3');
-                    let haiInput = await HaiInput.returnCorrectClass('url', test3);
+                    let haiInput = await HaiInput.create('url', test3);
                 </script>
 
 
@@ -152,7 +135,7 @@ if(empty($_POST) == false)
                 <article class='example-article'>
                     <h2>Switch input</h2>
                     <section class='input-section'>
-                        <form method='post' target='test4-iframe'>
+                        <form action='submit-test.php' method='post' target='test4-iframe'>
                             <input id='test4' name='test4' type='text' value='on'>
                             <input class='submit-test' type='submit'>
                         </form>
@@ -176,15 +159,15 @@ if(empty($_POST) == false)
                     import {HaiInput} from "./classes/hai-input-class.js";
 
                     let test4 = document.getElementById('test4');
-                    let haiInput = await HaiInput.returnCorrectClass('switch', test4);
+                    let haiInput = await HaiInput.create('switch', test4);
                 </script>
 
 
                 <article class='example-article'>
                     <h2>Switch input (varianta multiple)</h2>
                     <section class='input-section'>
-                        <form method='post' target='test5-iframe'>
-                            <input id='test5' name='test5' type='text' value='on'>
+                        <form action='submit-test.php' method='post' target='test5-iframe'>
+                            <input id='test5' name='test5' type='text' value='py'>
                             <datalist id='test5-datalist'>
                                 <option value='php'>PHP</option>
                                 <option value='js'>Javascript</option>
@@ -213,7 +196,7 @@ if(empty($_POST) == false)
 
                     let test5 = document.getElementById('test5');
                     let parameters = {list: 'test5-datalist'};
-                    let haiInput = await HaiInput.returnCorrectClass('switch', test5, parameters);
+                    let haiInput = await HaiInput.create('switch', test5, parameters);
                 </script>
             </main>
             <footer id='container-footer'>

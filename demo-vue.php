@@ -45,7 +45,7 @@ if(empty($_POST) == false)
                 <article class='example-article'>
                     <h2>Text input</h2>
                     <section class='input-section'>
-                        <form method='post' target='test1-iframe'>
+                        <form action='submit-text.php' method='post' target='test1-iframe'>
                             <hai-input label='Test 1' input-id='test' name='test' mask='AAA-000' placeholder='Napište...'></hai-input>
                             <input class='submit-test' type='submit'>
                         </form>
@@ -71,7 +71,7 @@ if(empty($_POST) == false)
                 <article class='example-article'>
                     <h2>Číselný input</h2>
                     <section class='input-section'>
-                        <form method='post' target='test2-iframe'>
+                        <form action='submit-text.php' method='post' target='test2-iframe'>
                             <hai-input label='Test 2' input-id='test2' name='test2' value='200' type='number' max='100000' min='100' ></hai-input>
                             <input class='submit-test' type='submit'>
                         </form>
@@ -97,7 +97,7 @@ if(empty($_POST) == false)
                 <article class='example-article'>
                     <h2>Url input</h2>
                     <section class='input-section'>
-                        <form method='post' target='test3-iframe'>
+                        <form action='submit-text.php' method='post' target='test3-iframe'>
                             <hai-input label='Test 3' input-id='test3' name='test3' type='url'></hai-input>
                             <input class='submit-test' type='submit'>
                         </form>

@@ -26,6 +26,8 @@ class HaiInputUrl extends HaiInputText
 
     processParameters()
     {
+        super.processParameters();
+
         if (this.parameters.allowedSchemes !== undefined)
         {
             if(Array.isArray(this.parameters.allowedSchemes) !== true)
@@ -354,11 +356,19 @@ class HaiInputUrl extends HaiInputText
         {
             event.target.classList.add('invalid');
             event.target.setCustomValidity(validity.message);
+            if(this.displayValidityWarnings === true && this.warningElement !== undefined)
+            {
+                this.warningElement.textContent = validity.message;
+            }
         }
         else
         {
             event.target.classList.remove('invalid');
             event.target.setCustomValidity('');
+            if(this.warningElement !== undefined)
+            {
+                this.warningElement.textContent = '';
+            }
         }
     }
 }

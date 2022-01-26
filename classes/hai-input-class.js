@@ -12,6 +12,10 @@ class HaiInput
     twin;
     /** @type {Object} - Object containing parameters.*/
     parameters;
+    displayValidityWarnings = true;
+    label;
+    labelElement;
+    warningElement;
 
     constructor(element = null, parameters = {})
     {
@@ -19,7 +23,7 @@ class HaiInput
         this.parameters = parameters;
     }
 
-    static async returnCorrectClass(type, element, parameters)
+    static async create(type, element, parameters)
     {
         switch (type)
         {
@@ -58,6 +62,15 @@ class HaiInput
                         haiInput.transformElementToHaiInput();
                         return haiInput;
                     });
+
+            case 'select':
+                return await import('./hai-input-select-class.js')
+                    .then((module) =>
+                    {
+                        let haiInput = new module.HaiInputSelect(element, parameters);
+                        haiInput.transformElementToHaiInput();
+                        return haiInput;
+                    });
         }
     }
 
@@ -80,7 +93,9 @@ class HaiInput
 
         let twin = document.createElement('input');
         twin.name = name;
-        twin.type = 'hidden';
+        twin.type = 'text';
+        twin.hidden = true;
+        twin.classList.add('hidden');
         twin.value = this.element.value;
 
         let min = 1;
@@ -88,11 +103,30 @@ class HaiInput
         let id = Math.floor(Math.random() * (max - min) + min);
         twin.id = `input-${id}`;
 
-        this.element.parentElement.appendChild(twin);
+        let inputWrapper = document.createElement('div');
+        inputWrapper.classList.add('hai-input-element');
+
+        let label = document.createElement('label');
+        let labelDiv = document.createElement('div');
+        labelDiv.classList.add('label-text');
+
+        let warningDiv = document.createElement('div');
+        warningDiv.classList.add('alert');
+
+        inputWrapper.append(label, twin);
+        this.element.parentElement.insertBefore(inputWrapper,this.element);
+        label.append(labelDiv, this.element, warningDiv);
 
         this.twin = twin;
+        this.labelElement = labelDiv;
+        this.warningElement = warningDiv;
 
         this.processParameters();
+
+        if(this.label !== undefined)
+        {
+            this.labelElement.textContent = this.label;
+        }
 
         this.element.addEventListener('input', (event) =>
         {
@@ -116,7 +150,22 @@ class HaiInput
 
     processParameters()
     {
+        if (this.parameters.label !== undefined)
+        {
+            if(typeof this.parameters.label !== 'string')
+            {
+                console.warn(`HaiForm: Parameter "label" must be a string.`);
+            }
+            else
+            {
+                this.label = this.parameters.label;
+            }
+        }
 
+        if(this.parameters.displayValidityWarnings !== undefined)
+        {
+            this.displayValidityWarnings = Boolean(this.parameters.displayValidityWarnings);
+        }
     }
 
     handleInput(event)

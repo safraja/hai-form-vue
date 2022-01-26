@@ -20,6 +20,8 @@ class HaiInputNumber extends HaiInputText
 
     processParameters()
     {
+        super.processParameters();
+
         if (this.parameters.min !== undefined)
         {
             if(isNaN(this.parameters.min) === true)
@@ -243,6 +245,10 @@ class HaiInputNumber extends HaiInputText
         {
             event.target.classList.add('invalid');
             event.target.setCustomValidity(validity.message);
+            if(this.displayValidityWarnings === true && this.warningElement !== undefined)
+            {
+                this.warningElement.textContent = validity.message;
+            }
             //TODO - vyřeš problém u custom elementů.
             /*
             this.twin.style.display = 'none';
@@ -255,6 +261,10 @@ class HaiInputNumber extends HaiInputText
         {
             event.target.classList.remove('invalid');
             event.target.setCustomValidity('');
+            if(this.warningElement !== undefined)
+            {
+                this.warningElement.textContent = '';
+            }
         }
     }
 
