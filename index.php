@@ -198,6 +198,53 @@
                     let parameters = {list: 'test5-datalist'};
                     let haiInput = await HaiInput.create('switch', test5, parameters);
                 </script>
+
+
+
+                <article class='example-article'>
+                    <h2>Select</h2>
+                    <section class='input-section'>
+                        <form action='submit-test.php' method='post' target='test6-iframe'>
+                            <select id='test6' name='test6' multiple>
+                                <option value='js' selected>Javascript</option>
+                                <option value='py'>Python</option>
+                                <option value='php' selected>PHP</option>
+                                <option value='c#'>C#</option>
+                                <option value='c++'>C++</option>
+                                <option value='f'>F</option>
+                                <option value='ts'>Typescript</option>
+                                <option value='xml'>XML</option>
+                                <option value='json'>JSON</option>
+                                <option value='html'>HTML</option>
+                                <option value='shell'>Shell</option>
+                                <option value='markdown'>Markdown</option>
+                                <option value='css'>CSS</option>
+                            </select>
+                            <input class='submit-test' type='submit'>
+                        </form>
+                    </section>
+                    <section class='code-section'>
+                        <header>
+                            <div class='active' data-code-tab-header='html'>HTML</div>
+                            <div data-code-tab-header='data'>Data</div>
+                        </header>
+                        <div class='active' data-code-tab='html'>
+                            <pre>
+<code class="language-html">...</code>
+                            </pre>
+                        </div>
+                        <div data-code-tab='data'>
+                            <iframe name='test6-iframe'></iframe>
+                        </div>
+                    </section>
+                </article>
+                <script type='module' async>
+                    import {HaiInput} from './classes/hai-input-class.js';
+
+                    let test6 = document.getElementById('test6');
+                    let parameters = {label: 'Test 6', multiple: true};
+                    let haiInput = await HaiInput.create('select', test6, parameters);
+                </script>
             </main>
             <footer id='container-footer'>
 

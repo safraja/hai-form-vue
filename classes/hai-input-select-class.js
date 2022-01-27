@@ -1,4 +1,5 @@
 import {HaiInput} from './hai-input-class.js';
+import Fuse from '../dependencies/fuse.basic.esm.min.js';
 
 class HaiInputSelect extends HaiInput
 {
@@ -103,16 +104,20 @@ class HaiInputSelect extends HaiInput
 
             for(let selectedOption of this.selectedOptions)
             {
-                let tag = document.createElement('li');
-                let label = document.createElement('span');
-                label.textContent = selectedOption.label;
-                tag.appendChild(label);
-                tagsUl.appendChild(tag)
+                this.addTag(selectedOption, tagsUl)
             }
         }
 
         let dropdown = document.createElement('div');
         dropdown.classList.add('dropdown');
+
+        let searchInputDiv = document.createElement('div');
+        searchInputDiv.classList.add('search-container');
+
+        let searchInput = document.createElement('input');
+        searchInput.placeholder = 'Search...';
+        searchInputDiv.appendChild(searchInput);
+        dropdown.appendChild(searchInputDiv);
 
         let optionsUl = document.createElement('ul');
         optionsUl.classList.add('options-container');
@@ -122,6 +127,18 @@ class HaiInputSelect extends HaiInput
 
         for(let option of this.options)
         {
+            let label = document.createElement('li');
+            label.classList.add('option');
+            label.setAttribute('data-value', option.value)
+            label.haiInputOption = option;
+
+            let spanElement = document.createElement('span');
+
+            if(option.label !== null)
+            {
+                spanElement.textContent = option.label;
+            }
+
             if(this.valueArray.includes(option.value))
             {
                 let found = false;
@@ -135,20 +152,8 @@ class HaiInputSelect extends HaiInput
                 }
                 if(found === true)
                 {
-                    continue;
+                    label.classList.add('selected');
                 }
-            }
-
-            let label = document.createElement('li');
-            label.classList.add('option');
-            label.setAttribute('data-value', option.value)
-            label.haiInputOption = option;
-
-            let spanElement = document.createElement('span');
-
-            if(option.label !== null)
-            {
-                spanElement.textContent = option.label;
             }
 
             label.addEventListener('click', (event) =>
@@ -174,6 +179,11 @@ class HaiInputSelect extends HaiInput
         let id = Math.floor(Math.random() * (max - min) + min);
         twin.id = `select-${id}`;
 
+        if(this.multiple === true)
+        {
+            twin.multiple = true;
+        }
+
         this.element.parentElement.appendChild(twin);
 
         this.twin = twin;
@@ -183,6 +193,27 @@ class HaiInputSelect extends HaiInput
         {
             this.labelElement.textContent = this.label;
         }
+        this.setTwinOptions();
+
+        inputField.addEventListener('click', (event) =>
+        {
+            searchInput.focus();
+        });
+
+        searchInput.addEventListener('input', (event) =>
+        {
+            let searchValue = event.target.value;
+
+            const settingOptions =
+            {
+                keys: ["label", "value"]
+            };
+
+            const fuse = new Fuse(this.options, settingOptions);
+
+            console.log(fuse.search(searchValue));
+
+        });
 
         this.element.addEventListener('focusin', (event) =>
         {
@@ -235,18 +266,52 @@ class HaiInputSelect extends HaiInput
         let dropdown = this.element.querySelector('.dropdown');
         dropdown.classList.add('active');
 
+        let mobileThreshold = window.getComputedStyle(document.documentElement)
+            .getPropertyValue('--hai-input-mobile-threshold');
+
+        if(window.matchMedia(`(max-width: ${mobileThreshold})`).matches)
+        {
+            this.element.classList.add('dialog-display');
+        }
+
+        console.log(window.matchMedia(`(max-width: ${mobileThreshold})`).matches);
+
+
         let focusOutFunc = (event) =>
         {
-            dropdown.classList.remove('active');
-            this.element.removeEventListener('focusout',focusOutFunc);
+            if(event.currentTarget.contains(event.relatedTarget) === false)
+            {
+                dropdown.classList.remove('active');
+                this.element.classList.remove('dialog-display');
+                this.element.removeEventListener('focusout',focusOutFunc);
+            }
+
         };
         this.element.addEventListener('focusout', focusOutFunc);
     }
 
     handleInput(event)
     {
-        let selectedOption = event.target.haiInputOption;
-        this.selectOption(selectedOption);
+        let optionElement;
+        if(event.target.matches('.option'))
+        {
+            optionElement = event.target;
+        }
+        else
+        {
+            optionElement = event.target.closest('.option');
+        }
+
+        let option = optionElement.haiInputOption;
+
+        if(this.isSelected(option))
+        {
+            this.unselectOption(option);
+        }
+        else
+        {
+            this.selectOption(option);
+        }
     }
 
     selectOption(option)
@@ -255,9 +320,52 @@ class HaiInputSelect extends HaiInput
         this.selectedOptions.push(option);
         this.value = this.valueArray.join(',');
         this.rawValue = this.value;
+        this.setTwinOptions();
 
         this.addTag(option);
-        this. removeOptionElement(option);
+        this.hideOptionElement(option);
+    }
+
+    unselectOption(option)
+    {
+        for(let i = 0; i < this.selectedOptions.length; i++)
+        {
+            if(this.selectedOptions[i].value === option.value && this.selectedOptions[i].label === option.label)
+            {
+                this.selectedOptions.splice(i, 1);
+                break;
+            }
+        }
+
+        for(let i = 0; i < this.valueArray.length; i++)
+        {
+            if(this.valueArray[i] === option.value)
+            {
+                this.valueArray.splice(i, 1);
+                break;
+            }
+        }
+
+        this.value = this.valueArray.join(',');
+        this.rawValue = this.value;
+        this.setTwinOptions();
+
+        this.removeTag(option);
+        this.showOptionElement(option);
+    }
+
+    setTwinOptions()
+    {
+        this.twin.innerHTML = '';
+
+        for(let option of this.selectedOptions)
+        {
+            let optionElement = document.createElement('option');
+            optionElement.value = option.value;
+            optionElement.textContent = option.label;
+            optionElement.selected = true;
+            this.twin.appendChild(optionElement);
+        }
     }
 
     addTag(option, tagsUl = null)
@@ -267,10 +375,44 @@ class HaiInputSelect extends HaiInput
             tagsUl = this.element.querySelector('.tags');
         }
         let tag = document.createElement('li');
+        tag.classList.add('tag');
+        tag.haiInputOption = option;
         let label = document.createElement('span');
         label.textContent = option.label;
         tag.appendChild(label);
+
+        if(this.showTagRemoveButton === true)
+        {
+            let remove = document.createElement('button');
+            remove.textContent = '×';
+            remove.classList.add('remove');
+            remove.addEventListener('click', (event) =>
+            {
+                this.unselectOption(option);
+                this.showOptionElement(option);
+                tag.remove();
+            });
+            tag.appendChild(remove);
+        }
+
         tagsUl.appendChild(tag)
+    }
+
+    removeTag(option, tagsUl = null)
+    {
+        if(tagsUl === null)
+        {
+            tagsUl = this.element.querySelector('.tags');
+        }
+
+        for(let tag of tagsUl.querySelectorAll('.tag'))
+        {
+            if(option.value === tag.haiInputOption.value && option.label === tag.haiInputOption.label)
+            {
+                tag.remove();
+                break;
+            }
+        }
     }
 
     removeOptionElement(option)
@@ -279,12 +421,50 @@ class HaiInputSelect extends HaiInput
         let optionElements = optionsContainer.querySelectorAll(`.option[data-value='${option.value}']`);
         for(let optionElement of optionElements)
         {
-            console.log(optionElement)
             if(option.value === optionElement.haiInputOption.value && option.label === optionElement.haiInputOption.label)
             {
                 optionElement.remove();
             }
         }
+    }
+
+    hideOptionElement(option)
+    {
+        let optionsContainer = this.element.querySelector('.options-container');
+        let optionElements = optionsContainer.querySelectorAll(`.option[data-value='${option.value}']`);
+        for(let optionElement of optionElements)
+        {
+            if(option.value === optionElement.haiInputOption.value && option.label === optionElement.haiInputOption.label)
+            {
+                optionElement.classList.add('selected');
+            }
+        }
+    }
+
+    showOptionElement(option)
+    {
+        let optionsContainer = this.element.querySelector('.options-container');
+        let optionElements = optionsContainer.querySelectorAll(`.option.selected[data-value='${option.value}']`);
+        for(let optionElement of optionElements)
+        {
+            if(option.value === optionElement.haiInputOption.value && option.label === optionElement.haiInputOption.label)
+            {
+                optionElement.classList.remove('selected');
+            }
+        }
+    }
+
+    isSelected(option)
+    {
+        for(let testedOption of this.selectedOptions)
+        {
+            if(option.value === testedOption.value && option.label === testedOption.label)
+            {
+                return  true;
+            }
+        }
+
+        return false;
     }
 }
 
