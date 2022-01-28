@@ -11,7 +11,9 @@
 .hai-input-element *
 {
     padding: 5px;
+    -webkit-tap-highlight-color: transparent;
 }
+
 .hai-input-element label
 {
     display: block;
@@ -222,6 +224,7 @@
     box-sizing: border-box;
     cursor: pointer;
     z-index: 100;
+    user-select: none;
 }
 .hai-input-element .select-wrapper .dropdown.active
 {
@@ -269,4 +272,12 @@
     left: 20px;
     color: green;
     font-weight: bold;
+}
+.hai-input-element .select-wrapper .dropdown .info
+{
+    display: none;
+}
+.hai-input-element .select-wrapper .dropdown .info.active
+{
+    display: block;
 }

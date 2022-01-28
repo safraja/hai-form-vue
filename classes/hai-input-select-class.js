@@ -11,6 +11,9 @@ class HaiInputSelect extends HaiInput
     enableSearch = true;
     tabIndex = 0;
 
+
+
+
     constructor(element = null, parameters = {})
     {
         super(element, parameters);
@@ -123,47 +126,12 @@ class HaiInputSelect extends HaiInput
         optionsUl.classList.add('options-container');
 
         dropdown.appendChild(optionsUl);
+
+        let infoDiv = document.createElement('div');
+        infoDiv.classList.add('info');
+        dropdown.appendChild(infoDiv);
+
         wrapper.appendChild(dropdown);
-
-        for(let option of this.options)
-        {
-            let label = document.createElement('li');
-            label.classList.add('option');
-            label.setAttribute('data-value', option.value)
-            label.haiInputOption = option;
-
-            let spanElement = document.createElement('span');
-
-            if(option.label !== null)
-            {
-                spanElement.textContent = option.label;
-            }
-
-            if(this.valueArray.includes(option.value))
-            {
-                let found = false;
-                for (let selectedOption of this.selectedOptions)
-                {
-                    if(option.value === selectedOption.value && option.label === selectedOption.label)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if(found === true)
-                {
-                    label.classList.add('selected');
-                }
-            }
-
-            label.addEventListener('click', (event) =>
-            {
-                this.handleInput(event);
-            });
-
-            label.append(spanElement);
-            optionsUl.appendChild(label);
-        }
 
         selectWrapper.append(labelDiv, wrapper, warningDiv);
         this.element.after(selectWrapper);
@@ -172,7 +140,7 @@ class HaiInputSelect extends HaiInput
 
 
         this.element.haiInput = this;
-
+        this.renderOptionsItems(this.options, optionsUl);
 
         let min = 1;
         let max = 100000000;
@@ -197,12 +165,18 @@ class HaiInputSelect extends HaiInput
 
         inputField.addEventListener('click', (event) =>
         {
-            searchInput.focus();
+            searchInput.click();
         });
 
         searchInput.addEventListener('input', (event) =>
         {
             let searchValue = event.target.value;
+
+            if(searchValue === '')
+            {
+                this.renderOptionsItems();
+                return;
+            }
 
             const settingOptions =
             {
@@ -210,17 +184,16 @@ class HaiInputSelect extends HaiInput
             };
 
             const fuse = new Fuse(this.options, settingOptions);
+            let searchResult = fuse.search(searchValue);
 
-            console.log(fuse.search(searchValue));
-
+            searchResult = Array.from(searchResult, result => result.item); // Extract objects from Fuse search.
+            this.renderOptionsItems(searchResult);
         });
 
         this.element.addEventListener('focusin', (event) =>
         {
             this.showDropdown(event);
         });
-
-
     }
 
     processParameters()
@@ -264,6 +237,10 @@ class HaiInputSelect extends HaiInput
     showDropdown(event)
     {
         let dropdown = this.element.querySelector('.dropdown');
+        if(dropdown.matches('.active'))
+        {   // No action necessary if dropdown is already active.
+            return;
+        }
         dropdown.classList.add('active');
 
         let mobileThreshold = window.getComputedStyle(document.documentElement)
@@ -273,21 +250,21 @@ class HaiInputSelect extends HaiInput
         {
             this.element.classList.add('dialog-display');
         }
-
-        console.log(window.matchMedia(`(max-width: ${mobileThreshold})`).matches);
-
-
-        let focusOutFunc = (event) =>
+        else
         {
-            if(event.currentTarget.contains(event.relatedTarget) === false)
+            let focusOutFunc = (event) =>
             {
-                dropdown.classList.remove('active');
-                this.element.classList.remove('dialog-display');
-                this.element.removeEventListener('focusout',focusOutFunc);
-            }
+                //console.log(document.activeElement)
+                if(event.currentTarget.contains(event.relatedTarget) === false)
+                {
+                    dropdown.classList.remove('active');
+                    this.element.classList.remove('dialog-display');
+                    this.element.removeEventListener('focusout',focusOutFunc);
+                }
 
-        };
-        this.element.addEventListener('focusout', focusOutFunc);
+            };
+            this.element.addEventListener('focusout', focusOutFunc);
+        }
     }
 
     handleInput(event)
@@ -323,7 +300,7 @@ class HaiInputSelect extends HaiInput
         this.setTwinOptions();
 
         this.addTag(option);
-        this.hideOptionElement(option);
+        this.hideOptionItem(option);
     }
 
     unselectOption(option)
@@ -351,7 +328,7 @@ class HaiInputSelect extends HaiInput
         this.setTwinOptions();
 
         this.removeTag(option);
-        this.showOptionElement(option);
+        this.showOptionItem(option);
     }
 
     setTwinOptions()
@@ -389,7 +366,7 @@ class HaiInputSelect extends HaiInput
             remove.addEventListener('click', (event) =>
             {
                 this.unselectOption(option);
-                this.showOptionElement(option);
+                this.showOptionItem(option);
                 tag.remove();
             });
             tag.appendChild(remove);
@@ -415,7 +392,72 @@ class HaiInputSelect extends HaiInput
         }
     }
 
-    removeOptionElement(option)
+    renderOptionsItems(optionsList = null, optionsUl = null)
+    {
+        if(optionsList === null)
+        {
+            optionsList = this.options;
+        }
+        if(optionsUl === null)
+        {
+            optionsUl = this.element.querySelector('.options-container');
+        }
+
+        optionsUl.innerHTML = '';
+
+        let infoDiv = this.element.querySelector('.dropdown .info');
+
+        if(optionsList.length === 0)
+        {
+            infoDiv.classList.add('active');
+            infoDiv.textContent = 'No options found';
+            return;
+        }
+
+        infoDiv.classList.remove('active');
+
+        for(let option of optionsList)
+        {
+            let label = document.createElement('li');
+            label.classList.add('option');
+            label.setAttribute('data-value', option.value)
+            label.haiInputOption = option;
+
+            let spanElement = document.createElement('span');
+
+            if(option.label !== null)
+            {
+                spanElement.textContent = option.label;
+            }
+
+            if(this.valueArray.includes(option.value))
+            {
+                let found = false;
+                for (let selectedOption of this.selectedOptions)
+                {
+                    if(option.value === selectedOption.value && option.label === selectedOption.label)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if(found === true)
+                {
+                    label.classList.add('selected');
+                }
+            }
+
+            label.addEventListener('click', (event) =>
+            {
+                this.handleInput(event);
+            });
+
+            label.append(spanElement);
+            optionsUl.appendChild(label);
+        }
+    }
+
+    removeOptionItem(option)
     {
         let optionsContainer = this.element.querySelector('.options-container');
         let optionElements = optionsContainer.querySelectorAll(`.option[data-value='${option.value}']`);
@@ -428,7 +470,7 @@ class HaiInputSelect extends HaiInput
         }
     }
 
-    hideOptionElement(option)
+    hideOptionItem(option)
     {
         let optionsContainer = this.element.querySelector('.options-container');
         let optionElements = optionsContainer.querySelectorAll(`.option[data-value='${option.value}']`);
@@ -441,7 +483,7 @@ class HaiInputSelect extends HaiInput
         }
     }
 
-    showOptionElement(option)
+    showOptionItem(option)
     {
         let optionsContainer = this.element.querySelector('.options-container');
         let optionElements = optionsContainer.querySelectorAll(`.option.selected[data-value='${option.value}']`);

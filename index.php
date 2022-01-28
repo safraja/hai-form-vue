@@ -205,7 +205,7 @@
                     <h2>Select</h2>
                     <section class='input-section'>
                         <form action='submit-test.php' method='post' target='test6-iframe'>
-                            <select id='test6' name='test6' multiple>
+                            <select id='test6' name='test6[]' multiple>
                                 <option value='js' selected>Javascript</option>
                                 <option value='py'>Python</option>
                                 <option value='php' selected>PHP</option>
