@@ -166,6 +166,7 @@
     width: 80vw;
     height: 40vh;
     background: #313131;
+    z-index: 200;
 }
 .hai-input-element .select-wrapper *
 {
@@ -240,11 +241,22 @@
 {
     height: 30vh;
 }
-.hai-input-element .select-wrapper .options-container .option
+.hai-input-element .select-wrapper .options-container .option,
+.hai-input-element .select-wrapper .options-container .option-group-header
 {
     padding: 5px;
     list-style: none;
     text-align: left;
+}
+.hai-input-element .select-wrapper .options-container .option-group-header
+{
+    position: sticky;
+    top: 0;
+    padding-top: 10px;
+}
+.hai-input-element .select-wrapper .options-container .option-group-header ~ .option
+{
+    padding-left: 15px;
 }
 .hai-input-element .select-wrapper.dialog-display .options-container .option
 {
@@ -259,7 +271,8 @@
 {
     display: none;
 }
-.hai-input-element .select-wrapper.dialog-display .options-container .option.selected
+.hai-input-element .select-wrapper.dialog-display .options-container .option.selected,
+.hai-input-element .select-wrapper.single .options-container .option.selected
 {
     display: block;
     position: relative;

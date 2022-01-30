@@ -3,16 +3,19 @@ import Fuse from '../dependencies/fuse.basic.esm.min.js';
 
 class HaiInputSelect extends HaiInput
 {
-    options = [];
-    selectedOptions = [];
-    valueArray = [];
+    options = new Map();
+    optGroups = new Set();
+    selectedOptions = new Map();
+    valuesSet = new Set();
     multiple = false;
     showTagRemoveButton = true;
     enableSearch = true;
     tabIndex = 0;
 
-
-
+    optionsItemsContainer = null;
+    tagsContainer = null;
+    searchInput = null;
+    inputText = null;
 
     constructor(element = null, parameters = {})
     {
@@ -20,7 +23,7 @@ class HaiInputSelect extends HaiInput
         this.type = 'select';
     }
 
-    transformElementToHaiInput()
+    async transformElementToHaiInput()
     {
         let name = this.element.name;
         this.value = this.element.value;
@@ -36,48 +39,9 @@ class HaiInputSelect extends HaiInput
 
         twin.hidden = true;
         twin.classList.add('hidden');
-        // twin.value = this.rawValue; TODO - toto se bude muset pro select udělat jinak.
 
-        if(this.element.nodeName === 'SELECT')
-        {   // Process children of original select.
-            let optGroups = this.element.querySelectorAll('optgroup');
-
-            if(optGroups.length === 0)
-            {
-                let options = this.element.options;
-                let help = [];
-
-                for(let option of options)
-                {
-                    help.push({value: option.value, label: option.label});
-                }
-
-                this.options = help;
-            }
-            else
-            {
-                // TODO - zpracovat option group
-            }
-
-            let selectedOptions = this.element.selectedOptions;
-            let help = [];
-            let helpValue = [];
-
-            for(let option of selectedOptions)
-            {
-                help.push({value: option.value, label: option.label});
-                helpValue.push(option.value);
-            }
-
-            this.selectedOptions = help;
-            this.valueArray = helpValue;
-            this.value = this.valueArray.join(',');
-            this.rawValue = this.value;
-        }
-
-
-        this.processParameters();
-        this.convertOptionsToObjectArray();
+        this.processElementContentAndAttributes(this.element);
+        await this.processParameters();
 
         let selectWrapper = document.createElement('div');
         selectWrapper.classList.add('hai-input-element');
@@ -92,6 +56,14 @@ class HaiInputSelect extends HaiInput
         let wrapper = document.createElement('div');
         wrapper.classList.add('select-wrapper');
         wrapper.tabIndex = -1;
+        if(this.multiple === true)
+        {
+            wrapper.classList.add('multiple');
+        }
+        else
+        {
+            wrapper.classList.add('single');
+        }
 
         let inputField = document.createElement('div');
         inputField.classList.add('input-field');
@@ -103,28 +75,35 @@ class HaiInputSelect extends HaiInput
         {
             let tagsUl = document.createElement('ul');
             tagsUl.classList.add('tags');
+            this.tagsContainer = tagsUl;
             inputField.appendChild(tagsUl);
 
-            for(let selectedOption of this.selectedOptions)
+            for(const selectedOption of this.selectedOptions.values())
             {
                 this.addTag(selectedOption, tagsUl)
+            }
+        }
+        else
+        {
+            let inputText = document.createElement('span');
+            inputText.classList.add('inputText');
+            inputField.appendChild(inputText);
+            this.inputText = inputText;
+
+            if(this.selectedOptions.size > 0)
+            {
+                let selectedOption = Array.from(this.selectedOptions.values())[0];
+                inputText.textContent = selectedOption.label;
+                inputText.setAttribute('data-value', selectedOption.value);
             }
         }
 
         let dropdown = document.createElement('div');
         dropdown.classList.add('dropdown');
 
-        let searchInputDiv = document.createElement('div');
-        searchInputDiv.classList.add('search-container');
-
-        let searchInput = document.createElement('input');
-        searchInput.placeholder = 'Search...';
-        searchInputDiv.appendChild(searchInput);
-        dropdown.appendChild(searchInputDiv);
-
         let optionsUl = document.createElement('ul');
         optionsUl.classList.add('options-container');
-
+        this.optionsItemsContainer = optionsUl;
         dropdown.appendChild(optionsUl);
 
         let infoDiv = document.createElement('div');
@@ -163,75 +142,218 @@ class HaiInputSelect extends HaiInput
         }
         this.setTwinOptions();
 
-        inputField.addEventListener('click', (event) =>
+        if(this.enableSearch === true)
         {
-            searchInput.click();
-        });
+            let searchInputDiv = document.createElement('div');
+            searchInputDiv.classList.add('search-container');
 
-        searchInput.addEventListener('input', (event) =>
-        {
-            let searchValue = event.target.value;
-
-            if(searchValue === '')
+            let searchInput = document.createElement('input');
+            searchInput.placeholder = 'Search...';
+            this.searchInput = searchInput;
+            searchInputDiv.appendChild(searchInput);
+            dropdown.prepend(searchInputDiv);
+            inputField.addEventListener('click', (event) =>
             {
-                this.renderOptionsItems();
-                return;
-            }
+                //console.log('inputField clicked')
+                searchInput.focus();
+            });
 
-            const settingOptions =
+            searchInput.addEventListener('input', (event) =>
             {
-                keys: ["label", "value"]
-            };
+                let searchValue = event.target.value;
 
-            const fuse = new Fuse(this.options, settingOptions);
-            let searchResult = fuse.search(searchValue);
+                if(searchValue === '')
+                {
+                    this.renderOptionsItems();
+                    return;
+                }
 
-            searchResult = Array.from(searchResult, result => result.item); // Extract objects from Fuse search.
-            this.renderOptionsItems(searchResult);
-        });
+                const settingOptions =
+                    {
+                        keys: ["label", "value", "group"]
+                    };
+
+                const fuse = new Fuse(Array.from(this.options.values()), settingOptions);
+                let searchResult = fuse.search(searchValue);
+                let searchResultMap = new Map();
+
+                for(const foundOption of searchResult)
+                {   // Convert Fuse search results to Map.
+                    searchResultMap.set(this.generateOptionKey(foundOption.item), foundOption.item);
+                }
+
+                this.renderOptionsItems(searchResultMap);
+            });
+        }
 
         this.element.addEventListener('focusin', (event) =>
         {
             this.showDropdown(event);
+            if(event.target === inputField)
+            {
+                //console.log('inputField focused.')
+                this.element.focus();
+            }
+
         });
     }
 
-    processParameters()
+    processElementContentAndAttributes(element = null)
+    {
+        if(element === null)
+        {
+            element = this.element;
+        }
+
+        if(element.nodeName === 'SELECT')
+        {   // Process children of original select.
+            let optGroups = element.querySelectorAll('optgroup');
+            let options = element.options;
+
+            if(optGroups.length === 0)
+            {
+                for(const option of options)
+                {
+                    this.options.set(this.generateOptionKey(option), {value: option.value, label: option.label});
+                }
+            }
+            else
+            {
+                for(const optGroup of optGroups)
+                {
+                    this.optGroups.add(optGroup.label);
+                }
+                for(const option of options)
+                {
+                    if(option.parentElement.nodeName === 'OPTGROUP')
+                    {
+                        this.options.set(this.generateOptionKey(option),
+                            {value: option.value, label: option.label, group: option.parentElement.label});
+                    }
+                    else
+                    {
+                        this.options.set(this.generateOptionKey(option), {value: option.value, label: option.label});
+                    }
+                }
+            }
+
+            // This seems to work even with single value select, so no need to crate a specific solution.
+            let selectedOptions = element.selectedOptions;
+
+            for(let option of selectedOptions)
+            {
+                this.selectedOptions.set(this.generateOptionKey(option), {value: option.value, label: option.label});
+                this.valuesSet.add(option.value);
+            }
+
+            this.value = Array.from(this.valuesSet.values()).join(',');
+            this.rawValue = this.value;
+        }
+    }
+
+    async processParameters()
     {
         super.processParameters();
-
-        if (this.parameters.options !== undefined)
-        {
-            this.options = this.parameters.options;
-        }
 
         if(this.parameters.multiple !== undefined)
         {
             this.multiple = Boolean(this.parameters.multiple);
         }
-    }
 
-    convertOptionsToObjectArray()
-    {
-        let originalOptions = this.options;
-        let convertedOptions = originalOptions;
-
-        if (typeof convertedOptions === 'string')
+        if (this.parameters.options !== undefined)
         {
-            convertedOptions = JSON.parse(convertedOptions);
-        }
-
-        if(Array.isArray(convertedOptions) && convertedOptions.length > 0 && typeof convertedOptions[0] == 'string')
-        {
-            let help = [];
-            for(let option of convertedOptions)
+            if(typeof this.parameters.options === 'string')
             {
-                help.push({value: option});
+                this.parameters.options = await this.fetchFile(this.parameters.options);
             }
-            convertedOptions = help;
+
+            if(this.parameters.options instanceof Map)
+            {
+                for(let [key, option] of this.parameters.options)
+                {
+                    if(typeof option !== 'object')
+                    {
+                        console.warn('HaiForm: Parameter "options" must contain only objects if given as Map. Option skipped.');
+                        continue;
+                    }
+                    if(option.value === undefined)
+                    {
+                        console.warn('HaiForm: Each option given by parameter "options" must have a "value" property. Option skipped.');
+                        continue;
+                    }
+                    if(option.label === undefined)
+                    {
+                        console.warn('HaiForm: Each option given by parameter "options" must have a "label" property. Option skipped.');
+                        continue;
+                    }
+                    option.key = key;    // Key must be saved even in the value object.
+                    this.options.set(key, option);
+
+                    if(option.selected === true)
+                    {
+                        if(this.multiple === false)
+                        {   // If multiple is false, only last "selected" must be saved as selected option, so delete all others.
+                            this.selectedOptions.clear();
+                            this.valuesSet.clear();
+                        }
+                        this.selectedOptions.set(key, option);
+                        this.valuesSet.add(option.value);
+                        this.value = Array.from(this.valuesSet.values()).join(',');
+                        this.rawValue = this.value;
+                    }
+
+                    if(option.group !== undefined)
+                    {
+                        this.optGroups.add(option.group);
+                    }
+                }
+            }
+            else if(Array.isArray(this.parameters.options) === false)
+            {
+                console.warn('HaiForm: Parameter "options" must be either a Map or an array of objects.');
+            }
+            else
+            {
+                for(const option of this.parameters.options)
+                {
+                    if(option.value === undefined)
+                    {
+                        console.warn('HaiForm: Each option given by parameter "options" must have a "value" property. Option skipped.');
+                        continue;
+                    }
+                    if(option.label === undefined)
+                    {
+                        console.warn('HaiForm: Each option given by parameter "options" must have a "label" property. Option skipped.');
+                        continue;
+                    }
+                    let key = this.generateOptionKey(option);
+                    this.options.set(key, option);
+
+                    if(option.selected === true)
+                    {
+                        if(this.multiple === false)
+                        {   // If multiple is false, only last "selected" must be saved as selected option, so delete all others.
+                            this.selectedOptions.clear();
+                            this.valuesSet.clear();
+                        }
+                        this.selectedOptions.set(key, option);
+                        this.valuesSet.add(option.value);
+                        this.value = Array.from(this.valuesSet.values()).join(',');
+                        this.rawValue = this.value;
+                    }
+
+                    if(option.group !== undefined)
+                    {
+                        this.optGroups.add(option.group);
+                    }
+                }
+            }
         }
 
-        this.options = convertedOptions;
+        if(this.parameters.enableSearch !== undefined)
+        {
+            this.enableSearch = Boolean(this.parameters.enableSearch);
+        }
     }
 
     showDropdown(event)
@@ -250,20 +372,29 @@ class HaiInputSelect extends HaiInput
         {
             this.element.classList.add('dialog-display');
         }
-        else
+        let focusOutFunc = (event) =>
         {
-            let focusOutFunc = (event) =>
-            {
-                //console.log(document.activeElement)
-                if(event.currentTarget.contains(event.relatedTarget) === false)
-                {
-                    dropdown.classList.remove('active');
-                    this.element.classList.remove('dialog-display');
-                    this.element.removeEventListener('focusout',focusOutFunc);
-                }
+            this.hideDropdown(event);
+        };
+        this.element.addEventListener('blur', focusOutFunc);
+        if(this.searchInput !== null)
+        {
+            this.searchInput.addEventListener('blur', focusOutFunc);
+        }
+    }
 
-            };
-            this.element.addEventListener('focusout', focusOutFunc);
+    hideDropdown(event)
+    {
+        let dropdown = this.element.querySelector('.dropdown');
+        if(event.currentTarget.contains(event.relatedTarget) === false)
+        {
+            dropdown.classList.remove('active');
+            this.element.classList.remove('dialog-display');
+            this.element.removeEventListener('blur',this.hideDropdown);
+            if(this.searchInput !== null)
+            {
+                this.searchInput.removeEventListener('blur', this.hideDropdown);
+            }
         }
     }
 
@@ -279,7 +410,7 @@ class HaiInputSelect extends HaiInput
             optionElement = event.target.closest('.option');
         }
 
-        let option = optionElement.haiInputOption;
+        let option = this.options.get(optionElement.getAttribute('data-key'));
 
         if(this.isSelected(option))
         {
@@ -293,37 +424,45 @@ class HaiInputSelect extends HaiInput
 
     selectOption(option)
     {
-        this.valueArray.push(option.value);
-        this.selectedOptions.push(option);
-        this.value = this.valueArray.join(',');
-        this.rawValue = this.value;
-        this.setTwinOptions();
+        if(this.multiple === true)
+        {
+            this.valuesSet.add(option.value);
+            this.selectedOptions.set(this.generateOptionKey(option), option);
+            this.value = Array.from(this.valuesSet.values()).join(',');
+            this.rawValue = this.value;
+            this.setTwinOptions();
 
-        this.addTag(option);
-        this.hideOptionItem(option);
+            this.addTag(option);
+            this.hideOptionItem(option);
+        }
+        else
+        {
+            this.inputText.textContent = option.label;
+            this.inputText.setAttribute('data-value', option.value);
+            this.showAllOptionItems();
+
+            this.valuesSet.clear();
+            this.selectedOptions.clear();
+            this.valuesSet.add(option.value);
+            this.selectedOptions.set(this.generateOptionKey(option), option);
+            this.value = option.value;
+            this.rawValue = this.value;
+            this.setTwinOptions();
+
+            this.hideOptionItem(option);
+        }
     }
 
     unselectOption(option)
     {
-        for(let i = 0; i < this.selectedOptions.length; i++)
-        {
-            if(this.selectedOptions[i].value === option.value && this.selectedOptions[i].label === option.label)
-            {
-                this.selectedOptions.splice(i, 1);
-                break;
-            }
+        if(this.multiple === false)
+        {   // In single select, unselecting practically mean select the same option again, so no action necessary.
+            return;
         }
+        this.selectedOptions.delete(this.generateOptionKey(option));
+        this.valuesSet.delete(option.value);
 
-        for(let i = 0; i < this.valueArray.length; i++)
-        {
-            if(this.valueArray[i] === option.value)
-            {
-                this.valueArray.splice(i, 1);
-                break;
-            }
-        }
-
-        this.value = this.valueArray.join(',');
+        this.value = Array.from(this.valuesSet.values()).join(',');
         this.rawValue = this.value;
         this.setTwinOptions();
 
@@ -335,7 +474,7 @@ class HaiInputSelect extends HaiInput
     {
         this.twin.innerHTML = '';
 
-        for(let option of this.selectedOptions)
+        for(const option of this.selectedOptions.values())
         {
             let optionElement = document.createElement('option');
             optionElement.value = option.value;
@@ -353,7 +492,7 @@ class HaiInputSelect extends HaiInput
         }
         let tag = document.createElement('li');
         tag.classList.add('tag');
-        tag.haiInputOption = option;
+        tag.setAttribute('data-key', this.generateOptionKey(option));
         let label = document.createElement('span');
         label.textContent = option.label;
         tag.appendChild(label);
@@ -379,20 +518,23 @@ class HaiInputSelect extends HaiInput
     {
         if(tagsUl === null)
         {
-            tagsUl = this.element.querySelector('.tags');
+            tagsUl = this.tagsContainer;
         }
 
-        for(let tag of tagsUl.querySelectorAll('.tag'))
+        let tag = tagsUl.querySelector(`.tag[data-key='${this.generateOptionKey(option)}']`);
+
+        if(tag !== null)
         {
-            if(option.value === tag.haiInputOption.value && option.label === tag.haiInputOption.label)
-            {
-                tag.remove();
-                break;
-            }
+            tag.remove();
+        }
+
+        if(this.searchInput !== null)
+        {
+            this.searchInput.focus();
         }
     }
 
-    renderOptionsItems(optionsList = null, optionsUl = null)
+    renderOptionsItems(optionsList = null, optionsUl = null, groupsList = null)
     {
         if(optionsList === null)
         {
@@ -400,14 +542,18 @@ class HaiInputSelect extends HaiInput
         }
         if(optionsUl === null)
         {
-            optionsUl = this.element.querySelector('.options-container');
+            optionsUl = this.optionsItemsContainer;
+        }
+        if(groupsList === null)
+        {
+            groupsList = this.optGroups;
         }
 
         optionsUl.innerHTML = '';
 
         let infoDiv = this.element.querySelector('.dropdown .info');
 
-        if(optionsList.length === 0)
+        if(optionsList.size === 0)
         {
             infoDiv.classList.add('active');
             infoDiv.textContent = 'No options found';
@@ -416,97 +562,140 @@ class HaiInputSelect extends HaiInput
 
         infoDiv.classList.remove('active');
 
-        for(let option of optionsList)
+        if(groupsList.size === 0)
         {
-            let label = document.createElement('li');
-            label.classList.add('option');
-            label.setAttribute('data-value', option.value)
-            label.haiInputOption = option;
-
-            let spanElement = document.createElement('span');
-
-            if(option.label !== null)
+            for(const [key, option] of optionsList)
             {
-                spanElement.textContent = option.label;
+                this.addOptionItem(option, key, optionsUl);
             }
-
-            if(this.valueArray.includes(option.value))
-            {
-                let found = false;
-                for (let selectedOption of this.selectedOptions)
-                {
-                    if(option.value === selectedOption.value && option.label === selectedOption.label)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if(found === true)
-                {
-                    label.classList.add('selected');
-                }
-            }
-
-            label.addEventListener('click', (event) =>
-            {
-                this.handleInput(event);
-            });
-
-            label.append(spanElement);
-            optionsUl.appendChild(label);
         }
+        else
+        {
+            let notAddedOptions = new Map(optionsList);
+
+            for(const group of groupsList)
+            {
+                let header = document.createElement('li');
+                header.classList.add('option-group-header');
+                let strong = document.createElement('strong');
+                strong.textContent = group;
+                header.appendChild(strong);
+                optionsUl.appendChild(header);
+
+                for(const [key, option] of notAddedOptions)
+                {
+                    if(option.group !== group)
+                    {
+                        continue;
+                    }
+                    this.addOptionItem(option, key, optionsUl);
+                    notAddedOptions.delete(key);
+                }
+            }
+
+            if(notAddedOptions.size > 0)
+            {   // If there are some options remaining (do not belong to any group), add them here.
+                let header = document.createElement('li');
+                header.classList.add('option-group-header');
+                let strong = document.createElement('strong');
+                header.appendChild(strong);
+                optionsUl.appendChild(header);
+
+                for(const [key, option] of notAddedOptions)
+                {
+                    this.addOptionItem(option, key, optionsUl);
+                }
+            }
+        }
+    }
+
+    addOptionItem(option, key, optionsUl = null)
+    {
+        if(optionsUl === null)
+        {
+            optionsUl = this.optionsItemsContainer;
+        }
+
+        let label = document.createElement('li');
+        label.classList.add('option');
+        label.setAttribute('data-key', key);
+        label.setAttribute('data-value', option.value);
+
+        let spanElement = document.createElement('span');
+
+        if(option.label !== null)
+        {
+            spanElement.textContent = option.label;
+        }
+
+        if(this.isSelected(option))
+        {
+            label.classList.add('selected');
+        }
+
+        label.addEventListener('click', (event) =>
+        {
+            this.handleInput(event);
+        });
+
+        label.append(spanElement);
+        optionsUl.appendChild(label);
     }
 
     removeOptionItem(option)
     {
-        let optionsContainer = this.element.querySelector('.options-container');
-        let optionElements = optionsContainer.querySelectorAll(`.option[data-value='${option.value}']`);
-        for(let optionElement of optionElements)
+        let optionItem = this.optionsItemsContainer.querySelector(`.option[data-key='${this.generateOptionKey(option)}']`);
+        if(optionItem !== null)
         {
-            if(option.value === optionElement.haiInputOption.value && option.label === optionElement.haiInputOption.label)
-            {
-                optionElement.remove();
-            }
+            optionItem.remove();
         }
     }
 
     hideOptionItem(option)
     {
-        let optionsContainer = this.element.querySelector('.options-container');
-        let optionElements = optionsContainer.querySelectorAll(`.option[data-value='${option.value}']`);
-        for(let optionElement of optionElements)
+        let optionItem = this.optionsItemsContainer.querySelector(`.option[data-key='${this.generateOptionKey(option)}']`);
+        if(optionItem !== null)
         {
-            if(option.value === optionElement.haiInputOption.value && option.label === optionElement.haiInputOption.label)
-            {
-                optionElement.classList.add('selected');
-            }
+            optionItem.classList.add('selected');
+        }
+    }
+
+    showAllOptionItems()
+    {
+        let options = this.optionsItemsContainer.querySelectorAll('.option.selected');
+        for(const optionItem of options)
+        {
+            optionItem.classList.remove('selected');
         }
     }
 
     showOptionItem(option)
     {
-        let optionsContainer = this.element.querySelector('.options-container');
-        let optionElements = optionsContainer.querySelectorAll(`.option.selected[data-value='${option.value}']`);
-        for(let optionElement of optionElements)
+        let optionItem = this.optionsItemsContainer.querySelector(`.option[data-key='${this.generateOptionKey(option)}']`);
+        if(optionItem !== null)
         {
-            if(option.value === optionElement.haiInputOption.value && option.label === optionElement.haiInputOption.label)
-            {
-                optionElement.classList.remove('selected');
-            }
+            optionItem.classList.remove('selected');
         }
     }
 
     isSelected(option)
     {
-        for(let testedOption of this.selectedOptions)
-        {
-            if(option.value === testedOption.value && option.label === testedOption.label)
-            {
-                return  true;
-            }
-        }
+        return this.selectedOptions.has(this.generateOptionKey(option));
+    }
 
-        return false;
+    generateOptionKey(option)
+    {
+        if(option.key !== undefined)
+        {
+            return option.key;
+        }
+        return `${option.label} (${option.value})`;
+    }
+
+    async fetchFile(fileName)
+    {
+        let response = await fetch(fileName)
+        return await response.json();
     }
 }
 
