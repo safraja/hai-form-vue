@@ -71,6 +71,15 @@ class HaiInput
                         haiInput.transformElementToHaiInput();
                         return haiInput;
                     });
+
+            case 'file':
+                return await import('./hai-input-file-class.js')
+                    .then((module) =>
+                    {
+                        let haiInput = new module.HaiInputFile(element, parameters);
+                        haiInput.transformElementToHaiInput();
+                        return haiInput;
+                    });
         }
     }
 

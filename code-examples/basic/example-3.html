@@ -1,11 +1,10 @@
-<div class='hai-input-element'>
-    <label for='test3'>Test 3</label>
-    <input id='test3' name='test3' type='url'>
-</div>
+<input id='test3' name='test3' type='url'>
 
-<script type="module" async>
-    import {HaiInput} from "./classes/hai-input-class.js";
+<script type='module' async>
+    import {HaiInput} from './classes/hai-input-class.js';
 
     let test3 = document.getElementById('test3');
-    let haiInput = await HaiInput.create('url', test3);
+    let parameters = {label: 'Test 3'}
+    let haiInput =
+        await HaiInput.create('url', test3, parameters);
 </script>

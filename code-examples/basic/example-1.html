@@ -1,12 +1,10 @@
-<div class='hai-input-element'>
-    <label>Test 1</label>
-    <input id='test1' name='test1' value='' type='text'>
-</div>
+<input id='test1' name='test1' value='' type='text'>
 
-<script type="module" async>
-    import {HaiInput} from "./classes/hai-input-class.js";
+<script type='module' async>
+    import {HaiInput} from './classes/hai-input-class.js';
 
     let test1 = document.getElementById('test1');
-    let parameters = {mask : '000 - AAA'}
-    let haiInput = await HaiInput.create('text', test1, parameters);
+    let parameters = {mask: '000 - AAA', label: 'Test 1'}
+    let haiInput =
+        await HaiInput.create('text', test1, parameters);
 </script>

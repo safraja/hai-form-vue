@@ -1,4 +1,4 @@
-<input id='test5' name='test5' type='text' value='on'>
+<input id='test5' name='test5' type='text' value='py'>
 <datalist id='test5-datalist'>
     <option value='php'>PHP</option>
     <option value='js'>Javascript</option>
@@ -9,6 +9,7 @@
     import {HaiInput} from './classes/hai-input-class.js';
 
     let test5 = document.getElementById('test5');
-    let parameters = {list: 'test5-datalist'};
-    let haiInput = await HaiInput.create('switch', test5, parameters);
+    let parameters = {list: 'test5-datalist', label: 'Test 5'};
+    let haiInput =
+        await HaiInput.create('switch', test5, parameters);
 </script>

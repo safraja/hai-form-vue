@@ -1,8 +1,10 @@
 <input id='test4' name='test4' type='text' value='on'>
 
-<script type="module" async>
-    import {HaiInput} from "./classes/hai-input-class.js";
+<script type='module' async>
+    import {HaiInput} from './classes/hai-input-class.js';
 
     let test4 = document.getElementById('test4');
-    let haiInput = await HaiInput.create('switch', test4);
+    let parameters = {label: 'Test 4'}
+    let haiInput =
+        await HaiInput.create('switch', test4, parameters);
 </script>

@@ -294,3 +294,91 @@
 {
     display: block;
 }
+
+.hai-input-element .file-zone-wrapper
+{
+    position: relative;
+    min-height: 200px;
+    border: 2px solid #f2f2f2;
+}
+.hai-input-element .file-zone-wrapper input
+{
+    display: none;
+}
+.hai-input-element .file-zone-wrapper .message
+{
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: inherit;
+    height: inherit;
+    box-sizing: border-box;
+}
+.hai-input-element .file-zone-wrapper .message.active
+{
+    display: flex;
+}
+.hai-input-element .file-zone-wrapper .files
+{
+    display: grid;
+    justify-content: space-evenly;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 160px));
+    gap: 20px;
+    width: 100%;
+    height: inherit;
+    margin: 0;
+    list-style: none;
+    box-sizing: border-box;
+}
+.hai-input-element .file-zone-wrapper .files .file
+{
+    position: relative;
+    background: #535353;
+}
+.hai-input-element .file-zone-wrapper .files .file .close
+{
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    line-height: 0.9;
+    cursor: pointer;
+}
+.hai-input-element .file-zone-wrapper .files .file:hover .close
+{
+    display: block;
+}
+.hai-input-element .file-zone-wrapper .files .file .close:hover
+{
+    color: #ff2f2f;
+}
+.hai-input-element .file-zone-wrapper .files .file .file-preview
+{
+    margin: 0;
+}
+.hai-input-element .file-zone-wrapper .files .file .file-preview img
+{
+    height: 50px;
+}
+.hai-input-element .file-zone-wrapper .files .file .file-preview figcaption
+{
+    padding: 0;
+    width: 100%;
+    overflow: hidden;
+    text-align: left;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.hai-input-element .file-zone-wrapper .files .file .file-preview figcaption :is(.size,.name)
+{
+    padding-bottom: 3px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.hai-input-element .file-zone-wrapper .files .file .file-preview figcaption .size
+{
+    padding: 0 5px;
+    color: #ffffffa6;
+}
