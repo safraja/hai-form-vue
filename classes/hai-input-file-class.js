@@ -6,6 +6,7 @@ class HaiInputFile extends HaiInput
     multiple = false;
     filesContainer = null;
     messageContainer = null;
+    innerFileInput = null;
 
     constructor(element = null, parameters = {})
     {
@@ -26,8 +27,8 @@ class HaiInputFile extends HaiInput
     transformElementToHaiInput()
     {
         let name = this.element.name;
-        this.value = this.element.value;
-        this.rawValue = this.value;
+        this.value = '';
+        this.rawValue = '';
 
         let twin = document.createElement('input');
         twin.name = name;
@@ -75,7 +76,7 @@ class HaiInputFile extends HaiInput
         this.messageContainer = message;
 
         let fileUploadText = document.createElement('strong');
-        fileUploadText.textContent = 'Drag and drop a file here';
+        fileUploadText.textContent = 'Drag & drop a file here';
         message.appendChild(fileUploadText);
         wrapper.appendChild(message);
 
@@ -88,8 +89,13 @@ class HaiInputFile extends HaiInput
         this.element.after(fileWrapper);
         wrapper.appendChild(this.element);
         this.twin = twin;
+        this.innerFileInput = this.element;
         this.element = wrapper;
 
+        if(this.label !== undefined)
+        {
+            labelDiv.textContent = this.label;
+        }
         this.element.haiInput = this;
 
         wrapper.addEventListener('dragover', (event) =>
@@ -114,7 +120,21 @@ class HaiInputFile extends HaiInput
             }
         });
 
+        wrapper.addEventListener('click', (event) =>
+        {
+            this.handleInput(event);
+        });
 
+        this.innerFileInput.addEventListener('change', (event) =>
+        {
+            for(let file of this.innerFileInput.files)
+            {
+                this.addFile(file);
+            }
+
+            let dataTransfer = new DataTransfer();
+            this.innerFileInput.files = dataTransfer.files; // Empty the file input.
+        });
     }
 
     addFile(file)
@@ -132,6 +152,8 @@ class HaiInputFile extends HaiInput
         }
 
         this.files.set(key, file);
+        this.rawValue = Array.from(this.files.keys()).join(',');
+        this.value = this.rawValue;
         this.saveValueToTwin();
 
         this.messageContainer.classList.remove('active');
@@ -183,6 +205,8 @@ class HaiInputFile extends HaiInput
     removeFile(key)
     {
         this.files.delete(key);
+        this.rawValue = Array.from(this.files.keys()).join(',');
+        this.value = this.rawValue;
         this.saveValueToTwin();
 
         let element = this.element.querySelector(`.file[data-key='${key}']`);
@@ -228,7 +252,25 @@ class HaiInputFile extends HaiInput
 
     handleInput(event)
     {
+        if(event.target === this.innerFileInput)
+        {
+            return;
+        }
 
+        let fileItem = event.target.closest('.file');
+        if(fileItem !== null)
+        {
+            if(fileItem.parentElement === null)
+            {   // Detect deleted element.
+                return;
+            }
+            if(fileItem.parentElement.closest('.hai-input-element') !== null)
+            {   // If user clicked on file item, do nothing.
+                return;
+            }
+        }
+
+        this.innerFileInput.click();
     }
 
     formatBytes(bytes, decimals = 2)

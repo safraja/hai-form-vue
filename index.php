@@ -442,7 +442,7 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">...</code>
+<code class="language-html"><?php echo htmlspecialchars(file_get_contents('./code-examples/basic/example-11.html')); ?></code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>
