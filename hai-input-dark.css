@@ -44,6 +44,10 @@
 {
     background: #313131;
 }
+.hai-input-element .select-wrapper .options-container .option:hover
+{
+    background: #131313;
+}
 
 .hai-input-element .file-zone-wrapper
 {

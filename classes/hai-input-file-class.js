@@ -4,6 +4,10 @@ class HaiInputFile extends HaiInput
 {
     files = new Map();
     multiple = false;
+    maxFilesCount = null;
+    maxFileSize = null;
+    maxTotalSize = null;
+    allowedFileTypes = null;
     filesContainer = null;
     messageContainer = null;
     innerFileInput = null;
@@ -91,6 +95,8 @@ class HaiInputFile extends HaiInput
         this.twin = twin;
         this.innerFileInput = this.element;
         this.element = wrapper;
+        this.labelElement = labelDiv;
+        this.warningElement = warningDiv;
 
         if(this.label !== undefined)
         {
@@ -101,18 +107,19 @@ class HaiInputFile extends HaiInput
         wrapper.addEventListener('dragover', (event) =>
         {
             event.preventDefault();
-            wrapper.classList.add('aktivni_pretahovani');
+            this.warningElement.textContent = '';
+            wrapper.classList.add('active-dragover');
         });
 
         wrapper.addEventListener('dragleave', (event) =>
         {
-            wrapper.classList.remove('aktivni_pretahovani');
+            wrapper.classList.remove('active-dragover');
         });
 
         wrapper.addEventListener('drop', (event) =>
         {
             event.preventDefault();
-            wrapper.classList.remove('aktivni_pretahovani');
+            wrapper.classList.remove('active-dragover');
 
             for(let file of event.dataTransfer.files)
             {
@@ -137,8 +144,67 @@ class HaiInputFile extends HaiInput
         });
     }
 
+    checkValidity(file)
+    {
+        if(this.maxFilesCount !== null && this.maxFilesCount < this.files.size + 1)
+        {
+            return {success: false, message: `The file could not be selected, only ${this.maxFilesCount} files can by selected.`};
+        }
+
+        if(this.maxFileSize !== null && this.maxFileSize < file.size)
+        {
+            console.log(file.size, this.maxFileSize, this.formatBytes(file.size), this.formatBytes(this.maxFileSize))
+            return {success: false, message: `The file could not be selected because it exceeds 
+                the maximum allowed size of ${this.formatBytes(this.maxFileSize)}.`};
+        }
+
+        let totalFilesSize = file.size;
+        for(const [key, file] of this.files)
+        {
+            totalFilesSize += file.size;
+        }
+
+        if(this.maxTotalSize !== null && this.maxTotalSize < totalFilesSize)
+        {
+            return {success: false, message: `The file could not be selected because the total maximum file
+                size of ${this.formatBytes(this.maxTotalSize)} was exceeded.`};
+        }
+
+        if(this.allowedFileTypes !== null)
+        {
+            let isAllowed = false;
+
+            for (const type of this.allowedFileTypes)
+            {
+                if (
+                    (/.*?\/\*/.test(type) === true && file.type.startsWith(type.slice(0, type.length - 2))) || // image/*, text/* etc.
+                    (/.*?\/.*/.test(type) && type === file.type) ||     // image/jpg, image/png, text/plain etc.
+                    (/^\..*/.test(type) && file.name.endsWith(type))    // .jpg, .txt etc.
+                )
+                {
+                    isAllowed = true;
+                    break;
+                }
+            }
+
+            if (isAllowed === false)
+            {
+                return {success: false, message: `The file could not be selected because its type is not allowed.`};
+            }
+        }
+
+        return {success: true};
+    }
+
     addFile(file)
     {
+        let validity = this.checkValidity(file);
+        if(validity.success === false)
+        {
+            this.warningElement.textContent = validity.message;
+            return;
+        }
+
         let key = file.name;
 
         if(this.files.has(key) === true)
@@ -248,10 +314,64 @@ class HaiInputFile extends HaiInput
         {
             this.multiple = Boolean(this.parameters.multiple);
         }
+
+        if(this.parameters.maxFilesCount !== undefined)
+        {
+            if(isNaN(this.parameters.maxFilesCount) === true)
+            {
+                console.warn(`HaiForm: Parameter "maxFilesCount" must be a number.`);
+            }
+            else
+            {
+                this.maxFilesCount = this.parameters.maxFilesCount;
+            }
+        }
+
+        if(this.parameters.maxFileSize !== undefined)
+        {
+            if(isNaN(this.parameters.maxFileSize) === true)
+            {
+                console.warn(`HaiForm: Parameter "maxFileSize" must be a number.`);
+            }
+            else
+            {
+                this.maxFileSize = this.parameters.maxFileSize;
+            }
+        }
+
+        if(this.parameters.maxTotalSize !== undefined)
+        {
+            if(isNaN(this.parameters.maxTotalSize) === true)
+            {
+                console.warn(`HaiForm: Parameter "maxTotalSize" must be a number.`);
+            }
+            else
+            {
+                this.maxTotalSize = this.parameters.maxTotalSize;
+            }
+        }
+
+        if(this.parameters.allowedFileTypes !== undefined)
+        {
+            if(typeof this.parameters.allowedFileTypes === 'string')
+            {   // TODO
+                this.parameters.allowedFileTypes = this.parameters.allowedFileTypes.split(',');
+            }
+            else if(Array.isArray(this.parameters.allowedFileTypes))
+            {
+                this.allowedFileTypes = this.parameters.allowedFileTypes;
+            }
+            else
+            {
+                console.warn(`HaiForm: Parameter "allowedFileTypes" must be an array or a string.`);
+            }
+        }
     }
 
     handleInput(event)
     {
+        this.warningElement.textContent = '';
+
         if(event.target === this.innerFileInput)
         {
             return;

@@ -503,7 +503,10 @@
                     let test11 = document.getElementById('test11');
                     let parameters = {
                         label: 'Test 11',
-                        multiple: true
+                        multiple: true,
+                        maxFilesCount: 5,
+                        allowedFileTypes: ['.pdf', 'image/*', 'text/css'],
+                        maxFileSize: 15_000_000
                     };
                     let haiInput = await HaiInput.create('file', test11, parameters);
                 </script>
