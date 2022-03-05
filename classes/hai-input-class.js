@@ -12,9 +12,13 @@ class HaiInput
     twin;
     /** @type {Object} - Object containing parameters.*/
     parameters;
+    /** @type {boolean} - If validity warnings should be displayed to the user.*/
     displayValidityWarnings = true;
+    /** @type {string} - Label, which should by generated for the input.*/
     label;
+    /** @type {HTMLElement} - Generated input label element.*/
     labelElement;
+    /** @type {HTMLElement} - Generated element which should display validity and other warnings.*/
     warningElement;
 
     constructor(element = null, parameters = {})
@@ -119,12 +123,16 @@ class HaiInput
         let labelDiv = document.createElement('div');
         labelDiv.classList.add('label-text');
 
+        let wrapper = document.createElement('div');
+        wrapper.classList.add('input-wrapper');
+
         let warningDiv = document.createElement('div');
         warningDiv.classList.add('alert');
 
         inputWrapper.append(label, twin);
         this.element.parentElement.insertBefore(inputWrapper,this.element);
-        label.append(labelDiv, this.element, warningDiv);
+        wrapper.appendChild(this.element);
+        label.append(labelDiv, wrapper, warningDiv);
 
         this.twin = twin;
         this.labelElement = labelDiv;

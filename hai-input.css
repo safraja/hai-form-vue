@@ -49,7 +49,15 @@
     text-align: left;
 }
 
-
+.hai-input-element .input-wrapper
+{
+    border: 2px solid;
+}
+.hai-input-element .input-wrapper input
+{
+    border: none;
+    height: 100%;
+}
 
 .hai-input-element .switch-wrapper
 {
@@ -156,19 +164,6 @@
 {
     position: relative;
 }
-.hai-input-element .select-wrapper.dialog-display
-{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    bottom: auto;
-    right: auto;
-    transform: translate(-50%, -50%);
-    width: 80vw;
-    height: 40vh;
-    background: #313131;
-    z-index: 200;
-}
 .hai-input-element .select-wrapper *
 {
     margin: 0;
@@ -186,7 +181,7 @@
 }
 .hai-input-element .select-wrapper.dialog-display .input-field
 {
-    display: none;
+    display: flex;
 }
 .hai-input-element .select-wrapper .tags
 {
@@ -236,15 +231,70 @@
 {
     display: block;
 }
+.hai-input-element .select-wrapper.dialog-display .dropdown
+{
+    position: fixed;
+    flex-direction: column;
+    display: none;
+    top: 50%;
+    left: 50%;
+    bottom: auto;
+    right: auto;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 40vh;
+    min-height: 400px;
+    background: #313131;
+    padding: 10px 0;
+    z-index: 200;
+    box-sizing: border-box;
+}
+@media only screen and (max-height: 360px)
+{
+    .hai-input-element .select-wrapper.dialog-display .dropdown
+    {
+        min-height: auto;
+        height: 90vh;
+    }
+}
+.hai-input-element .select-wrapper.dialog-display .dropdown.active
+{
+    display: flex;
+}
+.hai-input-element .select-wrapper.dialog-display .dropdown > *
+{
+    margin: 0 10px;
+}
+.hai-input-element .select-wrapper.dialog-display .dropdown .search-container
+{
+    padding: 5px 0 15px;
+}
 .hai-input-element .select-wrapper .options-container
 {
     padding: 0;
     max-height: 200px;
     overflow: auto;
+    overscroll-behavior: contain;
 }
 .hai-input-element .select-wrapper.dialog-display .options-container
 {
-    height: 30vh;
+    height: 100%;
+    max-height: none;
+}
+.hai-input-element .select-wrapper .control-buttons
+{
+    display: none;
+}
+.hai-input-element .select-wrapper.dialog-display .control-buttons
+{
+    display: block;
+    border-top: 1px solid;
+    margin: 0;
+}
+.hai-input-element .select-wrapper.dialog-display .control-buttons .button:hover
+{
+    background: #131313;
+    cursor: pointer;
 }
 .hai-input-element .select-wrapper .options-container .option,
 .hai-input-element .select-wrapper .options-container .option-group-header
@@ -273,6 +323,7 @@
 {
     background: #d5d5d5;
 }
+.hai-input-element .select-wrapper .options-container .option-group-header[data-unselected-options='0'],
 .hai-input-element .select-wrapper .options-container .option.selected
 {
     display: none;
@@ -291,6 +342,7 @@
     left: 20px;
     color: green;
     font-weight: bold;
+    z-index: 0;
 }
 .hai-input-element .select-wrapper .dropdown .info
 {
@@ -300,6 +352,7 @@
 {
     display: block;
 }
+
 
 .hai-input-element .file-zone-wrapper
 {

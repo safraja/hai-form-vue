@@ -1,4 +1,11 @@
-import {HaiInput, HaiInputText, HaiInputNumber, HaiInputUrl, HaiInputSwitch} from "../classes/hai-input-classes.js";
+import {
+    HaiInput,
+    HaiInputText,
+    HaiInputNumber,
+    HaiInputUrl,
+    HaiInputSwitch,
+    HaiInputFile
+} from "../classes/hai-input-classes.js";
 
 export default {
     name: 'hai-input',
@@ -39,9 +46,14 @@ export default {
         },
         // Switch type attributes.
         'options': {
-            'type': [String, Array, Object],
-            'default': () => []
+            'type': [String, Array, Object]
         },
+        'list': {
+            'type': String
+        },
+        'variant': {
+            'type': String
+        }
     },
     styles: ["@import './vue/styles.css'"],
     data()
@@ -53,13 +65,40 @@ export default {
             inputmode: ''
         }
     },
-    mounted()
+    created()
     {
         this.innerType = this.type;
-        this.AssignObject();  // Assign a HaiInput object tu the element.
+        this.assignObject();  // Assign a HaiInput object tu the element.
+        this.haiInput.processParameters();
 
-        this.haiInput.rawValue = this.haiInput.extractRawValue(this.value);
-        this.haiInput.value = this.haiInput.formatValue(this.value);
+        if(this.type === 'switch')
+        {
+            this.haiInput.rawValue = this.haiInput.extractRawValue(this.value);
+            this.haiInput.value = this.haiInput.formatValue(this.value);
+
+            this.haiInput.convertOptionsToObjectArray();
+
+            if(this.haiInput.variant === 'on/off')
+            {
+                if (this.haiInput.optionOnValue === null)
+                {
+                    this.haiInput.optionOnValue = this.haiInput.options[this.haiInput.options.length - 1].value;
+                }
+                else if (this.haiInput.options[0].value === this.haiInput.optionOnValue)
+                {
+                    this.haiInput.options = this.haiInput.options.reverse();
+                }
+            }
+        }
+
+    },
+    mounted()
+    {
+        if(this.type === 'switch')
+        {
+            this.haiInput.element = this.$refs.wrapper;
+        }
+
 
         if (this.$attrs.id === undefined)
         {
@@ -116,7 +155,7 @@ export default {
         if(this.innerType === 'number')
         {
             this.inputmode = 'numeric';
-            console.log(this.inputmode);
+            //console.log(this.inputmode);
         }
 
         if(this.type === 'switch')
@@ -143,34 +182,46 @@ export default {
 
     },
     methods: {
-        AssignObject()
+        assignObject()
         {
+            let parameters = [];
             switch (this.innerType)
             {
                 case 'text':
                     this.haiInput = new HaiInputText();
+                    parameters.push('mask');
                     break;
 
                 case 'number':
                     this.haiInput = new HaiInputNumber();
-                    if(this.max !== undefined)
-                    {
-                        this.haiInput.max = this.max;
-                    }
-                    if(this.min !== undefined)
-                    {
-                        this.haiInput.min = this.min;
-                    }
+                    parameters.push('mask', 'max', 'min', 'step', 'allowENotation', 'stripLeadingZeroes',
+                        'decimalSeparator', 'delimiter', 'thousandsGroupStyle', 'enableValueFormation');
                     break;
 
                 case "url":
                     this.haiInput = new HaiInputUrl();
+                    parameters.push('mask', 'allowedSchemes', 'defaultScheme', 'requireHost', 'allowPart', 'stripPart');
                     break;
 
                 case "switch":
                     this.haiInput = new HaiInputSwitch();
+                    parameters.push('options', 'variant', 'optionOnValue', 'list');
+                    break;
+
+                case "file":
+                    this.haiInput = new HaiInputFile();
+                    parameters.push('multiple', 'maxFilesCount', 'maxFileSize', 'maxTotalSize', 'allowedFileTypes');
                     break;
             }
+
+            for(let parameter of parameters)
+            {
+                if(this[parameter] !== undefined)
+                {
+                    this.haiInput.parameters[parameter] = this[parameter];
+                }
+            }
+
         },
         handleInput(event)
         {
@@ -189,7 +240,7 @@ export default {
             }
             else
             {
-                this.$refs.wrapper.setAttribute('data-state', this.haiInput.rawValue);
+                //this.$refs.wrapper.setAttribute('data-state', this.haiInput.rawValue);
             }
         },
         handleFocusOut(event)
@@ -229,12 +280,14 @@ export default {
     },
     template: `
         <template v-if='this.type === "switch"'>
-            <div ref='wrapper' class='switch-wrapper' data-state='on'>
+            <div class='label-text'>{{ label }}</div>
+            <div ref='wrapper' class='switch-wrapper' v-bind:data-variant='this.haiInput.variant' 
+                v-bind:data-state='(this.haiInput.optionOnValue === this.value) ? "on" : "off"'>
                 <div class='option-group' v-on:click='handleInput($event)'>
-                    <span ref='toggle' class='toggle'></span>
-                    <label v-for='item in this.innerOptions' class='option'>
+                    <span v-if='this.haiInput.variant === "on/off"' ref='toggle' class='toggle'></span>
+                    <label v-for='item in this.haiInput.options' class='option'>
                         <input type='radio' v-bind:VALUE='item.value'>
-                        <span></span>
+                        <span>{{ (this.haiInput.variant === 'multiple') ? item.label : '' }}</span>
                     </label>
                 </div>
             </div>
@@ -242,10 +295,12 @@ export default {
         <template v-else>
             <label>
                 <div class='label-text'>{{ label }}</div>
-                <input ref='input' type='text' :id='id' :name='name' :value='value' :inputmode='inputmode'
+                <div class='input-wrapper'>
+                    <input ref='input' type='text' :id='id' :name='name' :value='value' :inputmode='inputmode'
                             :placeholder='placeholder'
                             v-on:input='handleInput($event)' v-on:focusout='handleFocusOut($event)'
                             v-on:keydown='handleKeyAction($event)' v-on:wheel='handleWheel($event)'>
+                </div>
                 <span ref='alert' class='alert'></span>
             </label>
         </template>

@@ -2,12 +2,12 @@ import { defineCustomElement } from 'https://cdn.jsdelivr.net/npm/vue@3.2.19/dis
 
 import HaiInputElement from './vue/hai-input-element.js'
 
-const HaiText = defineCustomElement(HaiInputElement);
+const HaiInput = defineCustomElement(HaiInputElement);
 
 
 function register()
 {
-    customElements.define('hai-input', HaiText)
+    customElements.define('hai-input', HaiInput)
 }
 
-export {HaiText, register}
+export {HaiInput, register}

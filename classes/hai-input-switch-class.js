@@ -190,6 +190,18 @@ class HaiInputSwitch extends HaiInput
                 }
             }
         }
+
+        if (this.parameters.variant !== undefined)
+        {
+            if(['on/off', 'multiple'].includes(this.parameters.variant) === false)
+            {
+                console.warn('HaiForm: Parameter "variant" can be either "on/off" or "multiple", reverting back to default.');
+            }
+            else
+            {
+                this.variant = this.parameters.variant;
+            }
+        }
     }
 
     convertOptionsToObjectArray()
@@ -283,7 +295,7 @@ class HaiInputSwitch extends HaiInput
         this.value = newValue;
         this.rawValue = newValue;
 
-        if(this.element !== null)
+        if (this.element !== null)
         {
             if (this.rawValue === this.optionOnValue)
             {

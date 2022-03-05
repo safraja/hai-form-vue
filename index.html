@@ -49,17 +49,15 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">&lt;div class='hai-input-element'&gt;
-    &lt;label&gt;Test 1&lt;/label&gt;
-    &lt;input id='test1' name='test1' value='' type='text'&gt;
-&lt;/div&gt;
+<code class="language-html">&lt;input id='test1' name='test1' value='' type='text'&gt;
 
-&lt;script type=&quot;module&quot; async&gt;
-    import {HaiInput} from &quot;./classes/hai-input-class.js&quot;;
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
 
     let test1 = document.getElementById('test1');
-    let parameters = {mask : '000 - AAA'}
-    let haiInput = await HaiInput.returnCorrectClass('text', test1, parameters);
+    let parameters = {mask: '000 - AAA', label: 'Test 1'}
+    let haiInput =
+        await HaiInput.create('text', test1, parameters);
 &lt;/script&gt;</code>
                             </pre>
                         </div>
@@ -68,8 +66,8 @@
                         </div>
                     </section>
                 </article>
-                <script type="module" async>
-                    import {HaiInput} from "./classes/hai-input-class.js";
+                <script type='module' async>
+                    import {HaiInput} from './classes/hai-input-class.js';
 
                     let test1 = document.getElementById('test1');
                     let parameters = {mask : '000 - AAA', label: 'Test 1'}
@@ -93,17 +91,15 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">&lt;div class='hai-input-element'&gt;
-    &lt;label for='test3'&gt;Test 2&lt;/label&gt;
-    &lt;input id='test3' name='test2' value='200' type='number'&gt;
-&lt;/div&gt;
+<code class="language-html">&lt;input id='test2' name='test2' value='200' type='number'&gt;
 
-&lt;script type=&quot;module&quot; async&gt;
-    import {HaiInput} from &quot;./classes/hai-input-class.js&quot;;
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
 
     let test2 = document.getElementById('test2');
-    let parameters = {max: 250_000}
-    let haiInput = await HaiInput.returnCorrectClass('number', test2, parameters);
+    let parameters = {max: 250_000, label: 'Test 2'}
+    let haiInput =
+        await HaiInput.create('number', test2, parameters);
 &lt;/script&gt;</code>
                             </pre>
                         </div>
@@ -112,11 +108,11 @@
                         </div>
                     </section>
                 </article>
-                <script type="module" async>
-                    import {HaiInput} from "./classes/hai-input-class.js";
+                <script type='module' async>
+                    import {HaiInput} from './classes/hai-input-class.js';
 
                     let test2 = document.getElementById('test2');
-                    let parameters = {max: 250_000}
+                    let parameters = {max: 250_000, label: 'Test 2'}
                     let haiInput = await HaiInput.create('number', test2, parameters);
                 </script>
 
@@ -139,11 +135,13 @@
                             <pre>
 <code class="language-html">&lt;input id='test4' name='test4' type='text' value='on'&gt;
 
-&lt;script type=&quot;module&quot; async&gt;
-    import {HaiInput} from &quot;./classes/hai-input-class.js&quot;;
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
 
     let test4 = document.getElementById('test4');
-    let haiInput = await HaiInput.returnCorrectClass('switch', test4);
+    let parameters = {label: 'Test 4'}
+    let haiInput =
+        await HaiInput.create('switch', test4, parameters);
 &lt;/script&gt;</code>
                             </pre>
                         </div>
@@ -152,11 +150,12 @@
                         </div>
                     </section>
                 </article>
-                <script type="module" async>
-                    import {HaiInput} from "./classes/hai-input-class.js";
+                <script type='module' async>
+                    import {HaiInput} from './classes/hai-input-class.js';
 
                     let test3 = document.getElementById('test3');
-                    let haiInput = await HaiInput.create('url', test3);
+                    let parameters = {label: 'Test 3'}
+                    let haiInput = await HaiInput.create('url', test3, parameters);
                 </script>
 
 
@@ -178,11 +177,13 @@
                             <pre>
 <code class="language-html">&lt;input id='test4' name='test4' type='text' value='on'&gt;
 
-&lt;script type=&quot;module&quot; async&gt;
-    import {HaiInput} from &quot;./classes/hai-input-class.js&quot;;
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
 
     let test4 = document.getElementById('test4');
-    let haiInput = await HaiInput.returnCorrectClass('switch', test4);
+    let parameters = {label: 'Test 4'}
+    let haiInput =
+        await HaiInput.create('switch', test4, parameters);
 &lt;/script&gt;</code>
                             </pre>
                         </div>
@@ -191,11 +192,12 @@
                         </div>
                     </section>
                 </article>
-                <script type="module" async>
-                    import {HaiInput} from "./classes/hai-input-class.js";
+                <script type='module' async>
+                    import {HaiInput} from './classes/hai-input-class.js';
 
                     let test4 = document.getElementById('test4');
-                    let haiInput = await HaiInput.create('switch', test4);
+                    let parameters = {label: 'Test 4'}
+                    let haiInput = await HaiInput.create('switch', test4, parameters);
                 </script>
 
 
@@ -219,7 +221,7 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">&lt;input id='test5' name='test5' type='text' value='on'&gt;
+<code class="language-html">&lt;input id='test5' name='test5' type='text' value='py'&gt;
 &lt;datalist id='test5-datalist'&gt;
     &lt;option value='php'&gt;PHP&lt;/option&gt;
     &lt;option value='js'&gt;Javascript&lt;/option&gt;
@@ -230,8 +232,9 @@
     import {HaiInput} from './classes/hai-input-class.js';
 
     let test5 = document.getElementById('test5');
-    let parameters = {list: 'test5-datalist'};
-    let haiInput = await HaiInput.returnCorrectClass('switch', test5, parameters);
+    let parameters = {list: 'test5-datalist', label: 'Test 5'};
+    let haiInput =
+        await HaiInput.create('switch', test5, parameters);
 &lt;/script&gt;</code>
                             </pre>
                         </div>
@@ -244,7 +247,7 @@
                     import {HaiInput} from './classes/hai-input-class.js';
 
                     let test5 = document.getElementById('test5');
-                    let parameters = {list: 'test5-datalist'};
+                    let parameters = {list: 'test5-datalist', label: 'Test 5'};
                     let haiInput = await HaiInput.create('switch', test5, parameters);
                 </script>
 
@@ -279,7 +282,30 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">...</code>
+<code class="language-html">&lt;select id='test6' name='test6[]' multiple&gt;
+    &lt;option value='js' selected&gt;Javascript&lt;/option&gt;
+    &lt;option value='py'&gt;Python&lt;/option&gt;
+    &lt;option value='php' selected&gt;PHP&lt;/option&gt;
+    &lt;option value='c#'&gt;C#&lt;/option&gt;
+    &lt;option value='c++'&gt;C++&lt;/option&gt;
+    &lt;option value='f'&gt;F&lt;/option&gt;
+    &lt;option value='ts'&gt;Typescript&lt;/option&gt;
+    &lt;option value='xml'&gt;XML&lt;/option&gt;
+    &lt;option value='json'&gt;JSON&lt;/option&gt;
+    &lt;option value='html'&gt;HTML&lt;/option&gt;
+    &lt;option value='shell'&gt;Shell&lt;/option&gt;
+    &lt;option value='markdown'&gt;Markdown&lt;/option&gt;
+    &lt;option value='css'&gt;CSS&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
+
+    let test6 = document.getElementById('test6');
+    let parameters = {label: 'Test 6', multiple: true};
+    let haiInput =
+        await HaiInput.create('select', test6, parameters);
+&lt;/script&gt;</code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>
@@ -298,7 +324,7 @@
 
 
                 <article class='example-article'>
-                    <h2>Select</h2>
+                    <h2>Select (option groups)</h2>
                     <section class='input-section'>
                         <form action='submit-test.php' method='post' target='test7-iframe'>
                             <select id='test7' name='test7[]' multiple>
@@ -329,7 +355,33 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">...</code>
+<code class="language-html">&lt;select id='test7' name='test7[]' multiple&gt;
+    &lt;optgroup label='First group'&gt;
+        &lt;option value='py'&gt;Python&lt;/option&gt;
+        &lt;option value='php' selected&gt;PHP&lt;/option&gt;
+    &lt;/optgroup&gt;
+    &lt;optgroup label='Second group'&gt;
+        &lt;option value='css'&gt;CSS&lt;/option&gt;
+        &lt;option value='xml'&gt;XML&lt;/option&gt;
+        &lt;option value='html'&gt;HTML&lt;/option&gt;
+    &lt;/optgroup&gt;
+    &lt;optgroup label='Third group'&gt;
+        &lt;option value='js' selected&gt;Javascript&lt;/option&gt;
+        &lt;option value='c#'&gt;C#&lt;/option&gt;
+        &lt;option value='c++'&gt;C++&lt;/option&gt;
+        &lt;option value='shell'&gt;Shell&lt;/option&gt;
+        &lt;option value='markdown'&gt;Markdown&lt;/option&gt;
+    &lt;/optgroup&gt;
+&lt;/select&gt;
+
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
+
+    let test7 = document.getElementById('test7');
+    let parameters = {label: 'Test 7', multiple: true};
+    let haiInput =
+        await HaiInput.create('select', test7, parameters);
+&lt;/script&gt;</code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>
@@ -348,42 +400,65 @@
 
 
                 <article class='example-article'>
-                <h2>Select</h2>
-                <section class='input-section'>
-                    <form action='submit-test.php' method='post' target='test8-iframe'>
-                        <select id='test8' name='test8'>
-                            <option value='js' selected>Javascript</option>
-                            <option value='py'>Python</option>
-                            <option value='php' selected>PHP</option>
-                            <option value='c#'>C#</option>
-                            <option value='c++'>C++</option>
-                            <option value='f'>F</option>
-                            <option value='ts'>Typescript</option>
-                            <option value='xml'>XML</option>
-                            <option value='json'>JSON</option>
-                            <option value='html'>HTML</option>
-                            <option value='shell'>Shell</option>
-                            <option value='markdown'>Markdown</option>
-                            <option value='css'>CSS</option>
-                        </select>
-                        <input class='submit-test' type='submit'>
-                    </form>
-                </section>
-                <section class='code-section'>
-                    <header>
-                        <div class='active' data-code-tab-header='html'>HTML</div>
-                        <div data-code-tab-header='data'>Data</div>
-                    </header>
-                    <div class='active' data-code-tab='html'>
+                    <h2>Select (single)</h2>
+                    <section class='input-section'>
+                        <form action='submit-test.php' method='post' target='test8-iframe'>
+                            <select id='test8' name='test8'>
+                                <option value='js' selected>Javascript</option>
+                                <option value='py'>Python</option>
+                                <option value='php' selected>PHP</option>
+                                <option value='c#'>C#</option>
+                                <option value='c++'>C++</option>
+                                <option value='f'>F</option>
+                                <option value='ts'>Typescript</option>
+                                <option value='xml'>XML</option>
+                                <option value='json'>JSON</option>
+                                <option value='html'>HTML</option>
+                                <option value='shell'>Shell</option>
+                                <option value='markdown'>Markdown</option>
+                                <option value='css'>CSS</option>
+                            </select>
+                            <input class='submit-test' type='submit'>
+                        </form>
+                    </section>
+                    <section class='code-section'>
+                        <header>
+                            <div class='active' data-code-tab-header='html'>HTML</div>
+                            <div data-code-tab-header='data'>Data</div>
+                        </header>
+                        <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">...</code>
+<code class="language-html">&lt;select id='test8' name='test8'&gt;
+    &lt;option value='js' selected&gt;Javascript&lt;/option&gt;
+    &lt;option value='py'&gt;Python&lt;/option&gt;
+    &lt;option value='php' selected&gt;PHP&lt;/option&gt;
+    &lt;option value='c#'&gt;C#&lt;/option&gt;
+    &lt;option value='c++'&gt;C++&lt;/option&gt;
+    &lt;option value='f'&gt;F&lt;/option&gt;
+    &lt;option value='ts'&gt;Typescript&lt;/option&gt;
+    &lt;option value='xml'&gt;XML&lt;/option&gt;
+    &lt;option value='json'&gt;JSON&lt;/option&gt;
+    &lt;option value='html'&gt;HTML&lt;/option&gt;
+    &lt;option value='shell'&gt;Shell&lt;/option&gt;
+    &lt;option value='markdown'&gt;Markdown&lt;/option&gt;
+    &lt;option value='css'&gt;CSS&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
+
+    let test8 = document.getElementById('test8');
+    let parameters = {label: 'Test 8'};
+    let haiInput =
+        await HaiInput.create('select', test8, parameters);
+&lt;/script&gt;</code>
                             </pre>
-                    </div>
-                    <div data-code-tab='data'>
-                        <iframe name='test8-iframe'></iframe>
-                    </div>
-                </section>
-            </article>
+                        </div>
+                        <div data-code-tab='data'>
+                            <iframe name='test8-iframe'></iframe>
+                        </div>
+                    </section>
+                </article>
                 <script type='module' async>
                     import {HaiInput} from './classes/hai-input-class.js';
 
@@ -395,7 +470,7 @@
 
 
                 <article class='example-article'>
-                    <h2>Select</h2>
+                    <h2>Select (data given in parameter)</h2>
                     <section class='input-section'>
                         <form action='submit-test.php' method='post' target='test9-iframe'>
                             <input id='test9' name='test9'>
@@ -409,7 +484,42 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">...</code>
+<code class="language-html">&lt;input id='test9' name='test9'&gt;
+
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
+
+    let test9 = document.getElementById('test9');
+    let parameters = {
+        label: 'Test 9',
+        enableSearch: false,
+        options:
+        [
+            {
+                value: 'php',
+                label: 'PHP',
+                group: 'First Group'
+            },
+            {
+                value: 'javascript',
+                label: 'JS',
+                group: 'First Group'
+            },
+            {
+                value: 'xml',
+                label: 'XML',
+                group: 'Second Group',
+                selected: true
+            },
+            {
+                value: 'json',
+                label: 'JSON',
+                group: 'Second Group'
+            }
+        ]};
+    let haiInput =
+        await HaiInput.create('select', test9, parameters);
+&lt;/script&gt;</code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>
@@ -425,22 +535,22 @@
                         label: 'Test 9',
                         enableSearch: false,
                         options:
-                        [
-                            {value: 'php', label: 'PHP', group: 'First Group'},
-                            {value: 'javascript', label: 'JS', group: 'First Group'},
-                            {value: 'xml', label: 'XML', group: 'Second Group', selected: true},
-                            {value: 'json', label: 'JSON', group: 'Second Group'}
-                        ]};
+                            [
+                                {value: 'php', label: 'PHP', group: 'First Group'},
+                                {value: 'javascript', label: 'JS', group: 'First Group'},
+                                {value: 'xml', label: 'XML', group: 'Second Group', selected: true},
+                                {value: 'json', label: 'JSON', group: 'Second Group'}
+                            ]};
                     let haiInput = await HaiInput.create('select', test9, parameters);
                 </script>
 
 
 
                 <article class='example-article'>
-                    <h2>Select</h2>
+                    <h2>Select (data from remote file)</h2>
                     <section class='input-section'>
                         <form action='submit-test.php' method='post' target='test10-iframe'>
-                            <input id='test10' name='test10'>
+                            <input id='test10' name='test10[]'>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -451,7 +561,20 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">...</code>
+<code class="language-html">&lt;input id='test10' name='test10[]'&gt;
+
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
+
+    let test10 = document.getElementById('test10');
+    let parameters = {
+        label: 'Test 10',
+        options: 'employee-data.json',
+        multiple: true
+    };
+    let haiInput =
+        await HaiInput.create('select', test10, parameters);
+&lt;/script&gt;</code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>
@@ -475,10 +598,10 @@
 
 
                 <article class='example-article'>
-                    <h2>Select</h2>
+                    <h2>File</h2>
                     <section class='input-section'>
-                        <form action='submit-file-test.php' method='post' target='test11-iframe'>
-                            <input id='test11' name='test11' type='file'>
+                        <form action='submit-file-test.php' method='post' target='test11-iframe' enctype='multipart/form-data'>
+                            <input id='test11' name='test11[]' type='file'>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -489,7 +612,22 @@
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
-<code class="language-html">...</code>
+<code class="language-html">&lt;input id='test11' name='test11[]' type='file'&gt;
+
+&lt;script type='module' async&gt;
+    import {HaiInput} from './classes/hai-input-class.js';
+
+    let test11 = document.getElementById('test11');
+    let parameters = {
+        label: 'Test 11',
+        multiple: true,
+        maxFilesCount: 5,
+        allowedFileTypes: ['.pdf', 'image/*', 'text/css'],
+        maxFileSize: 15_000_000
+    };
+    let haiInput =
+        await HaiInput.create('file', test11, parameters);
+&lt;/script&gt;</code>
                             </pre>
                         </div>
                         <div data-code-tab='data'>

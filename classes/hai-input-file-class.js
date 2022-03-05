@@ -232,7 +232,7 @@ class HaiInputFile extends HaiInput
         filePreview.classList.add('file-preview');
 
         let img = document.createElement('img');
-        img.src = 'file.svg';
+        img.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTYgMGgtMTR2MjRoMjB2LTE4bC02LTZ6bTAgM2wzIDNoLTN2LTN6bS0xMiAxOXYtMjBoMTB2Nmg2djE0aC0xNnoiLz48L3N2Zz4=';
         filePreview.appendChild(img);
 
         if(file.type.startsWith('image/') === true)

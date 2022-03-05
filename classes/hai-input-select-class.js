@@ -110,6 +110,19 @@ class HaiInputSelect extends HaiInput
         infoDiv.classList.add('info');
         dropdown.appendChild(infoDiv);
 
+        let buttons = document.createElement('div');
+        buttons.classList.add('control-buttons');
+        dropdown.appendChild(buttons);
+
+        let confirm = document.createElement('div');
+        confirm.classList.add('button');
+        confirm.textContent = 'Confirm';
+        buttons.appendChild(confirm);
+        confirm.addEventListener('click', (event) =>
+        {
+            this.hideDropdown(event);
+        });
+
         wrapper.appendChild(dropdown);
 
         selectWrapper.append(labelDiv, wrapper, warningDiv);
@@ -170,7 +183,8 @@ class HaiInputSelect extends HaiInput
 
                 const settingOptions =
                     {
-                        keys: ["label", "value", "group"]
+                        keys: ["label", "value", "group"],
+                        threshold: 0.45
                     };
 
                 const fuse = new Fuse(Array.from(this.options.values()), settingOptions);
@@ -191,7 +205,6 @@ class HaiInputSelect extends HaiInput
             this.showDropdown(event);
             if(event.target === inputField)
             {
-                //console.log('inputField focused.')
                 this.element.focus();
             }
 
@@ -242,7 +255,16 @@ class HaiInputSelect extends HaiInput
 
             for(let option of selectedOptions)
             {
-                this.selectedOptions.set(this.generateOptionKey(option), {value: option.value, label: option.label});
+                if(option.parentElement.nodeName === 'OPTGROUP')
+                {
+                    this.selectedOptions.set(this.generateOptionKey(option),
+                        {value: option.value, label: option.label, group: option.parentElement.label});
+                }
+                else
+                {
+                    this.selectedOptions.set(this.generateOptionKey(option),
+                        {value: option.value, label: option.label});
+                }
                 this.valuesSet.add(option.value);
             }
 
@@ -433,7 +455,6 @@ class HaiInputSelect extends HaiInput
             this.setTwinOptions();
 
             this.addTag(option);
-            this.hideOptionItem(option);
         }
         else
         {
@@ -448,9 +469,16 @@ class HaiInputSelect extends HaiInput
             this.value = option.value;
             this.rawValue = this.value;
             this.setTwinOptions();
-
-            this.hideOptionItem(option);
         }
+
+        this.hideOptionItem(option);
+        if(this.searchInput !== null && this.searchInput.value !== '')
+        {   // Reset filter.
+            this.searchInput.value = '';
+            this.renderOptionsItems();
+            this.searchInput.focus();
+        }
+
     }
 
     unselectOption(option)
@@ -505,7 +533,6 @@ class HaiInputSelect extends HaiInput
             remove.addEventListener('click', (event) =>
             {
                 this.unselectOption(option);
-                this.showOptionItem(option);
                 tag.remove();
             });
             tag.appendChild(remove);
@@ -582,6 +609,9 @@ class HaiInputSelect extends HaiInput
                 header.appendChild(strong);
                 optionsUl.appendChild(header);
 
+                let unselectedOptions = 0;
+                let optionsInGroup = 0;
+
                 for(const [key, option] of notAddedOptions)
                 {
                     if(option.group !== group)
@@ -590,6 +620,21 @@ class HaiInputSelect extends HaiInput
                     }
                     this.addOptionItem(option, key, optionsUl);
                     notAddedOptions.delete(key);
+
+                    if(this.isSelected(option) === false)
+                    {
+                        unselectedOptions++;
+                    }
+                    optionsInGroup++;
+                }
+
+                if(optionsInGroup === 0)
+                {
+                    header.remove();
+                }
+                else
+                {
+                    header.setAttribute('data-unselected-options', `${unselectedOptions}`);
                 }
             }
 
@@ -657,6 +702,10 @@ class HaiInputSelect extends HaiInput
         if(optionItem !== null)
         {
             optionItem.classList.add('selected');
+            if(option.group !== undefined)
+            {
+                this.updateGroupHeaderUnselectedOpt(optionItem, -1);
+            }
         }
     }
 
@@ -665,7 +714,14 @@ class HaiInputSelect extends HaiInput
         let options = this.optionsItemsContainer.querySelectorAll('.option.selected');
         for(const optionItem of options)
         {
-            optionItem.classList.remove('selected');
+            if(optionItem.matches('.selected'))
+            {
+                optionItem.classList.remove('selected');
+                if(this.optGroups.length !== 0)
+                {
+                    this.updateGroupHeaderUnselectedOpt(optionItem, 1);
+                }
+            }
         }
     }
 
@@ -675,6 +731,33 @@ class HaiInputSelect extends HaiInput
         if(optionItem !== null)
         {
             optionItem.classList.remove('selected');
+            if(option.group !== undefined)
+            {
+                this.updateGroupHeaderUnselectedOpt(optionItem, 1);
+            }
+        }
+    }
+
+    updateGroupHeaderUnselectedOpt(optionItem, addValue)
+    {
+        let groupHeader;
+        let previousElement = optionItem.previousElementSibling;
+
+        while(previousElement !== null)
+        {
+            if(previousElement.matches('.option-group-header'))
+            {
+                groupHeader = previousElement;
+                break;
+            }
+            previousElement = previousElement.previousElementSibling;
+        }
+
+        if(groupHeader !== undefined)
+        {
+            let unselectedOptions = parseInt(groupHeader.getAttribute('data-unselected-options'));
+            unselectedOptions += addValue;
+            groupHeader.setAttribute('data-unselected-options', `${unselectedOptions}`);
         }
     }
 

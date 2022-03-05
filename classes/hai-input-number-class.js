@@ -2,14 +2,23 @@ import {HaiInputText} from './hai-input-text-class.js';
 
 class HaiInputNumber extends HaiInputText
 {
+    /** @type {number} - The minimum value to accept for this input.*/
     min;
+    /** @type {number} - The maximum value to accept for this input.*/
     max;
+    /** @type {number} - The number value which should by added/subtract from current input value on scroll or arrow up/down.*/
     step = 1;
+    /** @type {boolean} - If input should accept exponent, currently has no effect.*/
     allowENotation = false;
+    /** @type {boolean} - If input should automatically strip leading zeroes.*/
     stripLeadingZeroes = true;
+    /** @type {string} - Decimal separator.*/
     decimalSeparator = ',';
+    /** @type {string} - Delimiter of thousands groups.*/
     delimiter = ' ';
+    /** @type {string} - One of possible thousands groups style, can by "thousand", "lakh" or "wan".*/
     thousandsGroupStyle = 'thousand';
+    /** @type {boolean} - If the number should be automatically formatted (masked).*/
     enableValueFormation = true;
 
     constructor(element = null, parameters = {})
