@@ -38,7 +38,7 @@
                     <h2>Textový input</h2>
                     <section class='input-section'>
                         <form action='submit-test.php' method='post' target='test1-iframe'>
-                            <input id='test1' name='test1' value='' type='text'>
+                            <input id='test1' name='test1' value='' type='text' data-mask='000 - AAA' data-label='Test 1X'>
                             <input class='submit-test' type='submit'>
                         </form>
                     </section>
@@ -70,8 +70,7 @@
                     import {HaiInput} from './classes/hai-input-class.js';
 
                     let test1 = document.getElementById('test1');
-                    let parameters = {mask : '000 - AAA', label: 'Test 1'}
-                    let haiInput = await HaiInput.create('text', test1, parameters);
+                    let haiInput = await HaiInput.create('text', test1);
                 </script>
 
 

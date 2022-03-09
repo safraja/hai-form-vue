@@ -27,78 +27,82 @@ class HaiInputNumber extends HaiInputText
         this.type = 'number';
     }
 
-    processParameters()
+    processParameters(parameters = null)
     {
-        super.processParameters();
-
-        if (this.parameters.min !== undefined)
+        if(parameters === null)
         {
-            if(isNaN(this.parameters.min) === true)
+            parameters = this.parameters;
+        }
+        super.processParameters(parameters);
+
+        if (parameters.min !== undefined)
+        {
+            if(isNaN(parameters.min) === true)
             {
                 console.warn(`HaiForm: Parameter "min" must be a number.`);
             }
             else
             {
-                this.min = this.parameters.min;
+                this.min = parameters.min;
             }
         }
 
-        if(this.parameters.max !== undefined)
+        if(parameters.max !== undefined)
         {
-            if(isNaN(this.parameters.max) === true)
+            if(isNaN(parameters.max) === true)
             {
                 console.warn(`HaiForm: Parameter "max" must be a number.`);
             }
             else
             {
-                this.max = this.parameters.max;
+                this.max = parameters.max;
             }
         }
 
-        if(this.parameters.step !== undefined)
+        if(parameters.step !== undefined)
         {
-            if(isNaN(this.parameters.step) === true)
+            if(isNaN(parameters.step) === true)
             {
                 console.warn(`HaiForm: Parameter "step" must be a number, reverting back to "1".`);
             }
             else
             {
-                this.max = this.parameters.step;
+                this.max = parameters.step;
             }
         }
 
-        if(this.parameters.stripLeadingZeroes !== undefined)
+        if(parameters.stripLeadingZeroes !== undefined)
         {
-            this.stripLeadingZeroes = Boolean(this.parameters.stripLeadingZeroes);
+            this.stripLeadingZeroes = Boolean(parameters.stripLeadingZeroes);
         }
 
-        if(this.parameters.decimalSeparator !== undefined)
+        if(parameters.decimalSeparator !== undefined)
         {
-            this.decimalSeparator = this.parameters.decimalSeparator;
+            this.decimalSeparator = parameters.decimalSeparator;
         }
 
-        if(this.parameters.delimiter !== undefined)
+        if(parameters.delimiter !== undefined)
         {
-            this.delimiter = this.parameters.delimiter;
+            this.delimiter = parameters.delimiter;
         }
 
-        if(this.parameters.thousandsGroupStyle !== undefined)
+        if(parameters.thousandsGroupStyle !== undefined)
         {
             let supportedStyles = ['thousand', 'lakh','wan'];
-            if(supportedStyles.includes(this.parameters.thousandsGroupStyle) === false)
+            if(supportedStyles.includes(parameters.thousandsGroupStyle) === false)
             {
                 console.warn('HaiForm: Given thousands group style is not supported, reverting back to "thousand". ' +
                     'Supported types are:', supportedStyles);
             }
             else
             {
-                this.thousandsGroupStyle = this.parameters.thousandsGroupStyle;
+                this.thousandsGroupStyle = parameters.thousandsGroupStyle;
             }
         }
 
-        if(this.parameters.enableValueFormation !== undefined)
+        if(parameters.enableValueFormation !== undefined)
         {
-            this.enableValueFormation = Boolean(this.parameters.enableValueFormation);
+            this.enableValueFormation = Boolean(parameters.enableValueFormation);
         }
     }
 
@@ -228,6 +232,13 @@ class HaiInputNumber extends HaiInputText
 
     checkValidity()
     {
+        let superValidity = super.checkValidity();
+
+        if(superValidity.success === false)
+        {
+            return superValidity;
+        }
+
         if((isNaN(this.rawValue) === true)
             || (this.allowENotation === false && this.rawValue.toLowerCase().includes('e')))
         {
@@ -245,36 +256,6 @@ class HaiInputNumber extends HaiInputText
         }
 
         return {success: true};
-    }
-
-    handleFocusOut(event)
-    {
-        let validity = this.checkValidity();
-        if(validity.success === false)
-        {
-            event.target.classList.add('invalid');
-            event.target.setCustomValidity(validity.message);
-            if(this.displayValidityWarnings === true && this.warningElement !== undefined)
-            {
-                this.warningElement.textContent = validity.message;
-            }
-            //TODO - vyřeš problém u custom elementů.
-            /*
-            this.twin.style.display = 'none';
-            this.twin.type = 'text';
-            this.twin.setCustomValidity(validity.message);
-
-             */
-        }
-        else
-        {
-            event.target.classList.remove('invalid');
-            event.target.setCustomValidity('');
-            if(this.warningElement !== undefined)
-            {
-                this.warningElement.textContent = '';
-            }
-        }
     }
 
     applyGroupStyle(numberString)

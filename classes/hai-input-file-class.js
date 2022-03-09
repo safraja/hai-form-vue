@@ -40,6 +40,7 @@ class HaiInputFile extends HaiInput
         twin.hidden = true;
         twin.classList.add('hidden');
 
+        this.processAttributes();
         this.processParameters();
 
         if (name !== undefined)
@@ -146,6 +147,13 @@ class HaiInputFile extends HaiInput
 
     checkValidity(file)
     {
+        let superValidity = super.checkValidity();
+
+        if(superValidity.success === false)
+        {
+            return superValidity;
+        }
+
         if(this.maxFilesCount !== null && this.maxFilesCount < this.files.size + 1)
         {
             return {success: false, message: `The file could not be selected, only ${this.maxFilesCount} files can by selected.`};
@@ -306,60 +314,65 @@ class HaiInputFile extends HaiInput
         reader.readAsDataURL(file);
     }
 
-    processParameters()
+    processParameters(parameters = null)
     {
-        super.processParameters();
-
-        if(this.parameters.multiple !== undefined)
+        if(parameters === null)
         {
-            this.multiple = Boolean(this.parameters.multiple);
+            parameters = this.parameters;
+        }
+        super.processParameters(parameters);
+
+        if(parameters.multiple !== undefined)
+        {
+            this.multiple = Boolean(parameters.multiple);
         }
 
-        if(this.parameters.maxFilesCount !== undefined)
+        if(parameters.maxFilesCount !== undefined)
         {
-            if(isNaN(this.parameters.maxFilesCount) === true)
+            if(isNaN(parameters.maxFilesCount) === true)
             {
                 console.warn(`HaiForm: Parameter "maxFilesCount" must be a number.`);
             }
             else
             {
-                this.maxFilesCount = this.parameters.maxFilesCount;
+                this.maxFilesCount = parameters.maxFilesCount;
             }
         }
 
-        if(this.parameters.maxFileSize !== undefined)
+        if(parameters.maxFileSize !== undefined)
         {
-            if(isNaN(this.parameters.maxFileSize) === true)
+            if(isNaN(parameters.maxFileSize) === true)
             {
                 console.warn(`HaiForm: Parameter "maxFileSize" must be a number.`);
             }
             else
             {
-                this.maxFileSize = this.parameters.maxFileSize;
+                this.maxFileSize = parameters.maxFileSize;
             }
         }
 
-        if(this.parameters.maxTotalSize !== undefined)
+        if(parameters.maxTotalSize !== undefined)
         {
-            if(isNaN(this.parameters.maxTotalSize) === true)
+            if(isNaN(parameters.maxTotalSize) === true)
             {
                 console.warn(`HaiForm: Parameter "maxTotalSize" must be a number.`);
             }
             else
             {
-                this.maxTotalSize = this.parameters.maxTotalSize;
+                this.maxTotalSize = parameters.maxTotalSize;
             }
         }
 
-        if(this.parameters.allowedFileTypes !== undefined)
+        if(parameters.allowedFileTypes !== undefined)
         {
-            if(typeof this.parameters.allowedFileTypes === 'string')
-            {   // TODO
-                this.parameters.allowedFileTypes = this.parameters.allowedFileTypes.split(',');
-            }
-            else if(Array.isArray(this.parameters.allowedFileTypes))
+            if(typeof parameters.allowedFileTypes === 'string')
             {
-                this.allowedFileTypes = this.parameters.allowedFileTypes;
+                parameters.allowedFileTypes = parameters.allowedFileTypes.split(',');
+            }
+
+            if(Array.isArray(parameters.allowedFileTypes))
+            {
+                this.allowedFileTypes = parameters.allowedFileTypes;
             }
             else
             {

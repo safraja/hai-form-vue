@@ -41,6 +41,7 @@ class HaiInputSelect extends HaiInput
         twin.classList.add('hidden');
 
         this.processElementContentAndAttributes(this.element);
+        await this.processAttributes();
         await this.processParameters();
 
         let selectWrapper = document.createElement('div');
@@ -273,25 +274,29 @@ class HaiInputSelect extends HaiInput
         }
     }
 
-    async processParameters()
+    async processParameters(parameters = null)
     {
-        super.processParameters();
-
-        if(this.parameters.multiple !== undefined)
+        if(parameters === null)
         {
-            this.multiple = Boolean(this.parameters.multiple);
+            parameters = this.parameters;
+        }
+        super.processParameters(parameters);
+
+        if(parameters.multiple !== undefined)
+        {
+            this.multiple = Boolean(parameters.multiple);
         }
 
-        if (this.parameters.options !== undefined)
+        if (parameters.options !== undefined)
         {
-            if(typeof this.parameters.options === 'string')
+            if(typeof parameters.options === 'string')
             {
-                this.parameters.options = await this.fetchFile(this.parameters.options);
+                parameters.options = await this.fetchFile(parameters.options);
             }
 
-            if(this.parameters.options instanceof Map)
+            if(parameters.options instanceof Map)
             {
-                for(let [key, option] of this.parameters.options)
+                for(let [key, option] of parameters.options)
                 {
                     if(typeof option !== 'object')
                     {
@@ -330,13 +335,13 @@ class HaiInputSelect extends HaiInput
                     }
                 }
             }
-            else if(Array.isArray(this.parameters.options) === false)
+            else if(Array.isArray(parameters.options) === false)
             {
                 console.warn('HaiForm: Parameter "options" must be either a Map or an array of objects.');
             }
             else
             {
-                for(const option of this.parameters.options)
+                for(const option of parameters.options)
                 {
                     if(option.value === undefined)
                     {
@@ -372,9 +377,9 @@ class HaiInputSelect extends HaiInput
             }
         }
 
-        if(this.parameters.enableSearch !== undefined)
+        if(parameters.enableSearch !== undefined)
         {
-            this.enableSearch = Boolean(this.parameters.enableSearch);
+            this.enableSearch = Boolean(parameters.enableSearch);
         }
     }
 

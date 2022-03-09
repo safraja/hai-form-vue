@@ -13,7 +13,7 @@ class HaiInputSwitch extends HaiInput
         this.type = 'switch';
     }
 
-    transformElementToHaiInput()
+    async transformElementToHaiInput()
     {
         let name = this.element.name;
         this.value = this.element.value;
@@ -32,7 +32,8 @@ class HaiInputSwitch extends HaiInput
         twin.classList.add('hidden');
         twin.value = this.rawValue;
 
-        this.processParameters();
+        await this.processAttributes();
+        await this.processParameters();
         this.convertOptionsToObjectArray();
 
         if(this.options.length < 2)
@@ -153,27 +154,31 @@ class HaiInputSwitch extends HaiInput
         });
     }
 
-    processParameters()
+    processParameters(parameters = null)
     {
-        super.processParameters();
-
-        if (this.parameters.options !== undefined)
+        if(parameters === null)
         {
-            this.options = this.parameters.options;
+            parameters = this.parameters;
+        }
+        super.processParameters(parameters);
+
+        if (parameters.options !== undefined)
+        {
+            this.options = parameters.options;
         }
 
-        if(this.parameters.list !== undefined)
+        if(parameters.list !== undefined)
         {
-            if(typeof this.parameters.list !== 'string')
+            if(typeof parameters.list !== 'string')
             {
                 console.warn('HaiForm: List parameter must by a string.');
             }
             else
             {
-                let datalist = document.getElementById(this.parameters.list);
+                let datalist = document.getElementById(parameters.list);
                 if(datalist === null)
                 {
-                    console.warn(`HaiForm: Datalist with id ${this.parameters.list} was not found.`);
+                    console.warn(`HaiForm: Datalist with id ${parameters.list} was not found.`);
                 }
                 else
                 {
@@ -191,15 +196,15 @@ class HaiInputSwitch extends HaiInput
             }
         }
 
-        if (this.parameters.variant !== undefined)
+        if (parameters.variant !== undefined)
         {
-            if(['on/off', 'multiple'].includes(this.parameters.variant) === false)
+            if(['on/off', 'multiple'].includes(parameters.variant) === false)
             {
                 console.warn('HaiForm: Parameter "variant" can be either "on/off" or "multiple", reverting back to default.');
             }
             else
             {
-                this.variant = this.parameters.variant;
+                this.variant = parameters.variant;
             }
         }
     }

@@ -24,20 +24,24 @@ class HaiInputUrl extends HaiInputText
         this.type = 'url';
     }
 
-    processParameters()
+    processParameters(parameters = null)
     {
-        super.processParameters();
-
-        if (this.parameters.allowedSchemes !== undefined)
+        if(parameters === null)
         {
-            if(Array.isArray(this.parameters.allowedSchemes) !== true)
+            parameters = this.parameters;
+        }
+        super.processParameters(parameters);
+
+        if (parameters.allowedSchemes !== undefined)
+        {
+            if(Array.isArray(parameters.allowedSchemes) !== true)
             {
                 console.warn('HaiForm: Parameter "allowedSchemes" must by an array.');
             }
             else
             {
                 let valid = true;
-                for(let scheme of this.parameters.allowedSchemes)
+                for(let scheme of parameters.allowedSchemes)
                 {
                     if(typeof scheme !== 'string')
                     {
@@ -51,79 +55,79 @@ class HaiInputUrl extends HaiInputText
                 }
                 else
                 {
-                    this.allowedSchemes = this.parameters.allowedSchemes;
+                    this.allowedSchemes = parameters.allowedSchemes;
                 }
             }
         }
 
-        if (this.parameters.defaultScheme !== undefined)
+        if (parameters.defaultScheme !== undefined)
         {
-            if(typeof this.parameters.defaultScheme !== 'string' && this.parameters.defaultScheme !== null)
+            if(typeof parameters.defaultScheme !== 'string' && parameters.defaultScheme !== null)
             {
                 console.warn('HaiForm: Parameter "defaultScheme" must by a string or null.');
             }
             else
             {
-                this.defaultScheme = this.parameters.defaultScheme;
+                this.defaultScheme = parameters.defaultScheme;
             }
         }
 
-        if (this.parameters.requireHost !== undefined)
+        if (parameters.requireHost !== undefined)
         {
-            this.requireHost = Boolean(this.parameters.requireHost);
+            this.requireHost = Boolean(parameters.requireHost);
         }
 
-        if (this.parameters.allowPart !== undefined)
+        if (parameters.allowPart !== undefined)
         {
-            if(typeof this.parameters.allowPart !== 'object')
+            if(typeof parameters.allowPart !== 'object')
             {
                 console.warn('HaiForm: Parameter "allowPart" must by an object.');
             }
             else
             {
-                if (this.parameters.allowPart.userInfo !== undefined)
+                if (parameters.allowPart.userInfo !== undefined)
                 {
-                    this.allowPart.userInfo = Boolean(this.parameters.allowPart.userInfo);
+                    this.allowPart.userInfo = Boolean(parameters.allowPart.userInfo);
                 }
 
-                if (this.parameters.allowPart.port !== undefined)
+                if (parameters.allowPart.port !== undefined)
                 {
-                    this.allowPart.port = Boolean(this.parameters.allowPart.port);
+                    this.allowPart.port = Boolean(parameters.allowPart.port);
                 }
 
-                if (this.parameters.allowPart.path !== undefined)
+                if (parameters.allowPart.path !== undefined)
                 {
-                    this.allowPart.path = Boolean(this.parameters.allowPart.path);
+                    this.allowPart.path = Boolean(parameters.allowPart.path);
                 }
 
-                if (this.parameters.allowPart.query !== undefined)
+                if (parameters.allowPart.query !== undefined)
                 {
-                    this.allowPart.query = Boolean(this.parameters.allowPart.query);
+                    this.allowPart.query = Boolean(parameters.allowPart.query);
                 }
 
-                if (this.parameters.allowPart.fragment !== undefined)
+                if (parameters.allowPart.fragment !== undefined)
                 {
-                    this.allowPart.fragment = Boolean(this.parameters.allowPart.fragment);
+                    this.allowPart.fragment = Boolean(parameters.allowPart.fragment);
                 }
             }
         }
 
-        if (this.parameters.stripPart !== undefined)
+        if (parameters.stripPart !== undefined)
         {
-            if(typeof this.parameters.stripPart !== 'object')
+            if(typeof parameters.stripPart !== 'object')
             {
                 console.warn('HaiForm: Parameter "stripPart" must by an object.');
             }
             else
             {
-                if (this.parameters.stripPart.query !== undefined)
+                if (parameters.stripPart.query !== undefined)
                 {
-                    this.stripPart.query = Boolean(this.parameters.stripPart.query);
+                    this.stripPart.query = Boolean(parameters.stripPart.query);
                 }
 
-                if (this.parameters.stripPart.fragment !== undefined)
+                if (parameters.stripPart.fragment !== undefined)
                 {
-                    this.stripPart.fragment = Boolean(this.parameters.stripPart.fragment);
+                    this.stripPart.fragment = Boolean(parameters.stripPart.fragment);
                 }
             }
         }
@@ -225,6 +229,13 @@ class HaiInputUrl extends HaiInputText
 
     checkValidity()
     {
+        let superValidity = super.checkValidity();
+
+        if(superValidity.success === false)
+        {
+            return superValidity;
+        }
+
         if(String(this.rawValue) === '')
         {
             return {success: true};

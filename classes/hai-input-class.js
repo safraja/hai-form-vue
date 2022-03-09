@@ -20,6 +20,8 @@ class HaiInput
     labelElement;
     /** @type {HTMLElement} - Generated element which should display validity and other warnings.*/
     warningElement;
+    /** @type {boolean} - Indicates, if user must specify a value.*/
+    required;
 
     constructor(element = null, parameters = {})
     {
@@ -92,7 +94,7 @@ class HaiInput
         this.twin.value = this.value;
     }
 
-    transformElementToHaiInput()
+    async transformElementToHaiInput()
     {
         let name = this.element.name;
         //this.element.name = `hai-form[${name}]`;
@@ -138,7 +140,8 @@ class HaiInput
         this.labelElement = labelDiv;
         this.warningElement = warningDiv;
 
-        this.processParameters();
+        await this.processAttributes();
+        await this.processParameters();
 
         if(this.label !== undefined)
         {
@@ -165,24 +168,56 @@ class HaiInput
         });
     }
 
-    processParameters()
+    processParameters(parameters = null)
     {
-        if (this.parameters.label !== undefined)
+        if(parameters === null)
         {
-            if(typeof this.parameters.label !== 'string')
+            parameters = this.parameters;
+        }
+
+        if (parameters.label !== undefined)
+        {
+            if(typeof parameters.label !== 'string')
             {
                 console.warn(`HaiForm: Parameter "label" must be a string.`);
             }
             else
             {
-                this.label = this.parameters.label;
+                this.label = parameters.label;
             }
         }
 
-        if(this.parameters.displayValidityWarnings !== undefined)
+        if(parameters.displayValidityWarnings !== undefined)
         {
-            this.displayValidityWarnings = Boolean(this.parameters.displayValidityWarnings);
+            this.displayValidityWarnings = Boolean(parameters.displayValidityWarnings);
         }
+    }
+
+    async processAttributes()
+    {
+        await this.processDataAttributes();
+    }
+
+    async processDataAttributes()
+    {
+        let attributes = this.element.attributes;
+        let dataAttributes = {};
+
+        for (let attribute of attributes)
+        {
+            if(attribute.name.startsWith('data-') === false)
+            {
+                continue;
+            }
+
+            let camelize = s => s.replace(/-./g, x=>x[1].toUpperCase());
+
+            let name = camelize(attribute.name.substring(5));
+
+            dataAttributes[name] = attribute.nodeValue;
+        }
+
+        await this.processParameters(dataAttributes);
     }
 
     handleInput(event)
@@ -209,12 +244,35 @@ class HaiInput
 
     checkValidity()
     {
+        if(this.required === true && this.rawValue === '')
+        {
+            return {success: false, message: `Please specify a value.`};
+        }
+
         return {success: true};
     }
 
     handleFocusOut(event)
     {
-
+        let validity = this.checkValidity();
+        if(validity.success === false)
+        {
+            event.target.classList.add('invalid');
+            event.target.setCustomValidity(validity.message);
+            if(this.displayValidityWarnings === true && this.warningElement !== undefined)
+            {
+                this.warningElement.textContent = validity.message;
+            }
+        }
+        else
+        {
+            event.target.classList.remove('invalid');
+            event.target.setCustomValidity('');
+            if(this.warningElement !== undefined)
+            {
+                this.warningElement.textContent = '';
+            }
+        }
     }
 
     handleWheel(event)

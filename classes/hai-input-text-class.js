@@ -2,7 +2,10 @@ import {HaiInput} from './hai-input-class.js';
 
 class HaiInputText extends HaiInput
 {
+    maxLength;
+    minLength;
     mask;
+    validByMask;
 
     constructor(element = null, parameters = {})
     {
@@ -10,19 +13,24 @@ class HaiInputText extends HaiInput
         this.type = 'text';
     }
 
-    processParameters()
+    processParameters(parameters = null)
     {
-        super.processParameters();
-
-        if (this.parameters.mask !== undefined)
+        if(parameters === null)
         {
-            if(typeof this.parameters.mask !== 'string')
+            parameters = this.parameters;
+        }
+
+        super.processParameters(parameters);
+
+        if (parameters.mask !== undefined)
+        {
+            if(typeof parameters.mask !== 'string')
             {
                 console.warn(`HaiForm: Parameter "mask" must be a string.`);
             }
             else
             {
-                this.mask = this.parameters.mask;
+                this.mask = parameters.mask;
             }
         }
     }
@@ -37,6 +45,7 @@ class HaiInputText extends HaiInput
         }
 
         this.value = value;
+        this.rawValue = value;
         event.target.value = value;
         this.saveValueToTwin();
         return {success: true};
@@ -127,7 +136,41 @@ class HaiInputText extends HaiInput
             valuePosition++;
         }
 
+        if(maskPosition < mask.length)
+        {
+            valid = false;
+        }
+
+        this.validByMask = valid;
+
         return formattedValue;
+    }
+
+    checkValidity()
+    {
+        let superValidity = super.checkValidity();
+
+        if(superValidity.success === false)
+        {
+            return superValidity.success;
+        }
+
+        if(this.value.length > this.maxLength)
+        {
+            return {success: false, message: `Text length must be shorter or same as ${this.maxLength}`};
+        }
+
+        if(this.value.length < this.minLength)
+        {
+            return {success: false, message: `Text length must be longer or same as ${this.minLength}`};
+        }
+
+        if(this.mask != null && this.rawValue !== '' && this.validByMask === false)
+        {
+            return {success: false, message: `Inserted value does not match the mask.`};
+        }
+
+        return {success: true};
     }
 }
 
