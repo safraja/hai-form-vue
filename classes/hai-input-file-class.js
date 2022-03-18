@@ -28,7 +28,7 @@ class HaiInputFile extends HaiInput
         this.twin.files = dataTransfer.files;
     }
 
-    transformElementToHaiInput()
+    async transformElementToHaiInput()
     {
         let name = this.element.name;
         this.value = '';
@@ -40,8 +40,8 @@ class HaiInputFile extends HaiInput
         twin.hidden = true;
         twin.classList.add('hidden');
 
-        this.processAttributes();
-        this.processParameters();
+        await this.processAttributes();
+        await this.processParameters();
 
         if (name !== undefined)
         {
@@ -105,6 +105,20 @@ class HaiInputFile extends HaiInput
         }
         this.element.haiInput = this;
 
+        this.innerFileInput.addEventListener('change', (event) =>
+        {
+            for(let file of this.innerFileInput.files)
+            {
+                this.addFile(file);
+            }
+
+            let dataTransfer = new DataTransfer();
+            this.innerFileInput.files = dataTransfer.files; // Empty the file input.
+        });
+    }
+
+    addWrapperEvents(wrapper)
+    {
         wrapper.addEventListener('dragover', (event) =>
         {
             event.preventDefault();
@@ -131,17 +145,6 @@ class HaiInputFile extends HaiInput
         wrapper.addEventListener('click', (event) =>
         {
             this.handleInput(event);
-        });
-
-        this.innerFileInput.addEventListener('change', (event) =>
-        {
-            for(let file of this.innerFileInput.files)
-            {
-                this.addFile(file);
-            }
-
-            let dataTransfer = new DataTransfer();
-            this.innerFileInput.files = dataTransfer.files; // Empty the file input.
         });
     }
 

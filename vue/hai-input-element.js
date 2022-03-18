@@ -4,6 +4,7 @@ import {
     HaiInputNumber,
     HaiInputUrl,
     HaiInputSwitch,
+    HaiInputSelect,
     HaiInputFile
 } from "../classes/hai-input-classes.js";
 
@@ -14,7 +15,7 @@ export default {
         'label': {
             'type': String
         },
-        'input-id': {
+        'twin-id': {
             'type': String
         },
         'value': {
@@ -53,6 +54,9 @@ export default {
         },
         'variant': {
             'type': String
+        },
+        'multiple': {
+            'type': Boolean
         }
     },
     styles: ["@import './vue/styles.css'"],
@@ -65,16 +69,19 @@ export default {
             inputmode: ''
         }
     },
-    created()
+    async created()
     {
         this.innerType = this.type;
         this.assignObject();  // Assign a HaiInput object tu the element.
-        this.haiInput.processParameters();
+        await this.haiInput.processParameters();
+
+        this.haiInput.rawValue = this.value;
+        this.haiInput.value = this.value;
 
         if(this.type === 'switch')
         {
-            this.haiInput.rawValue = this.haiInput.extractRawValue(this.value);
-            this.haiInput.value = this.haiInput.formatValue(this.value);
+           // this.haiInput.rawValue = this.haiInput.extractRawValue(this.value);
+           // this.haiInput.value = this.haiInput.formatValue(this.value);
 
             this.haiInput.convertOptionsToObjectArray();
 
@@ -89,14 +96,91 @@ export default {
                     this.haiInput.options = this.haiInput.options.reverse();
                 }
             }
-        }
 
+            if(this.value === '' && !this.haiInput.options.includes(''))
+            {
+                this.haiInput.rawValue = this.haiInput.options[0].value;
+                this.haiInput.value= this.haiInput.options[0].value;
+            }
+        }
+        else if(this.type === 'select')
+        {
+            this.haiInput.renderOptionsItems();
+        }
     },
     mounted()
     {
         if(this.type === 'switch')
         {
             this.haiInput.element = this.$refs.wrapper;
+
+            let inputs = this.$refs.wrapper.querySelectorAll('input[type=radio]');
+
+            for(let input of inputs)
+            {
+                this.haiInput.inputs.push(input);
+            }
+        }
+        else if(this.type === 'select')
+        {
+            this.haiInput.element = this.$refs.wrapper;
+            this.haiInput.tagsContainer = this.$refs.tags;
+            this.haiInput.optionsItemsContainer = this.$refs.optionsContainer;
+            this.haiInput.searchInput = this.$refs.searchInput;
+
+            if(this.haiInput.multiple === false)
+            {
+                this.haiInput.inputText = this.$refs.inputText;
+                if(this.haiInput.selectedOptions.size > 0)
+                {
+                    let selectedOption = Array.from(this.haiInput.selectedOptions.values())[0];
+                    this.$refs.inputText.textContent = selectedOption.label;
+                    this.$refs.inputText.setAttribute('data-value', selectedOption.value);
+                }
+            }
+
+            if(this.haiInput.multiple === true)
+            {
+                for(let [key, option] of this.haiInput.selectedOptions)
+                {
+                    this.haiInput.addTag(option, this.$refs.tags);
+                }
+            }
+
+            this.$el.parentNode.host.addEventListener('blur', (event) =>
+            {
+                let dropdown = this.haiInput.element.querySelector('.dropdown');
+
+                if(this.$el.parentNode.contains(event.explicitOriginalTarget) === false)
+                {
+                    dropdown.classList.remove('active');
+                    this.haiInput.element.classList.remove('dialog-display');
+                    this.haiInput.element.removeEventListener('blur',this.hideDropdown);
+                    if(this.haiInput.searchInput !== null)
+                    {
+                        this.haiInput.searchInput.removeEventListener('blur', this.hideDropdown);
+                    }
+                }
+            })
+        }
+        else if(this.type === 'file')
+        {
+            this.haiInput.messageContainer = this.$refs.message;
+            this.haiInput.warningElement = this.$refs.alert;
+            this.haiInput.filesContainer = this.$refs.files;
+            this.haiInput.innerFileInput = this.$refs.innerFileInput;
+            this.haiInput.addWrapperEvents(this.$refs.wrapper);
+
+            this.haiInput.innerFileInput.addEventListener('change', (event) =>
+            {
+                for(let file of this.haiInput.innerFileInput.files)
+                {
+                    this.haiInput.addFile(file);
+                }
+
+                let dataTransfer = new DataTransfer();
+                this.haiInput.innerFileInput.files = dataTransfer.files; // Empty the file input.
+            });
         }
 
 
@@ -113,32 +197,30 @@ export default {
         }
 
         let twin;
-
-        if(this.inputId !== undefined)
+        if (this.type === 'select')
         {
-            twin = document.querySelector("input#" + this.inputId);
-            if (!twin)
-            {
-                twin = container.ownerDocument.createElement("input");
-                twin.type = "hidden";
-                //twin.classList.add("hidden-input");
-                this.$el.parentNode.host.parentElement.appendChild(twin);
-            }
+            twin = container.ownerDocument.createElement("select");
+        }
+        else if (this.type === 'file')
+        {
+            twin = container.ownerDocument.createElement("input");
+            twin.type = "file";
         }
         else
         {
             twin = container.ownerDocument.createElement("input");
-            twin.type = "hidden";
-            this.$el.parentNode.host.parentElement.appendChild(twin);
+            twin.type = "text";
         }
+        twin.hidden = true;
+        this.$el.parentNode.host.parentElement.appendChild(twin);
 
         if(this.name !== undefined)
         {
             twin.name = this.name;
         }
-        if(this.inputId !== undefined)
+        if(this.inputTwin !== undefined)
         {
-            twin.id = this.inputId;
+            twin.id = this.inputTwin;
         }
         else
         {
@@ -147,15 +229,24 @@ export default {
             let id = Math.floor(Math.random() * (max - min) + min);
             twin.id = `input-${id}`;
         }
-        twin.value = this.value;
+
         this.haiInput.twin = twin;
+
+        if (this.type === 'select')
+        {
+            this.haiInput.setTwinOptions();
+        }
+        else if (this.type !== 'file')
+        {
+            twin.value = this.value;
+        }
+
 
         //TODO
         //test
         if(this.innerType === 'number')
         {
             this.inputmode = 'numeric';
-            //console.log(this.inputmode);
         }
 
         if(this.type === 'switch')
@@ -189,23 +280,31 @@ export default {
             {
                 case 'text':
                     this.haiInput = new HaiInputText();
-                    parameters.push('mask');
+                    parameters.push('mask', 'maxLength', 'minLength');
                     break;
 
                 case 'number':
                     this.haiInput = new HaiInputNumber();
-                    parameters.push('mask', 'max', 'min', 'step', 'allowENotation', 'stripLeadingZeroes',
-                        'decimalSeparator', 'delimiter', 'thousandsGroupStyle', 'enableValueFormation');
+                    parameters.push('mask', 'maxLength', 'minLength', 'max', 'min', 'step', 'allowENotation',
+                        'stripLeadingZeroes', 'decimalSeparator', 'delimiter', 'thousandsGroupStyle',
+                        'enableValueFormation');
                     break;
 
                 case "url":
                     this.haiInput = new HaiInputUrl();
-                    parameters.push('mask', 'allowedSchemes', 'defaultScheme', 'requireHost', 'allowPart', 'stripPart');
+                    parameters.push('mask', 'maxLength', 'minLength', 'allowedSchemes', 'defaultScheme', 'requireHost',
+                        'allowPart', 'stripPart');
                     break;
 
                 case "switch":
                     this.haiInput = new HaiInputSwitch();
                     parameters.push('options', 'variant', 'optionOnValue', 'list');
+                    break;
+
+                case "select":
+                    this.haiInput = new HaiInputSelect();
+                    parameters.push('options', 'optGroups', 'selectedOptions', 'valuesSet', 'multiple',
+                        'showTagRemoveButton', 'enableSearch', 'tabIndex', 'list');
                     break;
 
                 case "file":
@@ -214,9 +313,9 @@ export default {
                     break;
             }
 
-            for(let parameter of parameters)
+            for (let parameter of parameters)
             {
-                if(this[parameter] !== undefined)
+                if (this[parameter] !== undefined)
                 {
                     this.haiInput.parameters[parameter] = this[parameter];
                 }
@@ -227,9 +326,9 @@ export default {
         {
             let result = this.haiInput.handleInput(event);
 
-            if(this.innerType !== 'switch')
+            if (this.innerType !== 'switch' && this.innerType !== 'select')
             {
-                if(result.success === true)
+                if (result.success === true)
                 {
                     this.$refs.alert.textContent = '';
                 }
@@ -241,6 +340,17 @@ export default {
             else
             {
                 //this.$refs.wrapper.setAttribute('data-state', this.haiInput.rawValue);
+            }
+        },
+        handleFocusIn(event)
+        {
+            if (this.innerType === 'select')
+            {
+                this.haiInput.showDropdown(event);
+                if(event.target === this.$refs.inputField)
+                {
+                    this.haiInput.element.focus();
+                }
             }
         },
         handleFocusOut(event)
@@ -276,6 +386,17 @@ export default {
         handleWheel(event)
         {
             this.haiInput.handleWheel(event);
+        },
+        handleSearch(event)
+        {
+            this.haiInput.useFuseSearch(event);
+        },
+        dropdownClick(event)
+        {
+            if(event.target !== this.haiInput.searchInput)
+            {
+                this.$refs.inputField.focus();
+            }
         }
     },
     template: `
@@ -285,13 +406,49 @@ export default {
                 v-bind:data-state='(this.haiInput.optionOnValue === this.value) ? "on" : "off"'>
                 <div class='option-group' v-on:click='handleInput($event)'>
                     <span v-if='this.haiInput.variant === "on/off"' ref='toggle' class='toggle'></span>
-                    <label v-for='item in this.haiInput.options' class='option'>
+                    <label v-for='item in this.haiInput.options' v-bind:class='(this.haiInput.variant === "multiple" 
+                            && item.value === this.haiInput.value) ? "option selected" : "option"'>
                         <input type='radio' v-bind:VALUE='item.value'>
                         <span>{{ (this.haiInput.variant === 'multiple') ? item.label : '' }}</span>
                     </label>
                 </div>
             </div>
         </template>
+        <template v-else-if='this.type === "select"'>
+            <div class='label-text'>{{ label }}</div>
+            <div ref='wrapper' v-bind:class='(this.haiInput.multiple === true) ? "select-wrapper multiple" : "select-wrapper single"'>
+                <div ref='inputField' class='input-field' tabindex='0' v-on:focusin='handleFocusIn($event)'>
+                    <ul v-if='this.haiInput.multiple === true' ref='tags' class='tags'>
+                        
+                    </ul>
+                    <span v-else ref='inputText' class='input-text'></span>
+                </div>
+                <div class='dropdown' v-on:click='dropdownClick($event)'>
+                    <div class='search-container'>
+                        <input ref='searchInput' placeholder='Search...' v-on:input='handleSearch($event)'>
+                    </div>
+                    <ul ref='optionsContainer' class='options-container'>
+                        
+                    </ul>
+                    <div class='info'></div>
+                    <div class='control-buttons'></div>
+                    <div class='button'>Confirm</div>
+                </div>
+            </div>
+            <span ref='alert' class='alert'></span>
+        </template>
+        <template v-else-if='this.type === "file"'>
+            <div class='label-text'>{{ label }}</div>
+            <div ref='wrapper' v-bind:class='(this.haiInput.multiple === true) ? "file-zone-wrapper multiple" : "file-zone-wrapper"'>
+                <div ref='message' class='message active'><strong>Drag &amp; drop a file here</strong></div>
+                <ul ref='files' class='files'>
+                
+                </ul>
+                <input ref='innerFileInput' type='file' v-bind:multiple='this.multiple == true'>
+            </div>
+            <span ref='alert' class='alert'></span>
+        </template>
+        
         <template v-else>
             <label>
                 <div class='label-text'>{{ label }}</div>

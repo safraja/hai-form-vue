@@ -242,7 +242,6 @@ class HaiInputSwitch extends HaiInput
         {
             this.handleInputOfMultipleVariant(event);
         }
-
     }
 
     handleInputOfMultipleVariant(event)

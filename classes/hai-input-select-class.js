@@ -87,7 +87,7 @@ class HaiInputSelect extends HaiInput
         else
         {
             let inputText = document.createElement('span');
-            inputText.classList.add('inputText');
+            inputText.classList.add('input-text');
             inputField.appendChild(inputText);
             this.inputText = inputText;
 
@@ -174,30 +174,7 @@ class HaiInputSelect extends HaiInput
 
             searchInput.addEventListener('input', (event) =>
             {
-                let searchValue = event.target.value;
-
-                if(searchValue === '')
-                {
-                    this.renderOptionsItems();
-                    return;
-                }
-
-                const settingOptions =
-                    {
-                        keys: ["label", "value", "group"],
-                        threshold: 0.45
-                    };
-
-                const fuse = new Fuse(Array.from(this.options.values()), settingOptions);
-                let searchResult = fuse.search(searchValue);
-                let searchResultMap = new Map();
-
-                for(const foundOption of searchResult)
-                {   // Convert Fuse search results to Map.
-                    searchResultMap.set(this.generateOptionKey(foundOption.item), foundOption.item);
-                }
-
-                this.renderOptionsItems(searchResultMap);
+                this.useFuseSearch(event);
             });
         }
 
@@ -208,8 +185,51 @@ class HaiInputSelect extends HaiInput
             {
                 this.element.focus();
             }
-
         });
+
+        let focusOutFunc = (event) =>
+        {
+            this.hideDropdown(event);
+        };
+        this.element.addEventListener('blur', focusOutFunc);
+        if(this.searchInput !== null)
+        {
+            this.searchInput.addEventListener('blur', focusOutFunc);
+        }
+
+        this.element.removeEventListener('blur',this.hideDropdown);
+        if(this.searchInput !== null)
+        {
+            this.searchInput.removeEventListener('blur', this.hideDropdown);
+        }
+    }
+
+    useFuseSearch(event)
+    {
+        let searchValue = event.target.value;
+
+        if(searchValue === '')
+        {
+            this.renderOptionsItems();
+            return;
+        }
+
+        const settingOptions =
+            {
+                keys: ["label", "value", "group"],
+                threshold: 0.45
+            };
+
+        const fuse = new Fuse(Array.from(this.options.values()), settingOptions);
+        let searchResult = fuse.search(searchValue);
+        let searchResultMap = new Map();
+
+        for(const foundOption of searchResult)
+        {   // Convert Fuse search results to Map.
+            searchResultMap.set(this.generateOptionKey(foundOption.item), foundOption.item);
+        }
+
+        this.renderOptionsItems(searchResultMap);
     }
 
     processElementContentAndAttributes(element = null)
@@ -285,6 +305,50 @@ class HaiInputSelect extends HaiInput
         if(parameters.multiple !== undefined)
         {
             this.multiple = Boolean(parameters.multiple);
+        }
+
+        if(parameters.list !== undefined && parameters.options === undefined)
+        {
+            if(typeof parameters.list !== 'string')
+            {
+                console.warn('HaiForm: List parameter must by a string.');
+            }
+            else
+            {
+                let datalist = document.getElementById(parameters.list);
+                if(datalist === null)
+                {
+                    console.warn(`HaiForm: Datalist with id ${parameters.list} was not found.`);
+                }
+                else
+                {
+                    let options = datalist.options;
+
+                    for(const option of options)
+                    {
+                        let optionObject = {value: option.value, label: option.label};
+
+                        if(option.getAttribute('data-group') !== null)
+                        {
+                            let optGroup = option.getAttribute('data-group');
+                            this.optGroups.add(optGroup);
+                            optionObject.group = optGroup;
+                        }
+
+                        this.options.set(this.generateOptionKey(option), optionObject);
+
+                        if(option.getAttribute('data-selected') !== null)
+                        {
+                            if(this.multiple === false)
+                            {
+                                this.selectedOptions.clear();
+                            }
+
+                            this.selectedOptions.set(this.generateOptionKey(option), optionObject);
+                        }
+                    }
+                }
+            }
         }
 
         if (parameters.options !== undefined)
@@ -399,15 +463,6 @@ class HaiInputSelect extends HaiInput
         {
             this.element.classList.add('dialog-display');
         }
-        let focusOutFunc = (event) =>
-        {
-            this.hideDropdown(event);
-        };
-        this.element.addEventListener('blur', focusOutFunc);
-        if(this.searchInput !== null)
-        {
-            this.searchInput.addEventListener('blur', focusOutFunc);
-        }
     }
 
     hideDropdown(event)
@@ -417,11 +472,6 @@ class HaiInputSelect extends HaiInput
         {
             dropdown.classList.remove('active');
             this.element.classList.remove('dialog-display');
-            this.element.removeEventListener('blur',this.hideDropdown);
-            if(this.searchInput !== null)
-            {
-                this.searchInput.removeEventListener('blur', this.hideDropdown);
-            }
         }
     }
 
