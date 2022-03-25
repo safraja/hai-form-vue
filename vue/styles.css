@@ -323,6 +323,7 @@ label .alert
 {
     background: #d5d5d5;
 }
+.select-wrapper .options-container .option-group-header[data-unselected-options='0'],
 .select-wrapper .options-container .option.selected
 {
     display: none;

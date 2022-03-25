@@ -4,7 +4,7 @@
     import {HaiInput} from './classes/hai-input-class.js';
 
     let test1 = document.getElementById('test1');
-    let parameters = {mask: '000 - AAA', label: 'Test 1'}
+    let parameters = {mask: '000 - AAA', label: 'Test 1', placeholder: '000 - AAA'}
     let haiInput =
         await HaiInput.create('text', test1, parameters);
 </script>

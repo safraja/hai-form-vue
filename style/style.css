@@ -128,7 +128,8 @@ hai-input
 {
     background: #097b85;
 }
-.language-html
+.language-html,
+.language-js
 {
     text-align: left;
     white-space: pre-wrap;
@@ -186,6 +187,67 @@ input[type=submit]:hover
     background: #339ca6;
 }
 
+.doc-tab
+{
+    padding: 15px;
+}
+.doc-tab > ul
+{
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    margin: 0;
+    padding: 0 10px 0 0;
+    list-style: none;
+    overflow: auto;
+    scrollbar-width: thin;
+}
+@media (max-width: 1024px)
+{
+    .doc-tab > ul
+    {
+        max-height: 300px;
+    }
+}
+.doc-table
+{
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid;
+    table-layout: fixed;
+}
+.doc-table td
+{
+    padding: 5px 10px;
+    border: 1px solid;
+}
+.doc-table .name
+{
+    font-size: 20px;
+    font-weight: bolder;
+}
+.doc-table dl
+{
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    padding-left: 10px;
+    padding-top: 5px;
+}
+.doc-table dd
+{
+    margin-left: 10px;
+}
+.left-aligned
+{
+    text-align: left;
+}
+.doc-section-header
+{
+    padding: 5px 0;
+    border-top: 5px double;
+    border-bottom: 5px double;
+    font-size: 24px;
+}
 
 @media (prefers-color-scheme: dark)
 {
@@ -221,6 +283,10 @@ input[type=submit]:hover
     {
         background: #161517;
         color: #dfdfdf;
+    }
+    [data-code-tab]
+    {
+        background: #282b2e;
     }
 
 }

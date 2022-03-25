@@ -1,3 +1,4 @@
+/** Class representing a form field. */
 class HaiInput
 {
     /** @type {string} - Type of input.*/
@@ -6,9 +7,9 @@ class HaiInput
     value;
     /** @type {string | number} - Raw value of input (without formatting).*/
     rawValue;
-    /** @type {HTMLInputElement} - Input element on which wa HaiInput initiated.*/
+    /** @type {HTMLInputElement|HTMLElement} - Input element on which was HaiInput initiated.*/
     element;
-    /** @type {HTMLInputElement} - Associated input, which should be send with submit and which always copy value of original element.*/
+    /** @type {HTMLInputElement|HTMLElement} - Associated input, which should be send with submit and which always copy value of original element.*/
     twin;
     /** @type {Object} - Object containing parameters.*/
     parameters;
@@ -23,12 +24,26 @@ class HaiInput
     /** @type {boolean} - Indicates, if user must specify a value.*/
     required;
 
+    /**
+     * Create HaiInput.
+     *
+     * @param {HTMLElement} element - The element over which the HaiInput is to be created.
+     * @param {object} parameters - Parameters determining the properties of the field.
+     */
     constructor(element = null, parameters = {})
     {
         this.element = element;
         this.parameters = parameters;
     }
 
+    /**
+     * Creates and returns a new instance of the HaiInput class based on the specified field type.
+     *
+     * @param {string} type - Form field type.
+     * @param {HTMLElement} element - The element over which the HaiInput is to be created.
+     * @param {object} parameters - Parameters determining the properties of the field.
+     * @returns {Promise<HaiInput>} - Promise with a new instance of the HaiInput class.
+     */
     static async create(type, element, parameters)
     {
         switch (type)
@@ -89,85 +104,29 @@ class HaiInput
         }
     }
 
+    /**
+     * Transfers the field value to the associated hidden field (twin).
+     */
     saveValueToTwin()
     {
         this.twin.value = this.value;
     }
 
+    /**
+     * Transforms the HTML structure of the field.
+     *
+     * @returns {Promise<void>}
+     */
     async transformElementToHaiInput()
     {
-        let name = this.element.name;
-        //this.element.name = `hai-form[${name}]`;
-        this.element.removeAttribute('name');
-        this.element.type = 'text';
-        this.element.haiInput = this;
 
-        this.rawValue = this.extractRawValue(this.element.value);
-        this.element.value = this.rawValue;
-        this.value = this.formatValue(this.rawValue);
-
-        let twin = document.createElement('input');
-        twin.name = name;
-        twin.type = 'text';
-        twin.hidden = true;
-        twin.classList.add('hidden');
-        twin.value = this.element.value;
-
-        let min = 1;
-        let max = 100000000;
-        let id = Math.floor(Math.random() * (max - min) + min);
-        twin.id = `input-${id}`;
-
-        let inputWrapper = document.createElement('div');
-        inputWrapper.classList.add('hai-input-element');
-
-        let label = document.createElement('label');
-        let labelDiv = document.createElement('div');
-        labelDiv.classList.add('label-text');
-
-        let wrapper = document.createElement('div');
-        wrapper.classList.add('input-wrapper');
-
-        let warningDiv = document.createElement('div');
-        warningDiv.classList.add('alert');
-
-        inputWrapper.append(label, twin);
-        this.element.parentElement.insertBefore(inputWrapper,this.element);
-        wrapper.appendChild(this.element);
-        label.append(labelDiv, wrapper, warningDiv);
-
-        this.twin = twin;
-        this.labelElement = labelDiv;
-        this.warningElement = warningDiv;
-
-        await this.processAttributes();
-        await this.processParameters();
-
-        if(this.label !== undefined)
-        {
-            this.labelElement.textContent = this.label;
-        }
-
-        this.element.addEventListener('input', (event) =>
-        {
-            this.handleInput(event);
-        });
-
-        this.element.addEventListener('keydown', (event) =>
-        {
-            this.handleKeyAction(event);
-        });
-
-        this.element.addEventListener('focusout', (event) =>
-        {
-            this.handleFocusOut(event);
-        });
-        this.element.addEventListener('wheel', (event) =>
-        {
-            this.handleWheel(event);
-        });
     }
 
+    /**
+     * Processes the given parameters and, if they are valid, stores them in the HaiInput class.
+     *
+     * @param {object} parameters - Parameters to be processed.
+     */
     processParameters(parameters = null)
     {
         if(parameters === null)
@@ -193,11 +152,21 @@ class HaiInput
         }
     }
 
+    /**
+     * Processes the HTML attributes of the original element over which the HaiInput class is created.
+     *
+     * @returns {Promise<void>}
+     */
     async processAttributes()
     {
         await this.processDataAttributes();
     }
 
+    /**
+     * Processes the HTML data attributes of the original element over which the HaiInput class is created.
+     *
+     * @returns {Promise<void>}
+     */
     async processDataAttributes()
     {
         let attributes = this.element.attributes;
@@ -220,12 +189,24 @@ class HaiInput
         await this.processParameters(dataAttributes);
     }
 
+    /**
+     * Handles the input event in the field.
+     *
+     * @param {Event} event
+     * @returns {{success: boolean}} - Object with information about the input success.
+     */
     handleInput(event)
     {
         this.saveValueToTwin();
         return {success: true};
     }
 
+    /**
+     * Verifies that the key clicked was Enter, if so, submits the form.
+     *
+     * @param {KeyboardEvent} event
+     * @returns {boolean} - True, if Enter was clicked, false otherwise.
+     */
     verifyEnterKey(event)
     {
         if(event.keyCode === 13 || event.code === 'Enter' || event.code === 'NumpadEnter')    // Mobile code for "Enter".
@@ -237,11 +218,21 @@ class HaiInput
         return false;
     }
 
+    /**
+     * Processes a key click.
+     *
+     * @param event
+     */
     handleKeyAction(event)
     {
-        let submit = this.verifyEnterKey(event);
+        this.verifyEnterKey(event);
     }
 
+    /**
+     * Verifies the validity of the field value.
+     *
+     * @returns {{success: boolean, message: string}|{success: boolean}} - Object with information about the result of the validity test. In case of a negative result, it also returns an error message.
+     */
     checkValidity()
     {
         if(this.required === true && this.rawValue === '')
@@ -252,6 +243,11 @@ class HaiInput
         return {success: true};
     }
 
+    /**
+     * Processes a focus out event.
+     *
+     * @param event
+     */
     handleFocusOut(event)
     {
         let validity = this.checkValidity();
@@ -275,20 +271,37 @@ class HaiInput
         }
     }
 
+    /**
+     * Handles mouse wheel scrolling.
+     *
+     * @param event
+     */
     handleWheel(event)
     {
 
     }
 
-    extractRawValue(formatedValue = null)
+    /**
+     * Extracts the raw value from its formatted form.
+     *
+     * @param {string|number|null} formattedValue - Formatted field value.
+     * @returns {string|null} - Extracted raw value.
+     */
+    extractRawValue(formattedValue = null)
     {
-        if(formatedValue === null)
+        if(formattedValue === null)
         {
             return this.value;
         }
-        return formatedValue;
+        return formattedValue;
     }
 
+    /**
+     * Transforms the value into a formatted form.
+     *
+     * @param {string|number|null} rawValue - The value to be formatted.
+     * @returns {string|number|null} - Formatted value.
+     */
     formatValue(rawValue = null)
     {
         if(rawValue === null)

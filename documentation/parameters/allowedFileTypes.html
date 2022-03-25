@@ -1,0 +1,24 @@
+<table class='doc-table'>
+    <tr>
+        <td class='name' colspan='3'>allowedFileTypes</td>
+    </tr>
+    <tr>
+        <td><strong>Typ:</strong> array|string</td>
+        <td><strong>Výchozí:</strong> null</td>
+        <td><strong>Ukázka:</strong> ['.pdf', 'image/*']</td>
+    </tr>
+    <tr class='left-aligned'>
+        <td colspan='3'>
+            <div>
+                Určuje povolené typu souborů, které může uživatel vybrat. Typy můžou být zadány přes pole
+                textových řetězců nebo po vzoru HTML atributu 'accept', tedy jako jeden textový řetězec,
+                ve kterém jsou jednotlivé typy odděleny čárkami.
+                Pokud není parametr nastaven, může uživatel vybrat soubory libovolného typu.
+            </div>
+            <div>
+                <strong>Upozornění: </strong> Kontrola typů je prováděna pouze na základě přípony souboru a nelze ji
+                proto považovat za zcela důvěryhodnou.
+            </div>
+        </td>
+    </tr>
+</table>

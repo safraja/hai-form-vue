@@ -1,10 +1,19 @@
 import {HaiInput} from './hai-input-class.js';
 
+/**
+ *  Class representing a switch.
+ * @extends HaiInput
+ */
 class HaiInputSwitch extends HaiInput
 {
+    /** @type {array|null} - Switchable options.*/
     options = ['', 'on'];
+    /** @type {string} - Switch variant (can be 'on/off' or 'multiple').*/
     variant = 'on/off';
+    /** @type {string|null} - In the on/off variant, it specifies which value is taken as ON. (If null is specified, the second option in the field is taken as ON.).*/
     optionOnValue = null;
+
+    /** @type {array} - Inner radio inputs.*/
     inputs = [];
 
     constructor(element = null, parameters = {})
@@ -13,6 +22,7 @@ class HaiInputSwitch extends HaiInput
         this.type = 'switch';
     }
 
+    /** @override */
     async transformElementToHaiInput()
     {
         let name = this.element.name;
@@ -75,10 +85,13 @@ class HaiInputSwitch extends HaiInput
         if(this.variant === 'on/off')
         {
             wrapper.setAttribute('data-variant', 'on/off');
-
-            if (this.rawValue === this.optionOnValue)
+            if (this.optionOnValue !== null && this.rawValue === String(this.optionOnValue))
             {
                 wrapper.setAttribute('data-state', 'on');
+            }
+            else
+            {
+                wrapper.setAttribute('data-state', 'off');
             }
         }
 
@@ -154,6 +167,7 @@ class HaiInputSwitch extends HaiInput
         });
     }
 
+    /** @override */
     processParameters(parameters = null)
     {
         if(parameters === null)
@@ -162,9 +176,16 @@ class HaiInputSwitch extends HaiInput
         }
         super.processParameters(parameters);
 
-        if (parameters.options !== undefined)
+        if(parameters.optionOnValue !== undefined)
         {
-            this.options = parameters.options;
+            if (typeof parameters.optionOnValue !== 'string')
+            {
+                console.warn('HaiForm: Parameter "optionOnValue" must by a string containing value of one of options.');
+            }
+            else
+            {
+                this.optionOnValue = parameters.optionOnValue;
+            }
         }
 
         if(parameters.list !== undefined)
@@ -207,8 +228,17 @@ class HaiInputSwitch extends HaiInput
                 this.variant = parameters.variant;
             }
         }
+
+        if (parameters.options !== undefined)
+        {
+            this.options = parameters.options;
+        }
     }
 
+    /**
+     * If the options were specified only as an array of values, converts them to an
+     * array of objects with value and label (which remains undefined).
+     */
     convertOptionsToObjectArray()
     {
         let originalOptions = this.options;
@@ -232,18 +262,25 @@ class HaiInputSwitch extends HaiInput
         this.options = convertedOptions;
     }
 
+    /** @override */
     handleInput(event)
     {
         if(this.variant === 'on/off')
         {
-            this.handleInputOfOnOffVariant(event);
+            return this.handleInputOfOnOffVariant(event);
         }
         else
         {
-            this.handleInputOfMultipleVariant(event);
+            return this.handleInputOfMultipleVariant(event);
         }
     }
 
+    /**
+     * Processes the input event in the 'multiple' variant field.
+     *
+     * @param {Event} event
+     * @returns {{success: boolean}} - Object with information about the input success.
+     */
     handleInputOfMultipleVariant(event)
     {
         event.preventDefault();
@@ -273,6 +310,12 @@ class HaiInputSwitch extends HaiInput
         return {success: true};
     }
 
+    /**
+     * Processes the input event in the 'on/off' variant field.
+     *
+     * @param {Event} event
+     * @returns {{success: boolean}} - Object with information about the input success.
+     */
     handleInputOfOnOffVariant(event)
     {
         event.preventDefault();

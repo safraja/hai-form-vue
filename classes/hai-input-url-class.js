@@ -1,19 +1,29 @@
 import {HaiInputText} from './hai-input-text-class.js';
 
+/**
+ *  Class representing a url input.
+ * @extends HaiInputText
+ */
 class HaiInputUrl extends HaiInputText
 {
+    /** @type {array|null} - Allowed schemes (null represents no restrictions). */
     allowedSchemes = ["http", "https"];
     /** @type {string|null} - Default scheme, which will by appended, when there is none present. */
     defaultScheme = "http";
+    /** @type {boolean} - If the url must contain a host. */
     requireHost = true;
-    allowPart = {
+    /** @type {object} - Allowed parts of the url. */
+    allowPart =
+    {
         userInfo: false,
         port: false,
         path: true,
         query: true,
         fragment: false
     };
-    stripPart = {
+    /** @type {object} - The parts that should be removed. */
+    stripPart =
+    {
         query: false,
         fragment: true
     };
@@ -24,6 +34,7 @@ class HaiInputUrl extends HaiInputText
         this.type = 'url';
     }
 
+    /** @override */
     processParameters(parameters = null)
     {
         if(parameters === null)
@@ -34,9 +45,13 @@ class HaiInputUrl extends HaiInputText
 
         if (parameters.allowedSchemes !== undefined)
         {
-            if(Array.isArray(parameters.allowedSchemes) !== true)
+            if(Array.isArray(parameters.allowedSchemes) !== true && parameters.allowedSchemes !== null)
             {
-                console.warn('HaiForm: Parameter "allowedSchemes" must by an array.');
+                console.warn('HaiForm: Parameter "allowedSchemes" must by an array or null.');
+            }
+            if(parameters.allowedSchemes === null)
+            {
+                this.allowedSchemes = parameters.allowedSchemes;
             }
             else
             {
@@ -133,15 +148,16 @@ class HaiInputUrl extends HaiInputText
         }
     }
 
+    /** @override */
     handleInput(event)
     {
         let value = event.target.value;
 
-        /*let formatedValue = this.formatValue(value);
+        /*let formattedValue = this.formatValue(value);
 
-        this.value = formatedValue;
-        this.rawValue = formatedValue;
-        event.target.value = formatedValue;*/
+        this.value = formattedValue;
+        this.rawValue = formattedValue;
+        event.target.value = formattedValue;*/
 
         this.value = value;
         this.rawValue = value;
@@ -149,10 +165,9 @@ class HaiInputUrl extends HaiInputText
         return {success: true};
     }
 
+    /** @override */
     formatValue(rawValue = null)
     {
-        let result = '';
-
         if(rawValue === null)
         {
             rawValue = this.rawValue;
@@ -183,6 +198,12 @@ class HaiInputUrl extends HaiInputText
         return rawValue;
     }
 
+    /**
+     * Adds a scheme to the field value.
+     *
+     * @param {string} rawValue - The value to which the scheme is to be added.
+     * @returns {string} - Edited value.
+     */
     appendDefaultScheme(rawValue)
     {
         let hasSchemeWithSlashes = /^[a-zA-z0-9.+-]+:\/\//i.test(rawValue);
@@ -218,7 +239,7 @@ class HaiInputUrl extends HaiInputText
                 return this.defaultScheme + "://" + String(rawValue);
             }
             else
-            {   // Otherwise, there is a scheme in string, or it is absolute nonformateabble garbage.
+            {   // Otherwise, there is a scheme in string, or it is absolute nonformitable garbage.
                 return rawValue;
             }
         }
@@ -227,29 +248,37 @@ class HaiInputUrl extends HaiInputText
         return rawValue;
     }
 
+    /** @override */
     checkValidity()
     {
         let superValidity = super.checkValidity();
 
-        if(superValidity.success === false)
+        if (superValidity.success === false)
         {
             return superValidity;
         }
 
-        if(String(this.rawValue) === '')
+        if (String(this.rawValue) === '')
         {
             return {success: true};
         }
 
         let allowedScheme = false;
 
-        for(let scheme of this.allowedSchemes)
+        if (this.allowedSchemes !== null)
         {
-            if(this.rawValue.startsWith(String(scheme) + ":"))
+            for(let scheme of this.allowedSchemes)
             {
-                allowedScheme = true;
-                break;
+                if(this.rawValue.startsWith(String(scheme) + ":"))
+                {
+                    allowedScheme = true;
+                    break;
+                }
             }
+        }
+        else
+        {
+            allowedScheme = true;
         }
 
         if(allowedScheme === false)
@@ -353,13 +382,14 @@ class HaiInputUrl extends HaiInputText
         return {success: true};
     }
 
+    /** @override */
     handleFocusOut(event)
     {
-        let formatedValue = this.formatValue(this.rawValue);
+        let formattedValue = this.formatValue(this.rawValue);
 
-        this.value = formatedValue;
-        this.rawValue = formatedValue;
-        event.target.value = formatedValue;
+        this.value = formattedValue;
+        this.rawValue = formattedValue;
+        event.target.value = formattedValue;
         this.saveValueToTwin();
 
         let validity = this.checkValidity();

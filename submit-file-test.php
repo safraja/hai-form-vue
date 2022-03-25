@@ -16,13 +16,16 @@
     </head>
     <body>
         <?php
-        $pocet = count($_FILES['test11']['name']);
-
-        for($i=0; $i < $pocet; $i++)
+        foreach ($_FILES as $file)
         {
-            if (is_uploaded_file($_FILES['test11']['tmp_name'][$i]))
+            $count = count($file['name']);
+
+            for($i=0; $i < $count; $i++)
             {
-                echo "File ". $_FILES['test11']['name'][$i] ." uploaded successfully.\n <br>";
+                if (is_uploaded_file($file['tmp_name'][$i]))
+                {
+                    echo "File ". $file['name'][$i] ." uploaded successfully.\n <br>";
+                }
             }
         }
         ?>

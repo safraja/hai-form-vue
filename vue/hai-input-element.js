@@ -165,6 +165,7 @@ export default {
         }
         else if(this.type === 'file')
         {
+            this.haiInput.element = this.$refs.wrapper;
             this.haiInput.messageContainer = this.$refs.message;
             this.haiInput.warningElement = this.$refs.alert;
             this.haiInput.filesContainer = this.$refs.files;
@@ -199,17 +200,21 @@ export default {
         let twin;
         if (this.type === 'select')
         {
-            twin = container.ownerDocument.createElement("select");
+            twin = container.ownerDocument.createElement('select');
+            if(this.haiInput.multiple)
+            {
+                twin.multiple = true;
+            }
         }
         else if (this.type === 'file')
         {
-            twin = container.ownerDocument.createElement("input");
-            twin.type = "file";
+            twin = container.ownerDocument.createElement('input');
+            twin.type = 'file';
         }
         else
         {
-            twin = container.ownerDocument.createElement("input");
-            twin.type = "text";
+            twin = container.ownerDocument.createElement('input');
+            twin.type = 'text';
         }
         twin.hidden = true;
         this.$el.parentNode.host.parentElement.appendChild(twin);

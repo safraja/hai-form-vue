@@ -46,6 +46,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -55,13 +56,39 @@
                         <div data-code-tab='data'>
                             <iframe name='test1-iframe'></iframe>
                         </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["mask.html", "maskTokens.html", "maxLength.html", "minLength.html",
+                                    "placeholder.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                $globalni_parametry = ["required.html", "label.html", "value.html"];
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
+                        </div>
                     </section>
                 </article>
                 <script type='module' async>
                     import {HaiInput} from './classes/hai-input-class.js';
 
                     let test1 = document.getElementById('test1');
-                    let parameters = {mask : '000 - AAA', label: 'Test 1'}
+                    let parameters = {mask : '000 - AAA', label: 'Test 1', placeholder: '000 - AAA'}
                     let haiInput = await HaiInput.create('text', test1, parameters);
                 </script>
 
@@ -79,6 +106,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -87,6 +115,33 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test2-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["min.html", "max.html", "step.html", "stripLeadingZeros.html",
+                                    "decimalSeparator.html", "delimiter.html", "thousandsGroupStyle.html",
+                                    "enableValueFormation.html", "mask.html", "maskTokens.html",
+                                    "maxLength.html", "minLength.html", "placeholder.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>
@@ -112,6 +167,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -120,6 +176,32 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test3-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["allowedSchemes.html", "defaultScheme.html", "requireHost.html",
+                                    "allowPart.html", "stripPart.html", "mask.html", "maskTokens.html",
+                                    "maxLength.html", "minLength.html", "placeholder.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>
@@ -145,6 +227,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -153,6 +236,30 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test4-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["variant.html", "options-switch.html", "list.html", "optionOnValue.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>
@@ -182,6 +289,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -190,6 +298,30 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test5-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["variant.html", "options-switch.html", "list.html", "optionOnValue.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>
@@ -229,6 +361,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -237,6 +370,30 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test6-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["options.html", "optionsSource.html", "multiple.html", "enableSearch.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>
@@ -279,6 +436,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -287,6 +445,30 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test7-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["options.html", "optionsSource.html", "multiple.html", "enableSearch.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>
@@ -326,6 +508,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -334,6 +517,30 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test8-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["options.html", "optionsSource.html", "multiple.html", "enableSearch.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>
@@ -359,6 +566,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -367,6 +575,30 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test9-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["options.html", "optionsSource.html", "multiple.html", "enableSearch.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>
@@ -401,6 +633,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -410,6 +643,30 @@
                         <div data-code-tab='data'>
                             <iframe name='test10-iframe'></iframe>
                         </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["options.html", "optionsSource.html", "multiple.html", "enableSearch.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
+                        </div>
                     </section>
                 </article>
                 <script type='module' async>
@@ -418,9 +675,8 @@
                     let test10 = document.getElementById('test10');
                     let parameters = {
                         label: 'Test 10',
-                        options: 'employee-data.json',
+                        optionsSource: 'employee-data.json',
                         multiple: true
-
                     };
                     let haiInput = await HaiInput.create('select', test10, parameters);
                 </script>
@@ -439,6 +695,7 @@
                         <header>
                             <div class='active' data-code-tab-header='html'>HTML</div>
                             <div data-code-tab-header='data'>Data</div>
+                            <div data-code-tab-header='parametry'>Parametry</div>
                         </header>
                         <div class='active' data-code-tab='html'>
                             <pre>
@@ -447,6 +704,31 @@
                         </div>
                         <div data-code-tab='data'>
                             <iframe name='test11-iframe'></iframe>
+                        </div>
+                        <div data-code-tab='parametry' class='doc-tab'>
+                            <ul>
+                                <?php
+                                $parametry = ["multiple-file.html", "maxFilesCount.html", "maxFileSize.html",
+                                    "maxTotalSize.html", "allowedFileTypes.html"];
+
+                                foreach ($parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+
+                                ?>
+                                <li class='doc-section-header'>Globální parametry</li>
+                                <?php
+                                foreach ($globalni_parametry as $parametr)
+                                {
+                                    echo "<li>";
+                                    include "documentation/parameters/{$parametr}";
+                                    echo "</li>";
+                                }
+                                ?>
+                            </ul>
                         </div>
                     </section>
                 </article>

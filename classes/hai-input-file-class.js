@@ -1,15 +1,29 @@
 import {HaiInput} from './hai-input-class.js';
 
+/**
+ *  Class representing a file input.
+ * @extends HaiInput
+ */
 class HaiInputFile extends HaiInput
 {
+    /** @type {Map} - Files selected by the user. */
     files = new Map();
+    /** @type {boolean} - If selecting multiple files is enabled. */
     multiple = false;
+    /** @type {int|null} - The maximum number of files a user can select. */
     maxFilesCount = null;
+    /** @type {int|null} - Maximum size of individual files the user can select. */
     maxFileSize = null;
+    /** @type {number|null} - The maximum total size of files that a user can select. */
     maxTotalSize = null;
+    /** @type {string|array|null} - Allowed file types that the user can select. */
     allowedFileTypes = null;
+
+    /** @type {HTMLElement|null} -  Generated file container element. */
     filesContainer = null;
+    /** @type {HTMLElement|null} - Generated message element. */
     messageContainer = null;
+    /** @type {HTMLInputElement|null} - Generated file input element. */
     innerFileInput = null;
 
     constructor(element = null, parameters = {})
@@ -18,6 +32,7 @@ class HaiInputFile extends HaiInput
         this.type = 'file';
     }
 
+    /** @override */
     saveValueToTwin()
     {
         let dataTransfer = new DataTransfer()
@@ -28,6 +43,7 @@ class HaiInputFile extends HaiInput
         this.twin.files = dataTransfer.files;
     }
 
+    /** @override */
     async transformElementToHaiInput()
     {
         let name = this.element.name;
@@ -62,7 +78,7 @@ class HaiInputFile extends HaiInput
         let wrapper = document.createElement('div');
         wrapper.classList.add('file-zone-wrapper');
         wrapper.tabIndex = -1;
-        if(this.multiple === true)
+        if (this.multiple === true)
         {
             wrapper.classList.add('multiple');
             twin.multiple = true;
@@ -99,7 +115,7 @@ class HaiInputFile extends HaiInput
         this.labelElement = labelDiv;
         this.warningElement = warningDiv;
 
-        if(this.label !== undefined)
+        if (this.label !== undefined)
         {
             labelDiv.textContent = this.label;
         }
@@ -107,7 +123,7 @@ class HaiInputFile extends HaiInput
 
         this.innerFileInput.addEventListener('change', (event) =>
         {
-            for(let file of this.innerFileInput.files)
+            for (let file of this.innerFileInput.files)
             {
                 this.addFile(file);
             }
@@ -115,7 +131,10 @@ class HaiInputFile extends HaiInput
             let dataTransfer = new DataTransfer();
             this.innerFileInput.files = dataTransfer.files; // Empty the file input.
         });
+
+        this.addWrapperEvents(wrapper);
     }
+
 
     addWrapperEvents(wrapper)
     {
@@ -148,6 +167,12 @@ class HaiInputFile extends HaiInput
         });
     }
 
+    /**
+     * Verifies the validity of the field value (according to the newly selected file).
+     *
+     * @param {File} file - Newly selected file.
+     * @returns {{success: boolean, message: string}|{success: boolean}} - Object with information about the result of the validity test. In case of a negative result, it also returns an error message.
+     */
     checkValidity(file)
     {
         let superValidity = super.checkValidity();
@@ -207,6 +232,11 @@ class HaiInputFile extends HaiInput
         return {success: true};
     }
 
+    /**
+     * Processes the selection (addition) of a new file.
+     *
+     * @param {File} file - Newly added file.
+     */
     addFile(file)
     {
         let validity = this.checkValidity(file);
@@ -279,6 +309,11 @@ class HaiInputFile extends HaiInput
         });
     }
 
+    /**
+     * Processes the removal of a file.
+     *
+     * @param {string} key - Key for the removed file in the map.
+     */
     removeFile(key)
     {
         this.files.delete(key);
@@ -295,6 +330,12 @@ class HaiInputFile extends HaiInput
         }
     }
 
+    /**
+     * Loads a preview image of the file.
+     *
+     * @param {File} file - The file for which to load the thumbnail.
+     * @param {HTMLImageElement} imgElement - The element in which to display the image.
+     */
     loadImageToElement(file, imgElement)
     {
         let reader = new FileReader();
@@ -317,6 +358,7 @@ class HaiInputFile extends HaiInput
         reader.readAsDataURL(file);
     }
 
+    /** @override */
     processParameters(parameters = null)
     {
         if(parameters === null)
@@ -384,6 +426,7 @@ class HaiInputFile extends HaiInput
         }
     }
 
+    /** @override */
     handleInput(event)
     {
         this.warningElement.textContent = '';
@@ -409,6 +452,13 @@ class HaiInputFile extends HaiInput
         this.innerFileInput.click();
     }
 
+    /**
+     * Formats the size in Bytes to higher orders (KB, MB, ...).
+     *
+     * @param {int} bytes - The number of Bytes to be formatted.
+     * @param {int} decimals - The number of decimal places to which the formatted number is to be rounded.
+     * @returns {string} - Formatted size.
+     */
     formatBytes(bytes, decimals = 2)
     {
         if (bytes === 0)

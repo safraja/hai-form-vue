@@ -1,17 +1,21 @@
 import {HaiInputText} from './hai-input-text-class.js';
 
+/**
+ *  Class representing a number input.
+ * @extends HaiInputText
+ */
 class HaiInputNumber extends HaiInputText
 {
-    /** @type {number} - The minimum value to accept for this input.*/
-    min;
-    /** @type {number} - The maximum value to accept for this input.*/
-    max;
+    /** @type {number|null} - The minimum value to accept for this input.*/
+    min = null;
+    /** @type {number|null} - The maximum value to accept for this input.*/
+    max = null;
     /** @type {number} - The number value which should by added/subtract from current input value on scroll or arrow up/down.*/
     step = 1;
     /** @type {boolean} - If input should accept exponent, currently has no effect.*/
     allowENotation = false;
-    /** @type {boolean} - If input should automatically strip leading zeroes.*/
-    stripLeadingZeroes = true;
+    /** @type {boolean} - If input should automatically strip leading zeros.*/
+    stripLeadingZeros = true;
     /** @type {string} - Decimal separator.*/
     decimalSeparator = ',';
     /** @type {string} - Delimiter of thousands groups.*/
@@ -27,6 +31,7 @@ class HaiInputNumber extends HaiInputText
         this.type = 'number';
     }
 
+    /** @override */
     processParameters(parameters = null)
     {
         if(parameters === null)
@@ -71,9 +76,9 @@ class HaiInputNumber extends HaiInputText
             }
         }
 
-        if(parameters.stripLeadingZeroes !== undefined)
+        if(parameters.stripLeadingZeros !== undefined)
         {
-            this.stripLeadingZeroes = Boolean(parameters.stripLeadingZeroes);
+            this.stripLeadingZeros = Boolean(parameters.stripLeadingZeros);
         }
 
         if(parameters.decimalSeparator !== undefined)
@@ -106,6 +111,7 @@ class HaiInputNumber extends HaiInputText
         }
     }
 
+    /** @override */
     handleInput(event)
     {
         let value = event.target.value;
@@ -127,6 +133,7 @@ class HaiInputNumber extends HaiInputText
         return {success: true};
     }
 
+    /** @override */
     extractRawValue(formattedValue = null)
     {
         let result = '';
@@ -160,6 +167,7 @@ class HaiInputNumber extends HaiInputText
         return result;
     }
 
+    /** @override */
     formatValue(rawValue = null)
     {
         let result = '';
@@ -190,7 +198,7 @@ class HaiInputNumber extends HaiInputText
             let decimalPart = null;
             let integerPart = numberParts[0];
 
-            if(this.stripLeadingZeroes)
+            if(this.stripLeadingZeros)
             {
                 integerPart = integerPart.replace(/^0+/g, '');
             }
@@ -230,6 +238,7 @@ class HaiInputNumber extends HaiInputText
         return result;
     }
 
+    /** @override */
     checkValidity()
     {
         let superValidity = super.checkValidity();
@@ -245,12 +254,12 @@ class HaiInputNumber extends HaiInputText
             return {success: false, message: 'Please input valid number'};
         }
 
-        if(Number(this.rawValue) > this.max)
+        if(this.max !== null && Number(this.rawValue) > this.max)
         {
             return {success: false, message: `Number must be lower or same as ${this.max}`};
         }
 
-        if(Number(this.rawValue) < this.min)
+        if(this.min !== null && Number(this.rawValue) < this.min)
         {
             return {success: false, message: `Number must be higher or same as ${this.min}`};
         }
@@ -258,6 +267,12 @@ class HaiInputNumber extends HaiInputText
         return {success: true};
     }
 
+    /**
+     * Formats a text string containing a number according to the selected style.
+     *
+     * @param {string} numberString - The number to be formatted.
+     * @returns {string} - Formatted form of the number.
+     */
     applyGroupStyle(numberString)
     {
         switch (this.thousandsGroupStyle)
@@ -277,6 +292,16 @@ class HaiInputNumber extends HaiInputText
         return numberString;
     }
 
+    /**
+     * Specifies (based on the previous state and the action performed) to which position (number of characters from
+     * the start of the value text) in the form field text to move the cursor.
+     *
+     * @param {int} prevPosition - Previous cursor position.
+     * @param {string} oldValue - Previous field value.
+     * @param {string} newValue - New field value.
+     * @param {InputEvent} event - The event that was executed.
+     * @returns {int} - New cursor position.
+     */
     getNextCursorPosition(prevPosition, oldValue, newValue, event)
     {
         if (oldValue.length === prevPosition - 1)
@@ -295,6 +320,14 @@ class HaiInputNumber extends HaiInputText
         return prevPosition + this.getPositionOffset(prevPosition, oldValue, newValue);
     }
 
+    /**
+     * Calculates by how many places the cursor should move.
+     *
+     * @param {int} prevPosition - Previous cursor position.
+     * @param {string} oldValue - Previous field value.
+     * @param {string} newValue - New field value-
+     * @returns {number} - The calculated number of positions to move the cursor.
+     */
     getPositionOffset (prevPosition, oldValue, newValue)
     {
         let oldRawValue, newRawValue, lengthOffset;
@@ -306,6 +339,12 @@ class HaiInputNumber extends HaiInputText
         return (lengthOffset !== 0) ? (lengthOffset / Math.abs(lengthOffset)) : 0;
     }
 
+    /**
+     * Changes the current value of the field by a static number, unless this violates the maximum or
+     * minimum specified value of the field. If so, the field value remains the same.
+     *
+     * @param {number} change - A number specifying by how much the field value should change.
+     */
     changeNumberValue(change)
     {
         let rawValue = Number(this.rawValue);
@@ -315,15 +354,16 @@ class HaiInputNumber extends HaiInputText
         }
 
         let newRawValue = rawValue + Number(change);
-        if((change > 0 && newRawValue > this.max) || (change < 0 && newRawValue < this.min))
+        if((change > 0 && this.max !== null && newRawValue > this.max)
+            || (change < 0 && this.min !== null && newRawValue < this.min))
         {   // Dont increase over max or decrease below min limits.
             return;
         }
-        if((change < 0 && newRawValue > this.max))
+        if((change < 0 && this.max !== null && newRawValue > this.max))
         {   // If decreasing when over max, set max.
             newRawValue = this.max;
         }
-        if((change > 0 && newRawValue < this.min))
+        if((change > 0 && this.min !== null && newRawValue < this.min))
         {   // If increasing when below min, set min.
             newRawValue = this.min;
         }
@@ -334,6 +374,7 @@ class HaiInputNumber extends HaiInputText
         this.saveValueToTwin();
     }
 
+    /** @override */
     handleKeyAction(event)
     {
         let submit = this.verifyEnterKey(event);
@@ -357,6 +398,7 @@ class HaiInputNumber extends HaiInputText
         }
     }
 
+    /** @override */
     handleWheel(event)
     {
         event.preventDefault();

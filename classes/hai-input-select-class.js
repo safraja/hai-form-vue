@@ -1,20 +1,38 @@
 import {HaiInput} from './hai-input-class.js';
 import Fuse from '../dependencies/fuse.basic.esm.min.js';
 
+/**
+ *  Class representing a select.
+ * @extends HaiInput
+ */
 class HaiInputSelect extends HaiInput
 {
+    /** @type {Map} - Drop-down menu options. */
     options = new Map();
+    /** @type {string|null} - The address of the file from which to load the options. */
+    optionsSource = null;
+    /** @type {Set} - Option groups. */
     optGroups = new Set();
+    /** @type {Map} - Selected options. */
     selectedOptions = new Map();
+    /** @type {Set} - Values of the selected options. */
     valuesSet = new Set();
+    /** @type {boolean} - If the user should be able to select multiple options. */
     multiple = false;
+    /** @type {boolean} - Whether to display a button to remove the selected options. */
     showTagRemoveButton = true;
+    /** @type {boolean} - Whether to display the options search box. */
     enableSearch = true;
+    /** @type {int} - Tab index of the field. */
     tabIndex = 0;
 
+    /** @type {HTMLElement} - Generated options container element. */
     optionsItemsContainer = null;
+    /** @type {HTMLElement} - Generated tags container element. */
     tagsContainer = null;
+    /** @type {HTMLElement} - Generated search input element. */
     searchInput = null;
+    /** @type {HTMLElement} - Generated pseudo input. */
     inputText = null;
 
     constructor(element = null, parameters = {})
@@ -23,6 +41,7 @@ class HaiInputSelect extends HaiInput
         this.type = 'select';
     }
 
+    /** @override */
     async transformElementToHaiInput()
     {
         let name = this.element.name;
@@ -204,6 +223,11 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Find options through the Fuse library.
+     *
+     * @param {Event} event - Input event for searching.
+     */
     useFuseSearch(event)
     {
         let searchValue = event.target.value;
@@ -232,6 +256,11 @@ class HaiInputSelect extends HaiInput
         this.renderOptionsItems(searchResultMap);
     }
 
+    /**
+     * Processes an HTML element (currently only select) and retrieves options from it.
+     *
+     * @param {HTMLElement} element - Element to be processed.
+     */
     processElementContentAndAttributes(element = null)
     {
         if(element === null)
@@ -294,6 +323,7 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /** @override */
     async processParameters(parameters = null)
     {
         if(parameters === null)
@@ -305,6 +335,11 @@ class HaiInputSelect extends HaiInput
         if(parameters.multiple !== undefined)
         {
             this.multiple = Boolean(parameters.multiple);
+        }
+
+        if(parameters.enableSearch !== undefined)
+        {
+            this.enableSearch = Boolean(parameters.enableSearch);
         }
 
         if(parameters.list !== undefined && parameters.options === undefined)
@@ -351,13 +386,20 @@ class HaiInputSelect extends HaiInput
             }
         }
 
+        if (parameters.optionsSource !== undefined)
+        {
+            if(typeof parameters.optionsSource !== 'string')
+            {
+                console.warn('HaiForm: Parameter "optionsSource" must be a string.');
+            }
+            else
+            {
+                parameters.options = await this.fetchFile(parameters.optionsSource);
+            }
+        }
+        
         if (parameters.options !== undefined)
         {
-            if(typeof parameters.options === 'string')
-            {
-                parameters.options = await this.fetchFile(parameters.options);
-            }
-
             if(parameters.options instanceof Map)
             {
                 for(let [key, option] of parameters.options)
@@ -440,13 +482,13 @@ class HaiInputSelect extends HaiInput
                 }
             }
         }
-
-        if(parameters.enableSearch !== undefined)
-        {
-            this.enableSearch = Boolean(parameters.enableSearch);
-        }
     }
 
+    /**
+     * Displays a drop-down menu.
+     *
+     * @param {Event} event - The event that triggered dropdown show.
+     */
     showDropdown(event)
     {
         let dropdown = this.element.querySelector('.dropdown');
@@ -465,6 +507,11 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Hides the drop-down menu.
+     *
+     * @param {Event} event - The event that triggered dropdown hide.
+     */
     hideDropdown(event)
     {
         let dropdown = this.element.querySelector('.dropdown');
@@ -475,6 +522,7 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /** @override */
     handleInput(event)
     {
         let optionElement;
@@ -497,8 +545,15 @@ class HaiInputSelect extends HaiInput
         {
             this.selectOption(option);
         }
+
+        return {success: true};
     }
 
+    /**
+     * Select one of the options.
+     *
+     * @param {object} option - Option to be selected.
+     */
     selectOption(option)
     {
         if(this.multiple === true)
@@ -536,6 +591,11 @@ class HaiInputSelect extends HaiInput
 
     }
 
+    /**
+     * Unselect one of the options.
+     *
+     * @param {object} option - Option to be unselected.
+     */
     unselectOption(option)
     {
         if(this.multiple === false)
@@ -553,6 +613,9 @@ class HaiInputSelect extends HaiInput
         this.showOptionItem(option);
     }
 
+    /**
+     * Sets the selected options of the associated selector (twin), based on the selected options in this field.
+     */
     setTwinOptions()
     {
         this.twin.innerHTML = '';
@@ -567,11 +630,17 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Adds a tag for the newly selected option.
+     *
+     * @param {object} option - The option for which the tag should be added.
+     * @param {HTMLElement|null} tagsUl - The element where the tag should be placed (if null, the default class element is used).
+     */
     addTag(option, tagsUl = null)
     {
         if(tagsUl === null)
         {
-            tagsUl = this.element.querySelector('.tags');
+            tagsUl = this.tagsContainer;
         }
         let tag = document.createElement('li');
         tag.classList.add('tag');
@@ -596,6 +665,12 @@ class HaiInputSelect extends HaiInput
         tagsUl.appendChild(tag)
     }
 
+    /**
+     * Remove a tag of unselected option.
+     *
+     * @param {object} option - The option which tags should be removed.
+     * @param {HTMLElement|null} tagsUl - The element where the tag is placed (if null, the default class element is used).
+     */
     removeTag(option, tagsUl = null)
     {
         if(tagsUl === null)
@@ -616,6 +691,13 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Generates items (HTML elements) of the drop-down menu.
+     *
+     * @param {Map|null} optionsList - Options for which to generate HTML elements for the drop-down menu (if null, default class options attribute is used).
+     * @param {HTMLElement|null} optionsUl - The element where HTML elements should be placed (if null, the default class element is used).
+     * @param {Set|null} groupsList - Groups of options (if null, default class opt. groups attribute is used).
+     */
     renderOptionsItems(optionsList = null, optionsUl = null, groupsList = null)
     {
         if(optionsList === null)
@@ -709,6 +791,13 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Add an option (HTML element) to the drop-down menu.
+     *
+     * @param {object} option - Option for which to add an HTML element.
+     * @param {string} key - Key of added option.
+     * @param {HTMLElement|null} optionsUl - The element where HTML elements should be placed (if null, the default class element is used).
+     */
     addOptionItem(option, key, optionsUl = null)
     {
         if(optionsUl === null)
@@ -742,6 +831,11 @@ class HaiInputSelect extends HaiInput
         optionsUl.appendChild(label);
     }
 
+    /**
+     * Remove an option (HTML element) from the drop-down menu.
+     *
+     * @param {object} option - Option which HTML element should be removed.
+     */
     removeOptionItem(option)
     {
         let optionItem = this.optionsItemsContainer.querySelector(`.option[data-key='${this.generateOptionKey(option)}']`);
@@ -751,6 +845,11 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Hide an option (HTML element) from the drop-down menu.
+     *
+     * @param {object} option - Option whose HTML element should be hidden.
+     */
     hideOptionItem(option)
     {
         let optionItem = this.optionsItemsContainer.querySelector(`.option[data-key='${this.generateOptionKey(option)}']`);
@@ -764,6 +863,9 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Show all options (HTML elements) from the drop-down menu, in other words remove their hidden status.
+     */
     showAllOptionItems()
     {
         let options = this.optionsItemsContainer.querySelectorAll('.option.selected');
@@ -780,6 +882,11 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Show an option (HTML element) in the drop-down menu, in other words remove its hidden status.
+     *
+     * @param {object} option - Option whose HTML element should be shown.
+     */
     showOptionItem(option)
     {
         let optionItem = this.optionsItemsContainer.querySelector(`.option[data-key='${this.generateOptionKey(option)}']`);
@@ -793,6 +900,14 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * For option group headers, updates their attribute for the number of visible
+     * options (data-unselected-options) based on the specified value. If the
+     * updated option does not belong to any group (has no parent header), function does nothing.
+     *
+     * @param {HTMLElement} optionItem - The option whose group header is to be updated.
+     * @param {int} addValue - By how much the value should be changed.
+     */
     updateGroupHeaderUnselectedOpt(optionItem, addValue)
     {
         let groupHeader;
@@ -816,11 +931,23 @@ class HaiInputSelect extends HaiInput
         }
     }
 
+    /**
+     * Verify whether the option is selected.
+     *
+     * @param {object} option - Option to be tested.
+     * @returns {boolean} - True if the option is selected, otherwise false.
+     */
     isSelected(option)
     {
         return this.selectedOptions.has(this.generateOptionKey(option));
     }
 
+    /**
+     * Generates a key for the selected option.
+     *
+     * @param {object} option - The option for which the key is to be generated.
+     * @returns {string} - Generated key.
+     */
     generateOptionKey(option)
     {
         if(option.key !== undefined)
@@ -830,6 +957,12 @@ class HaiInputSelect extends HaiInput
         return `${option.label} (${option.value})`;
     }
 
+    /**
+     * Downloads data from an external file.
+     *
+     * @param {string} fileName - File address
+     * @returns {Promise<any>} - File data.
+     */
     async fetchFile(fileName)
     {
         let response = await fetch(fileName)
