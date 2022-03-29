@@ -23,6 +23,8 @@ class HaiInputSelect extends HaiInput
     showTagRemoveButton = true;
     /** @type {boolean} - Whether to display the options search box. */
     enableSearch = true;
+    /** @type {string|null} - The text of the placeholder for the field. Only works with multiple select.*/
+    placeholder = null;
     /** @type {int} - Tab index of the field. */
     tabIndex = 0;
 
@@ -95,6 +97,12 @@ class HaiInputSelect extends HaiInput
         {
             let tagsUl = document.createElement('ul');
             tagsUl.classList.add('tags');
+
+            if(this.placeholder !== null)
+            {
+                tagsUl.setAttribute('data-placeholder', this.placeholder);
+            }
+
             this.tagsContainer = tagsUl;
             inputField.appendChild(tagsUl);
 
@@ -340,6 +348,18 @@ class HaiInputSelect extends HaiInput
         if(parameters.enableSearch !== undefined)
         {
             this.enableSearch = Boolean(parameters.enableSearch);
+        }
+
+        if (parameters.placeholder !== undefined)
+        {
+            if(typeof parameters.placeholder !== 'string')
+            {
+                console.warn(`HaiForm: Parameter "placeholder" must be a string.`);
+            }
+            else
+            {
+                this.placeholder = parameters.placeholder;
+            }
         }
 
         if(parameters.list !== undefined && parameters.options === undefined)

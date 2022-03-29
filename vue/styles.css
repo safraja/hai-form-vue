@@ -13,6 +13,10 @@
     padding: 5px;
     -webkit-tap-highlight-color: transparent;
 }
+::placeholder
+{
+    opacity: 0.6;
+}
 
 label
 {
@@ -183,12 +187,30 @@ label .alert
 {
     display: flex;
 }
+.select-wrapper .input-field .input-text[data-value='']
+{
+    opacity: 0.6;
+}
 .select-wrapper .tags
 {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 5px;
     padding: 0;
+}
+.select-wrapper .tags:empty::after
+{
+    content: attr(data-placeholder);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 5px;
+    opacity: 0.6;
+    box-sizing: border-box;
 }
 .select-wrapper .tags li
 {

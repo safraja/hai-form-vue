@@ -284,7 +284,6 @@ class HaiInputSwitch extends HaiInput
     handleInputOfMultipleVariant(event)
     {
         event.preventDefault();
-        let newValue;
 
         let clickedOption = event.target;
         if(clickedOption.matches('.option') === false)

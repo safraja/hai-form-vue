@@ -80,12 +80,12 @@ export default {
 
         if(this.type === 'switch')
         {
-           // this.haiInput.rawValue = this.haiInput.extractRawValue(this.value);
-           // this.haiInput.value = this.haiInput.formatValue(this.value);
+            // this.haiInput.rawValue = this.haiInput.extractRawValue(this.value);
+            // this.haiInput.value = this.haiInput.formatValue(this.value);
 
             this.haiInput.convertOptionsToObjectArray();
 
-            if(this.haiInput.variant === 'on/off')
+            if (this.haiInput.variant === 'on/off')
             {
                 if (this.haiInput.optionOnValue === null)
                 {
@@ -95,7 +95,17 @@ export default {
                 {
                     this.haiInput.options = this.haiInput.options.reverse();
                 }
+
+                if (this.haiInput.rawValue === this.haiInput.optionOnValue)
+                {
+                    this.haiInput.element.setAttribute('data-state', 'on');
+                }
+                else
+                {
+                    this.haiInput.element.setAttribute('data-state', 'off');
+                }
             }
+
 
             if(this.value === '' && !this.haiInput.options.includes(''))
             {
@@ -407,13 +417,12 @@ export default {
     template: `
         <template v-if='this.type === "switch"'>
             <div class='label-text'>{{ label }}</div>
-            <div ref='wrapper' class='switch-wrapper' v-bind:data-variant='this.haiInput.variant' 
-                v-bind:data-state='(this.haiInput.optionOnValue === this.value) ? "on" : "off"'>
+            <div ref='wrapper' class='switch-wrapper' v-bind:data-variant='this.haiInput.variant'>
                 <div class='option-group' v-on:click='handleInput($event)'>
                     <span v-if='this.haiInput.variant === "on/off"' ref='toggle' class='toggle'></span>
                     <label v-for='item in this.haiInput.options' v-bind:class='(this.haiInput.variant === "multiple" 
-                            && item.value === this.haiInput.value) ? "option selected" : "option"'>
-                        <input type='radio' v-bind:VALUE='item.value'>
+                            && item.value === this.value) ? "option selected" : "option"'>
+                        <input type='radio' v-bind:VALUE='item.value' v-bind:checked='(item.value === this.value)'>
                         <span>{{ (this.haiInput.variant === 'multiple') ? item.label : '' }}</span>
                     </label>
                 </div>

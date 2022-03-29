@@ -646,7 +646,8 @@
                         <div data-code-tab='parametry' class='doc-tab'>
                             <ul>
                                 <?php
-                                $parametry = ["options.html", "optionsSource.html", "multiple.html", "enableSearch.html"];
+                                $parametry = ["options.html", "optionsSource.html", "multiple.html", "enableSearch.html",
+                                    "placeholder.html"];
 
                                 foreach ($parametry as $parametr)
                                 {
@@ -675,6 +676,7 @@
                     let test10 = document.getElementById('test10');
                     let parameters = {
                         label: 'Test 10',
+                        placeholder: 'Click to select',
                         optionsSource: 'employee-data.json',
                         multiple: true
                     };
