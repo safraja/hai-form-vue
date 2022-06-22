@@ -79,6 +79,11 @@ class HaiInputText extends HaiInput
             this.element.placeholder = this.placeholder;
         }
 
+        if(this.disabled)
+        {
+            this.twin.disabled = true;
+        }
+
         if(this.label !== undefined)
         {
             this.labelElement.textContent = this.label;
@@ -178,6 +183,11 @@ class HaiInputText extends HaiInput
     /** @override */
     handleInput(event)
     {
+        if(this.readonly || this.disabled)
+        {
+            event.target.value = this.value;
+            return {success: false};
+        }
         let value = event.target.value;
 
         if(this.mask != null)

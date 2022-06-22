@@ -24,6 +24,8 @@ class HaiInputNumber extends HaiInputText
     thousandsGroupStyle = 'thousand';
     /** @type {boolean} - If the number should be automatically formatted (masked).*/
     enableValueFormation = true;
+    /** @type {int|null} - The maximum number of digits an input can have after the decimal point.*/
+    maxDecimalDigitsCount = null;
 
     constructor(element = null, parameters = {})
     {
@@ -34,7 +36,7 @@ class HaiInputNumber extends HaiInputText
     /** @override */
     processParameters(parameters = null)
     {
-        if(parameters === null)
+        if (parameters === null)
         {
             parameters = this.parameters;
         }
@@ -42,7 +44,7 @@ class HaiInputNumber extends HaiInputText
 
         if (parameters.min !== undefined)
         {
-            if(isNaN(parameters.min) === true)
+            if (isNaN(parameters.min) === true)
             {
                 console.warn(`HaiForm: Parameter "min" must be a number.`);
             }
@@ -52,9 +54,9 @@ class HaiInputNumber extends HaiInputText
             }
         }
 
-        if(parameters.max !== undefined)
+        if (parameters.max !== undefined)
         {
-            if(isNaN(parameters.max) === true)
+            if (isNaN(parameters.max) === true)
             {
                 console.warn(`HaiForm: Parameter "max" must be a number.`);
             }
@@ -64,37 +66,37 @@ class HaiInputNumber extends HaiInputText
             }
         }
 
-        if(parameters.step !== undefined)
+        if (parameters.step !== undefined)
         {
-            if(isNaN(parameters.step) === true)
+            if (isNaN(parameters.step) === true)
             {
                 console.warn(`HaiForm: Parameter "step" must be a number, reverting back to "1".`);
             }
             else
             {
-                this.max = parameters.step;
+                this.step = parameters.step;
             }
         }
 
-        if(parameters.stripLeadingZeros !== undefined)
+        if (parameters.stripLeadingZeros !== undefined)
         {
             this.stripLeadingZeros = Boolean(parameters.stripLeadingZeros);
         }
 
-        if(parameters.decimalSeparator !== undefined)
+        if (parameters.decimalSeparator !== undefined)
         {
             this.decimalSeparator = parameters.decimalSeparator;
         }
 
-        if(parameters.delimiter !== undefined)
+        if (parameters.delimiter !== undefined)
         {
             this.delimiter = parameters.delimiter;
         }
 
-        if(parameters.thousandsGroupStyle !== undefined)
+        if (parameters.thousandsGroupStyle !== undefined)
         {
-            let supportedStyles = ['thousand', 'lakh','wan'];
-            if(supportedStyles.includes(parameters.thousandsGroupStyle) === false)
+            let supportedStyles = ['thousand', 'lakh', 'wan'];
+            if (supportedStyles.includes(parameters.thousandsGroupStyle) === false)
             {
                 console.warn('HaiForm: Given thousands group style is not supported, reverting back to "thousand". ' +
                     'Supported types are:', supportedStyles);
@@ -105,20 +107,44 @@ class HaiInputNumber extends HaiInputText
             }
         }
 
-        if(parameters.enableValueFormation !== undefined)
+        if (parameters.enableValueFormation !== undefined)
         {
             this.enableValueFormation = Boolean(parameters.enableValueFormation);
+        }
+
+        if (parameters.maxDecimalDigitsCount !== undefined)
+        {
+            if (isNaN(parameters.maxDecimalDigitsCount) === true)
+            {
+                console.warn(`HaiForm: Parameter "maxDecimalDigitsCount" must be a number, reverting back to null.`);
+            }
+            else
+            {
+                this.maxDecimalDigitsCount = parameters.maxDecimalDigitsCount;
+            }
         }
     }
 
     /** @override */
     handleInput(event)
     {
+        if (this.readonly || this.disabled)
+        {
+            event.target.value = this.value;
+            return {success: false};
+        }
+
         let value = event.target.value;
         let oldValue = this.value;
         let cursorPosition = event.target.selectionEnd;
 
         let rawValue = this.extractRawValue(value);
+
+        if (isNaN(rawValue) === false && this.maxDecimalDigitsCount !== null)
+        {
+            rawValue = this.truncateDecimals(rawValue, this.maxDecimalDigitsCount);
+        }
+
         this.rawValue = rawValue;
         let formattedValue = this.formatValue(rawValue);
         this.value = formattedValue;
@@ -126,11 +152,36 @@ class HaiInputNumber extends HaiInputText
 
         this.saveValueToTwin();
 
-        let newCursorPosition = this.getNextCursorPosition(cursorPosition,oldValue,
+        let newCursorPosition = this.getNextCursorPosition(cursorPosition, oldValue,
             formattedValue, event);
         event.target.setSelectionRange(newCursorPosition, newCursorPosition);
 
         return {success: true};
+    }
+
+    /**
+     * Truncates the number to the desired number of decimal places (for 0, completely removes the decimal point).
+     *
+     * @param {number|string} number - The number to be truncated.
+     * @param {int} digits - The number of decimal digits to which to reduce the number.
+     * @returns {string} - Truncated number.
+     */
+    truncateDecimals(number, digits)
+    {
+        let numberString = number.toString();
+        let decimalPosition = numberString.indexOf('.');
+        let substringLength;
+
+        if(decimalPosition === -1)
+        {
+            substringLength = numberString.length;
+        }
+        else
+        {
+            substringLength = 1 + decimalPosition + digits;
+        }
+
+        return numberString.substr(0, substringLength);
     }
 
     /** @override */
@@ -138,12 +189,12 @@ class HaiInputNumber extends HaiInputText
     {
         let result = '';
 
-        if(formattedValue === null)
+        if (formattedValue === null)
         {
             formattedValue = this.value;
         }
 
-            // Strip alphabet letters.
+        // Strip alphabet letters.
         result = formattedValue.replace(/[A-Za-z]/g, '')
             // Replace the first decimal marks (dots, commas and arabic decimal separator) with reserved placeholder.
             .replace(/[.,٫]/, 'M')
@@ -172,23 +223,23 @@ class HaiInputNumber extends HaiInputText
     {
         let result = '';
 
-        if(rawValue === null)
+        if (rawValue === null)
         {
             rawValue = this.rawValue;
         }
 
         rawValue = String(rawValue);
 
-        if(rawValue === '' || rawValue === '-' || rawValue === '+')
+        if (rawValue === '' || rawValue === '-' || rawValue === '+')
         {   // Do not format empty value or unfinished number.
             return rawValue;
         }
 
-        if(this.enableValueFormation)
+        if (this.enableValueFormation)
         {
             let sign;
 
-            if(rawValue.slice(0, 1) === '-' || rawValue.slice(0, 1) === '+')
+            if (rawValue.slice(0, 1) === '-' || rawValue.slice(0, 1) === '+')
             {
                 sign = rawValue.slice(0, 1);
             }
@@ -198,35 +249,35 @@ class HaiInputNumber extends HaiInputText
             let decimalPart = null;
             let integerPart = numberParts[0];
 
-            if(this.stripLeadingZeros)
+            if (this.stripLeadingZeros)
             {
                 integerPart = integerPart.replace(/^0+/g, '');
             }
 
-            if(integerPart === '')
+            if (integerPart === '')
             {
                 integerPart = '0';
             }
 
-            if(numberParts[1] != null && numberParts[1] !== '')
+            if (numberParts[1] != null && numberParts[1] !== '')
             {
                 decimalPart = numberParts[1];
             }
 
             integerPart = this.applyGroupStyle(integerPart);
 
-            if(sign === '-')
+            if (sign === '-')
             {
                 result += sign;
             }
             result += integerPart;
 
-            if(numberParts[1] != null)
+            if (numberParts[1] != null)
             {
                 result += this.decimalSeparator;
             }
 
-            if(decimalPart !== null)
+            if (decimalPart !== null)
             {
                 result += decimalPart;
             }
@@ -243,23 +294,23 @@ class HaiInputNumber extends HaiInputText
     {
         let superValidity = super.checkValidity();
 
-        if(superValidity.success === false)
+        if (superValidity.success === false)
         {
             return superValidity;
         }
 
-        if((isNaN(this.rawValue) === true)
+        if ((isNaN(this.rawValue) === true)
             || (this.allowENotation === false && this.rawValue.toLowerCase().includes('e')))
         {
             return {success: false, message: 'Please input valid number'};
         }
 
-        if(this.max !== null && Number(this.rawValue) > this.max)
+        if (this.max !== null && Number(this.rawValue) > this.max)
         {
             return {success: false, message: `Number must be lower or same as ${this.max}`};
         }
 
-        if(this.min !== null && Number(this.rawValue) < this.min)
+        if (this.min !== null && Number(this.rawValue) < this.min)
         {
             return {success: false, message: `Number must be higher or same as ${this.min}`};
         }
@@ -304,15 +355,14 @@ class HaiInputNumber extends HaiInputText
      */
     getNextCursorPosition(prevPosition, oldValue, newValue, event)
     {
-        if (oldValue.length === prevPosition - 1)
+        if (oldValue.length === prevPosition - 1 || event.inputType === 'insertFromPaste')
         {
             return newValue.length;
         }
         let oldRawValue = this.extractRawValue(oldValue);
         let newRawValue = this.extractRawValue(newValue);
 
-        if(event.inputType === 'deleteContentForward' &&
-            oldRawValue === newRawValue)
+        if (event.inputType === 'deleteContentForward' && oldRawValue === newRawValue)
         {   // If user tried to delete delimiter, move the cursor position.
             return prevPosition + 1;
         }
@@ -328,7 +378,7 @@ class HaiInputNumber extends HaiInputText
      * @param {string} newValue - New field value-
      * @returns {number} - The calculated number of positions to move the cursor.
      */
-    getPositionOffset (prevPosition, oldValue, newValue)
+    getPositionOffset(prevPosition, oldValue, newValue)
     {
         let oldRawValue, newRawValue, lengthOffset;
 
@@ -348,22 +398,22 @@ class HaiInputNumber extends HaiInputText
     changeNumberValue(change)
     {
         let rawValue = Number(this.rawValue);
-        if(isNaN(rawValue))
+        if (isNaN(rawValue))
         {
             rawValue = 0;
         }
 
         let newRawValue = rawValue + Number(change);
-        if((change > 0 && this.max !== null && newRawValue > this.max)
+        if ((change > 0 && this.max !== null && newRawValue > this.max)
             || (change < 0 && this.min !== null && newRawValue < this.min))
         {   // Dont increase over max or decrease below min limits.
             return;
         }
-        if((change < 0 && this.max !== null && newRawValue > this.max))
+        if ((change < 0 && this.max !== null && newRawValue > this.max))
         {   // If decreasing when over max, set max.
             newRawValue = this.max;
         }
-        if((change > 0 && this.min !== null && newRawValue < this.min))
+        if ((change > 0 && this.min !== null && newRawValue < this.min))
         {   // If increasing when below min, set min.
             newRawValue = this.min;
         }
@@ -377,9 +427,13 @@ class HaiInputNumber extends HaiInputText
     /** @override */
     handleKeyAction(event)
     {
+        if (this.readonly || this.disabled)
+        {
+            return;
+        }
         let submit = this.verifyEnterKey(event);
 
-        if(submit === false)
+        if (submit === false)
         {
             switch (event.code)
             {
@@ -402,7 +456,11 @@ class HaiInputNumber extends HaiInputText
     handleWheel(event)
     {
         event.preventDefault();
-        if(event.deltaY < 0)
+        if (this.readonly || this.disabled)
+        {
+            return;
+        }
+        if (event.deltaY < 0)
         {
             this.changeNumberValue(Number(this.step));
         }

@@ -151,13 +151,17 @@ class HaiInputUrl extends HaiInputText
     /** @override */
     handleInput(event)
     {
+        if(this.readonly || this.disabled)
+        {
+            event.target.value = this.value;
+            return {success: false};
+        }
         let value = event.target.value;
 
-        /*let formattedValue = this.formatValue(value);
-
-        this.value = formattedValue;
-        this.rawValue = formattedValue;
-        event.target.value = formattedValue;*/
+        if(this.mask != null)
+        {
+            value = this.formatValueByMask(value);
+        }
 
         this.value = value;
         this.rawValue = value;

@@ -22,12 +22,6 @@ export default {
             'type': String,
             'default': ''
         },
-        'mask': {
-            'type': String
-        },
-        'placeholder': {
-            'type': String
-        },
         'type': {
             'type': String,
             'default': 'text'
@@ -35,15 +29,74 @@ export default {
         'name': {
             'type': String
         },
+        'required': {
+            'type': Boolean
+        },
+        'disabled': {
+            'type': Boolean
+        },
+        'readonly': {
+            'type': Boolean
+        },
+        // Text type attributes.
+        'mask': {
+            'type': String
+        },
+        'mask-tokens': {
+            'type': [String, Object]
+        },
+        'placeholder': {
+            'type': String
+        },
+        'max-length': {
+            'type': [String, Number],
+        },
+        'min-length': {
+            'type': [String, Number],
+        },
         // Number type attributes.
         'min': {
             'type': Number,
         },
         'max': {
             'type': Number,
-        }
-        ,'allow-e-notation': {
+        },
+        'allow-e-notation': {
             'type': Boolean,
+        },
+        'decimal-separator': {
+            'type': String,
+        },
+        'delimiter': {
+            'type': String,
+        },
+        'enable-value-formation': {
+            'type': Boolean,
+            'default': true
+        },
+        'step': {
+            'type': [String, Number]
+        },
+        'strip-leading-zeros': {
+            'type': Boolean,
+            'default': true
+        },
+        'thousand-group-style': {
+            'type': String,
+        },
+        // URL type attributes.
+        'allow-part': {
+            'type': [String, Object],
+        },
+        'default-scheme': {
+            'type': String,
+        },
+        'require-host': {
+            'type': Boolean,
+            'default': true
+        },
+        'strip-part': {
+            'type': [String, Object],
         },
         // Switch type attributes.
         'options': {
@@ -57,7 +110,34 @@ export default {
         },
         'multiple': {
             'type': Boolean
-        }
+        },
+        'options-on-value': {
+            'type': String
+        },
+        // Select type attributes.
+        'options-source': {
+            'type': String
+        },
+        'enable-search': {
+            'type': Boolean,
+            'default': true
+        },
+        // File type attributes.
+        'allowed-file-types': {
+            'type': [String, Array]
+        },
+        'allowed-schemes': {
+            'type': [String, Array]
+        },
+        'max-files-count': {
+            'type': [String, Number],
+        },
+        'max-file-size': {
+            'type': [String, Number],
+        },
+        'max-total-size': {
+            'type': [String, Number],
+        },
     },
     styles: ["@import './vue/styles.css'"],
     data()
@@ -233,6 +313,11 @@ export default {
         {
             twin.name = this.name;
         }
+        if(this.disabled)
+        {
+            twin.disabled = true;
+        }
+
         if(this.inputTwin !== undefined)
         {
             twin.id = this.inputTwin;
@@ -257,8 +342,7 @@ export default {
         }
 
 
-        //TODO
-        //test
+        //TODO - management of inputmode, not crucial, but should be addressed in the future.
         if(this.innerType === 'number')
         {
             this.inputmode = 'numeric';
@@ -318,7 +402,7 @@ export default {
 
                 case "select":
                     this.haiInput = new HaiInputSelect();
-                    parameters.push('options', 'optGroups', 'selectedOptions', 'valuesSet', 'multiple',
+                    parameters.push('options', 'optionsSource', 'optGroups', 'selectedOptions', 'valuesSet', 'multiple',
                         'showTagRemoveButton', 'enableSearch', 'tabIndex', 'list');
                     break;
 
@@ -328,10 +412,14 @@ export default {
                     break;
             }
 
+            parameters.push('value', 'required', 'label', 'readonly', 'disabled')
+
+            //console.log(`%cNew hai-input element (type ${this.innerType})`, 'font-size:18px')
             for (let parameter of parameters)
             {
                 if (this[parameter] !== undefined)
                 {
+                    //console.log('Parameter:', parameter, 'Value:', this[parameter])
                     this.haiInput.parameters[parameter] = this[parameter];
                 }
             }
@@ -362,40 +450,49 @@ export default {
             if (this.innerType === 'select')
             {
                 this.haiInput.showDropdown(event);
-                if(event.target === this.$refs.inputField)
+                if(event.target === this.$refs.inputField || event.composedPath().includes(this.$refs.inputField))
                 {
+                    //console.log('handleFocusIn  ---  2', event.target)
                     this.haiInput.element.focus();
                 }
             }
         },
         handleFocusOut(event)
         {
-            this.haiInput.handleFocusOut(event);
-            let validity = this.haiInput.checkValidity();
+            //console.log('handleFocusOut')
 
-            let fn = (invalidEvent) =>
+            if (this.innerType === 'select')
             {
-                this.$refs.input.reportValidity();
-            };
-
-            if(validity.success === false)
-            {
-                this.$refs.alert.textContent = validity.message;
-                this.haiInput.twin.style.display = 'none';
-                this.haiInput.twin.type = 'text';
-                this.haiInput.twin.setCustomValidity(validity.message);
-                this.haiInput.twin.addEventListener('invalid', fn);
+                event.preventDefault();
+                //console.log(event);
             }
             else
             {
-                this.$refs.alert.textContent = '';
-                this.haiInput.twin.type = 'hidden';
-                this.haiInput.twin.setCustomValidity('');
-                this.haiInput.twin.removeEventListener('invalid', fn);
+                this.haiInput.handleFocusOut(event);
+                let validity = this.haiInput.checkValidity();
+
+                let fn = (invalidEvent) =>
+                {
+                    this.$refs.input.reportValidity();
+                };
+
+                if(validity.success === false)
+                {
+                    this.$refs.alert.textContent = validity.message;
+                    this.haiInput.twin.style.display = 'none';
+                    this.haiInput.twin.setCustomValidity(validity.message);
+                    this.haiInput.twin.addEventListener('invalid', fn);
+                }
+                else
+                {
+                    this.$refs.alert.textContent = '';
+                    this.haiInput.twin.setCustomValidity('');
+                    this.haiInput.twin.removeEventListener('invalid', fn);
+                }
             }
         },
         handleKeyAction(event)
-        {
+        {console.log('handleKeyAction')
             this.haiInput.handleKeyAction(event);
         },
         handleWheel(event)
@@ -408,16 +505,25 @@ export default {
         },
         dropdownClick(event)
         {
-            if(event.target !== this.haiInput.searchInput)
+            if(event.target !== this.haiInput.searchInput && event.originalTarget !== this.$refs.confirmButton)
             {
-                this.$refs.inputField.focus();
+                console.log('?',event.originalTarget ,this.$refs.confirmButton)
+                //this.$refs.inputField.focus();
             }
+        },
+        closeDropdown(event)
+        {
+            let dropdown = this.haiInput.element.querySelector('.dropdown');
+            dropdown.classList.remove('active');
+            this.haiInput.element.classList.remove('dialog-display');
         }
     },
     template: `
         <template v-if='this.type === "switch"'>
             <div class='label-text'>{{ label }}</div>
-            <div ref='wrapper' class='switch-wrapper' v-bind:data-variant='this.haiInput.variant'>
+            <div ref='wrapper' v-bind:class='"switch-wrapper" + " " +
+                ((this.haiInput.disabled === true || this.haiInput.readonly === true) ? "inactive" : "")' 
+                v-bind:data-variant='this.haiInput.variant'>
                 <div class='option-group' v-on:click='handleInput($event)'>
                     <span v-if='this.haiInput.variant === "on/off"' ref='toggle' class='toggle'></span>
                     <label v-for='item in this.haiInput.options' v-bind:class='(this.haiInput.variant === "multiple" 
@@ -429,9 +535,10 @@ export default {
             </div>
         </template>
         <template v-else-if='this.type === "select"'>
-            <div class='label-text'>{{ label }}</div>
-            <div ref='wrapper' v-bind:class='(this.haiInput.multiple === true) ? "select-wrapper multiple" : "select-wrapper single"'>
-                <div ref='inputField' class='input-field' tabindex='0' v-on:focusin='handleFocusIn($event)'>
+            <div class='label-text' v-on:click='closeDropdown($event)'>{{ label }}</div>
+            <div ref='wrapper' v-bind:class='(this.haiInput.multiple === true) ? "select-wrapper multiple" : "select-wrapper single"'
+                v-on:focusout='handleFocusOut($event)' v-on:focusin='handleFocusIn($event)' tabindex='0'>
+                <div ref='inputField' class='input-field' tabindex='0'>
                     <ul v-if='this.haiInput.multiple === true' ref='tags' class='tags'>
                         
                     </ul>
@@ -445,8 +552,9 @@ export default {
                         
                     </ul>
                     <div class='info'></div>
-                    <div class='control-buttons'></div>
-                    <div class='button'>Confirm</div>
+                    <div class='control-buttons'>
+                        <div ref='confirmButton' class='button' v-on:click='closeDropdown($event)'>Confirm</div>
+                    </div>
                 </div>
             </div>
             <span ref='alert' class='alert'></span>
@@ -454,7 +562,7 @@ export default {
         <template v-else-if='this.type === "file"'>
             <div class='label-text'>{{ label }}</div>
             <div ref='wrapper' v-bind:class='(this.haiInput.multiple === true) ? "file-zone-wrapper multiple" : "file-zone-wrapper"'>
-                <div ref='message' class='message active'><strong>Drag &amp; drop a file here</strong></div>
+                <div ref='message' class='message active'><strong>Drop a file here</strong><small>or click to select</small></div>
                 <ul ref='files' class='files'>
                 
                 </ul>

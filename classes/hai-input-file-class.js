@@ -65,6 +65,11 @@ class HaiInputFile extends HaiInput
             twin.name = name;
         }
 
+        if(this.disabled)
+        {
+            twin.disabled = true;
+        }
+
         let fileWrapper = document.createElement('div');
         fileWrapper.classList.add('hai-input-element');
         fileWrapper.classList.add('file');
@@ -97,8 +102,11 @@ class HaiInputFile extends HaiInput
         this.messageContainer = message;
 
         let fileUploadText = document.createElement('strong');
-        fileUploadText.textContent = 'Drag & drop a file here';
+        fileUploadText.textContent = 'Drop a file here';
+        let fileUploadSubtext = document.createElement('small');
+        fileUploadSubtext.textContent = 'or click to select';
         message.appendChild(fileUploadText);
+        message.appendChild(fileUploadSubtext);
         wrapper.appendChild(message);
 
         let filesContainer = document.createElement('ul');
@@ -154,6 +162,11 @@ class HaiInputFile extends HaiInput
         {
             event.preventDefault();
             wrapper.classList.remove('active-dragover');
+
+            if(this.readonly || this.disabled)
+            {
+                return;
+            }
 
             for(let file of event.dataTransfer.files)
             {
@@ -246,6 +259,14 @@ class HaiInputFile extends HaiInput
             return;
         }
 
+        if(this.multiple === false)
+        {   // Remove all files.
+            for(let key of this.files.keys())
+            {
+                this.removeFile(key);
+            }
+        }
+
         let key = file.name;
 
         if(this.files.has(key) === true)
@@ -298,7 +319,10 @@ class HaiInputFile extends HaiInput
 
         let close = document.createElement('div');
         close.classList.add('close');
-        close.textContent = '🗙';
+
+        close.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"/></svg>';
+
+
         close.title = 'Remove file';
         fileItem.appendChild(close);
         this.filesContainer.appendChild(fileItem);
@@ -429,6 +453,11 @@ class HaiInputFile extends HaiInput
     /** @override */
     handleInput(event)
     {
+        if(this.readonly || this.disabled)
+        {
+            return {success: false};
+        }
+
         this.warningElement.textContent = '';
 
         if(event.target === this.innerFileInput)

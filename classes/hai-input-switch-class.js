@@ -46,6 +46,11 @@ class HaiInputSwitch extends HaiInput
         await this.processParameters();
         this.convertOptionsToObjectArray();
 
+        if(this.disabled)
+        {
+            twin.disabled = true;
+        }
+
         if(this.options.length < 2)
         {
             console.error('There must be at least 2 options specified.');
@@ -93,6 +98,11 @@ class HaiInputSwitch extends HaiInput
             {
                 wrapper.setAttribute('data-state', 'off');
             }
+        }
+
+        if(this.disabled === true || this.readonly === true)
+        {
+            wrapper.classList.add('inactive');
         }
 
         let optionGroup = document.createElement('div');
@@ -265,6 +275,11 @@ class HaiInputSwitch extends HaiInput
     /** @override */
     handleInput(event)
     {
+        if(this.readonly || this.disabled)
+        {
+            return {success: false};
+        }
+
         if(this.variant === 'on/off')
         {
             return this.handleInputOfOnOffVariant(event);

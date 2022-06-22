@@ -52,6 +52,10 @@
     border: 2px solid #222121;
     color: #f2f2f2;
 }
+.hai-input-element .select-wrapper.dialog-display .dropdown
+{
+    background: #313131;
+}
 .hai-input-element .select-wrapper .options-container .option-group-header
 {
     background: #313131;
@@ -60,6 +64,11 @@
 {
     background: #131313;
 }
+.hai-input-element .select-wrapper.dialog-display .control-buttons .button:hover
+{
+    background: #131313;
+}
+
 
 .hai-input-element .file-zone-wrapper
 {

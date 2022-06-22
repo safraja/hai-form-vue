@@ -22,7 +22,11 @@ class HaiInput
     /** @type {HTMLElement} - Generated element which should display validity and other warnings.*/
     warningElement;
     /** @type {boolean} - Indicates, if user must specify a value.*/
-    required;
+    required = false;
+    /** @type {boolean} - Indicates, if field is disabled (inactive, value is not send to server).*/
+    disabled = false;
+    /** @type {boolean} - Indicates, if field is readonly (can not be changed by user).*/
+    readonly = false;
 
     /**
      * Create HaiInput.
@@ -44,7 +48,7 @@ class HaiInput
      * @param {object} parameters - Parameters determining the properties of the field.
      * @returns {Promise<HaiInput>} - Promise with a new instance of the HaiInput class.
      */
-    static async create(type, element, parameters)
+    static async create(type, element, parameters = {})
     {
         switch (type)
         {
@@ -146,6 +150,21 @@ class HaiInput
             }
         }
 
+        if(parameters.required !== undefined)
+        {
+            this.required = Boolean(parameters.required);
+        }
+
+        if(parameters.readonly !== undefined)
+        {
+            this.readonly = Boolean(parameters.readonly);
+        }
+
+        if(parameters.disabled !== undefined)
+        {
+            this.disabled = Boolean(parameters.disabled);
+        }
+
         if(parameters.displayValidityWarnings !== undefined)
         {
             this.displayValidityWarnings = Boolean(parameters.displayValidityWarnings);
@@ -163,7 +182,7 @@ class HaiInput
     }
 
     /**
-     * Processes the HTML data attributes of the original element over which the HaiInput class is created.
+     * Processes the HTML data  butes of the original element over which the HaiInput class is created.
      *
      * @returns {Promise<void>}
      */

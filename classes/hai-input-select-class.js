@@ -65,6 +65,11 @@ class HaiInputSelect extends HaiInput
         await this.processAttributes();
         await this.processParameters();
 
+        if(this.disabled)
+        {
+            twin.disabled = true;
+        }
+
         let selectWrapper = document.createElement('div');
         selectWrapper.classList.add('hai-input-element');
         selectWrapper.classList.add('select');
@@ -545,6 +550,11 @@ class HaiInputSelect extends HaiInput
     /** @override */
     handleInput(event)
     {
+        if(this.readonly || this.disabled)
+        {
+            return {success: false};
+        }
+
         let optionElement;
         if(event.target.matches('.option'))
         {
@@ -676,6 +686,10 @@ class HaiInputSelect extends HaiInput
             remove.classList.add('remove');
             remove.addEventListener('click', (event) =>
             {
+                if(this.readonly || this.disabled)
+                {
+                    return;
+                }
                 this.unselectOption(option);
                 tag.remove();
             });

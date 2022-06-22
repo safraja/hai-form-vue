@@ -56,6 +56,7 @@ label .alert
 .input-wrapper
 {
     border: 2px solid;
+    background: white;
 }
 .input-wrapper input
 {
@@ -92,6 +93,12 @@ label .alert
     background: blue;
     transition: background 0.5s, border 0.5s;
 }
+.switch-wrapper[data-variant='on/off'].inactive .option-group
+{
+    border: 2px solid #7b5fe0;
+    background: #7b5fe0;
+    cursor: not-allowed;
+}
 .switch-wrapper[data-variant='on/off'][data-state='off'] .option-group
 {
     border: 2px solid gray;
@@ -121,6 +128,10 @@ label .alert
     justify-content: center;
     align-items: center;
     cursor: pointer;
+}
+.switch-wrapper.inactive label.option
+{
+    cursor: not-allowed;
 }
 .switch-wrapper label.option:hover
 {
@@ -266,7 +277,7 @@ label .alert
     width: 80vw;
     height: 40vh;
     min-height: 400px;
-    background: #313131;
+    background: #ffffff;
     padding: 10px 0;
     z-index: 200;
     box-sizing: border-box;
@@ -315,7 +326,7 @@ label .alert
 }
 .select-wrapper.dialog-display .control-buttons .button:hover
 {
-    background: #131313;
+    background: #d5d5d5;
     cursor: pointer;
 }
 .select-wrapper .options-container .option,
@@ -364,7 +375,7 @@ label .alert
     left: 20px;
     color: green;
     font-weight: bold;
-    z-index: -1;
+    z-index: 0;
 }
 .select-wrapper .dropdown .info
 {
@@ -400,6 +411,7 @@ label .alert
 .file-zone-wrapper .message.active
 {
     display: flex;
+    flex-direction: column;
 }
 .file-zone-wrapper .files
 {
@@ -427,13 +439,27 @@ label .alert
     line-height: 0.9;
     cursor: pointer;
 }
+@media only screen and (max-width: 768px)
+{
+    .file-zone-wrapper .files .file .close
+    {
+        display: block;
+        fill: #ff2f2f;
+    }
+}
+.file-zone-wrapper .files .file .close svg
+{
+    width: 16px;
+    height: 16px;
+    padding: 0;
+}
 .file-zone-wrapper .files .file:hover .close
 {
     display: block;
 }
-.file-zone-wrapper .files .file .close:hover
+.file-zone-wrapper .files .file .close:hover svg
 {
-    color: #ff2f2f;
+    fill: #ff2f2f;
 }
 .file-zone-wrapper .files .file .file-preview
 {
@@ -523,11 +549,19 @@ label .alert
         border: 2px solid #222121;
         color: #f2f2f2;
     }
+    .select-wrapper.dialog-display .dropdown
+    {
+        background: #313131;
+    }
     .select-wrapper .options-container .option-group-header
     {
         background: #313131;
     }
     .select-wrapper .options-container .option:hover
+    {
+        background: #131313;
+    }
+    .select-wrapper.dialog-display .control-buttons .button:hover
     {
         background: #131313;
     }

@@ -29,6 +29,14 @@ code
 {
     height: inherit;
 }
+a
+{
+    color: #42b396
+}
+a:visited
+{
+    color: #337246;
+}
 #main-menu
 {
     display: flex;
@@ -104,8 +112,7 @@ hai-input
 }
 .code-section
 {
-
-    background: #989898;
+    background: #ffffff;
     overflow: hidden;
 }
 .code-section > div
@@ -248,6 +255,89 @@ input[type=submit]:hover
     border-bottom: 5px double;
     font-size: 24px;
 }
+#container .centered
+{
+    display: flex;
+    justify-content: center;
+}
+.main-text-container
+{
+    max-width: 1000px;
+    line-height: 1.7;
+}
+.main-text-container h3
+{
+    margin-top: 100px;
+}
+.github-link,
+.github-link:visited
+{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid black;
+    background: white;
+    padding: 10px 15px;
+    fill: black;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+}
+.types-table
+{
+    display: inline-flex;
+    border: 1px solid;
+}
+.types-table > span
+{
+    padding: 5px 10px;
+    border: 1px solid;
+}
+.two-images-example,
+.two-codes-example
+{
+    display: flex;
+    gap: 50px;
+    width: 100%;
+    padding: 10px 50px;
+    box-sizing: border-box;
+}
+.two-images-example .image-example
+{
+    width: 100%;
+}
+.two-images-example img
+{
+    width: 100%;
+    aspect-ratio: 4/2.5;
+    border: 1px solid;
+}
+.two-codes-example pre
+{
+    width: 100%;
+    font-size: 12px;
+}
+.one-code-example code
+{
+    text-align: center;
+    font-size: 14px;
+}
+@media (max-width: 768px)
+{
+    .types-table
+    {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, 200px);
+        justify-content: center;
+        border: none;
+    }
+    .two-images-example,
+    .two-codes-example
+    {
+        flex-direction: column;
+    }
+}
 
 @media (prefers-color-scheme: dark)
 {
@@ -288,5 +378,16 @@ input[type=submit]:hover
     {
         background: #282b2e;
     }
-
+    .github-link,
+    .github-link:visited
+    {
+        fill: white;
+        border: 1px solid white;
+        background: #131313;
+        color: white;
+    }
+    .github-link:hover
+    {
+        background: black;
+    }
 }
