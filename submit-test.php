@@ -28,6 +28,8 @@
             $json = json_encode($_POST, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|
                 JSON_UNESCAPED_SLASHES|JSON_PRESERVE_ZERO_FRACTION);
 
+            $json = htmlspecialchars($json);
+
             echo "<pre><code class='language-json'>{$json}</code></pre>";
         }
         elseif(isset($_POST))

@@ -21,6 +21,11 @@
     border: 2px solid white;
     background: #313131;
 }
+.hai-input-element .switch-wrapper label.option
+{
+    background: #313131;
+    color: #f2f2f2;
+}
 .hai-input-element .switch-wrapper label.option.selected
 {
     background: #f2f2f2;
@@ -73,6 +78,7 @@
 .hai-input-element .file-zone-wrapper
 {
     border: 2px solid #f2f2f2;
+    background: #313131;
 }
 .hai-input-element .file-zone-wrapper .files .file
 {
@@ -81,4 +87,33 @@
 .hai-input-element .file-zone-wrapper .files .file .file-preview figcaption .size
 {
     color: #ffffffa6;
+}
+
+.hai-input-element .textarea-zone-wrapper
+{
+    border: 2px solid #222121;
+    background: #313131;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar
+{
+    border-bottom: 2px solid #222121;
+    background: #1a1919;
+    color: #f2f2f2;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button
+{
+    background: #131313;
+    border: 1px solid #313131;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button svg
+{
+    fill: #f2f2f2a6;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button:hover svg
+{
+    fill: #ffffff;
+}
+.hai-input-element .textarea-zone-wrapper .editor
+{
+    color: #f2f2f2;
 }

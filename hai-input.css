@@ -27,11 +27,13 @@
 .hai-input-element input
 {
     display: block;
-    border: 2px solid;
+    background: #ffffff;
+    border: 2px solid #c8c8c8;
     width: 100%;
     height: 40px;
     font-size: 16px;
     box-sizing: border-box;
+    color: #3c3838;
 }
 .hai-input-element input[hidden]
 {
@@ -55,8 +57,8 @@
 
 .hai-input-element .input-wrapper
 {
-    border: 2px solid;
-    background: white;
+    border: 2px solid #c8c8c8;
+    background: #ffffff;
 }
 .hai-input-element .input-wrapper input
 {
@@ -81,8 +83,8 @@
     display: flex;
     position: relative;
     height: 100%;
-    border: 2px solid black;
-    background: white;
+    border: 2px solid #c8c8c8;
+    background: #ffffff;
     cursor: pointer;
     box-sizing: border-box;
 }
@@ -146,9 +148,14 @@
 {
     background: transparent;
 }
+.hai-input-element .switch-wrapper label.option
+{
+    background: #ffffff;
+    color: #3c3838;
+}
 .hai-input-element .switch-wrapper label.option.selected
 {
-    background: black;
+    background: #848181;
     color: #ffffff;
 }
 .hai-input-element .switch-wrapper[data-variant='on/off'] label.option
@@ -188,9 +195,9 @@
     display: flex;
     position: relative;
     background: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #c8c8c8;
     min-height: 40px;
-    color: #000000;
+    color: #3c3838;
     box-sizing: border-box;
     cursor: text;
 }
@@ -253,8 +260,8 @@
     width: calc(100% - 2*5px); /* Parent minus padding. */
     padding: 0;
     background: #ffffff;
-    border: 2px solid #000000;
-    color: #000000;
+    border: 2px solid #c8c8c8;
+    color: #3c3838;
     box-sizing: border-box;
     cursor: pointer;
     z-index: 100;
@@ -392,7 +399,8 @@
     position: relative;
     min-height: 200px;
     margin: 5px;
-    border: 2px solid #000000;
+    border: 2px solid #c8c8c8;
+    background: #ffffff;
 }
 .hai-input-element .file-zone-wrapper input
 {
@@ -489,4 +497,68 @@
 {
     padding: 0 5px;
     color: #000000a6;
+}
+
+.hai-input-element .textarea-zone-wrapper
+{
+    border: 2px solid #c8c8c8;
+    background: #ffffff;
+    padding: 0;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar
+{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid #c8c8c8;
+    background: #b5b5b5;
+    min-height: 25px;
+    color: #3c3838;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #d5d5d5;
+    border: 1px solid #ffffff;
+    cursor: pointer;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button svg
+{
+    height: 15px;
+    padding: 0;
+    fill: #000000a6;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button:hover svg
+{
+    fill: #000000;
+}
+.hai-input-element .textarea-zone-wrapper .editor
+{
+    display: flex;
+    height: 200px;
+    overflow: auto;
+    text-align: left;
+    color: #3c3838;
+}
+.hai-input-element .textarea-zone-wrapper .editor .editor-content
+{
+    width: 100%;
+    outline: none;
+}
+.hai-input-element .textarea-zone-wrapper .editor .editor-content:empty::after
+{
+    content: attr(data-placeholder);
+    position: relative;
+    opacity: 0.6;
+}
+.hai-input-element .textarea-zone-wrapper .editor .editor-content *
+{
+    padding: 0;
+}
+.hai-input-element .textarea-zone-wrapper .editor .editor-content ol,
+.hai-input-element .textarea-zone-wrapper .editor .editor-content ul
+{
+    padding-left: 25px;
 }

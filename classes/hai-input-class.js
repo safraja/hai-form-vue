@@ -105,6 +105,19 @@ class HaiInput
                         haiInput.transformElementToHaiInput();
                         return haiInput;
                     });
+
+            case 'textarea':
+                return await import('./hai-input-textarea-class.js')
+                    .then((module) =>
+                    {
+                        let haiInput = new module.HaiInputTextarea(element, parameters);
+                        haiInput.transformElementToHaiInput();
+                        return haiInput;
+                    });
+
+            default:
+                console.warn(`HaiForm: Selected type "${type}" is not supported.`);
+                return;
         }
     }
 
