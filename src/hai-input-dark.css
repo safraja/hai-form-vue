@@ -1,0 +1,119 @@
+.hai-input-element input
+{
+    background: #313131;
+    border: 2px solid #222121;
+    color: #f2f2f2;
+}
+
+.hai-input-element .input-wrapper
+{
+    border: 2px solid #222121;
+    background: #313131;
+}
+.hai-input-element .input-wrapper input
+{
+    border: none;
+    height: 100%;
+}
+
+.hai-input-element .switch-wrapper .option-group
+{
+    border: 2px solid white;
+    background: #313131;
+}
+.hai-input-element .switch-wrapper label.option
+{
+    background: #313131;
+    color: #f2f2f2;
+}
+.hai-input-element .switch-wrapper label.option.selected
+{
+    background: #f2f2f2;
+    color: #313131;
+}
+
+.hai-input-element .select-wrapper .input-field
+{
+    background: #313131;
+    border: 2px solid #222121;
+    color: #f2f2f2;
+}
+.hai-input-element .select-wrapper .tags li
+{
+    background: #131313;
+}
+.hai-input-element .select-wrapper .tags li .remove
+{
+    border-left: 1px solid #f2f2f2;
+    color: #f2f2f2a6;
+}
+.hai-input-element .select-wrapper .tags li .remove:hover
+{
+    color: #f2f2f2;
+}
+.hai-input-element .select-wrapper .dropdown
+{
+    background: #313131;
+    border: 2px solid #222121;
+    color: #f2f2f2;
+}
+.hai-input-element .select-wrapper.dialog-display .dropdown
+{
+    background: #313131;
+}
+.hai-input-element .select-wrapper .options-container .option-group-header
+{
+    background: #313131;
+}
+.hai-input-element .select-wrapper .options-container .option:hover
+{
+    background: #131313;
+}
+.hai-input-element .select-wrapper.dialog-display .control-buttons .button:hover
+{
+    background: #131313;
+}
+
+
+.hai-input-element .file-zone-wrapper
+{
+    border: 2px solid #f2f2f2;
+    background: #313131;
+}
+.hai-input-element .file-zone-wrapper .files .file
+{
+    background: #535353;
+}
+.hai-input-element .file-zone-wrapper .files .file .file-preview figcaption .size
+{
+    color: #ffffffa6;
+}
+
+.hai-input-element .textarea-zone-wrapper
+{
+    border: 2px solid #222121;
+    background: #313131;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar
+{
+    border-bottom: 2px solid #222121;
+    background: #1a1919;
+    color: #f2f2f2;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button
+{
+    background: #131313;
+    border: 1px solid #313131;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button svg
+{
+    fill: #f2f2f2a6;
+}
+.hai-input-element .textarea-zone-wrapper .toolbar button:hover svg
+{
+    fill: #ffffff;
+}
+.hai-input-element .textarea-zone-wrapper .editor
+{
+    color: #f2f2f2;
+}

@@ -1,5 +1,7 @@
-/employee-data.json
-/demo-vue.html
-/index.html
-/favicon.ico
-/test-page.php
+.DS_Store
+node_modules
+
+/.npmrc
+/.travis.yml
+/LICENSE HEADER.txt
+/yarn-error.log
