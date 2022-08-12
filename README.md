@@ -1,46 +1,58 @@
-# rollup-starter-lib
+# Hai Form
+Javascript library for custom inputs and selects with additional features.
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/rollup/rollup-starter-lib.svg)](https://greenkeeper.io/)
+## [Demo](https://haikner.cz/hai-form/)
 
-This repo contains a bare-bones example of how to create a library using Rollup, including importing a module from `node_modules` and converting it from CommonJS.
+## Supported field types
+| Field type   | Main feature |
+| ------------ | ------------ |
+| Text input   | Text masking |
+| Number input | Numeral formatting |
+| URL input    | Valiadtion by URL parts |
+| File input   | Drag and Drop support |
+| Select       | Tagging and search support |
+| Switch       | 2 variants (on/off and multiple)|
 
-We're creating a library called `how-long-till-lunch`, which usefully tells us how long we have to wait until lunch, using the [ms](https://github.com/zeit/ms) package:
+## Who is the Hai Form library for?
+The purpose of the Hai Form library is to provide a basic solution for the most common form field needs. The intention is to cover as many fields as possible so that web developers do not have to use a large number of external libraries when creating forms. 
 
-```js
-console.log('it will be lunchtime in ' + howLongTillLunch());
-```
+At the same time however, it is not planned to address any field type very deeply. There is a huge number of specialized libraries that focus specifically on particular field types, and the Hai Form library does not aim to try to outdo these libraries. 
 
-## Getting started
+So if you are happy with a somewhat more basic solution (such as text masks) and don't need any more complex functionality for your forms, the Hai Form library may be ideal for you, otherwise I recommend taking a look at many great libraries listed below that served as inspiration for the Hai Form library.
 
-Clone this repository and install its dependencies:
+## Instalation
+...
 
-```bash
-git clone https://github.com/rollup/rollup-starter-lib
-cd rollup-starter-lib
-npm install
-```
+## Usage
+...
 
-`npm run build` builds the library to `dist`, generating three files:
+## Dependencies
+The [Fuse.js](https://github.com/krisk/fuse) library is used for searching (filtering) options in selects.
 
-* `dist/how-long-till-lunch.cjs.js`
-    A CommonJS bundle, suitable for use in Node.js, that `require`s the external dependency. This corresponds to the `"main"` field in package.json
-* `dist/how-long-till-lunch.esm.js`
-    an ES module bundle, suitable for use in other people's libraries and applications, that `import`s the external dependency. This corresponds to the `"module"` field in package.json
-* `dist/how-long-till-lunch.umd.js`
-    a UMD build, suitable for use in any environment (including the browser, as a `<script>` tag), that includes the external dependency. This corresponds to the `"browser"` field in package.json
+## Inspiration and alternatives
+This library was created as part of a thesis, inspiration for its creation was taken from the projects below.
 
-`npm run dev` builds the library, then keeps rebuilding it whenever the source files change using [rollup-watch](https://github.com/rollup/rollup-watch).
+### Masking
+- [https://github.com/nosir/cleave.js](https://github.com/nosir/cleave.js)
+- [https://github.com/vuejs-tips/vue-the-mask](https://github.com/vuejs-tips/vue-the-mask)
+- [https://github.com/uNmAnNeR/imaskjs](https://github.com/uNmAnNeR/imaskjs)
+- [https://github.com/text-mask/text-mask](https://github.com/text-mask/text-mask)
+- [https://github.com/igorescobar/jQuery-Mask-Plugin](https://github.com/igorescobar/jQuery-Mask-Plugin)
+- [https://github.com/estelle/input-masking](https://github.com/estelle/input-masking)
+- [https://github.com/vanilla-masker/vanilla-masker](https://github.com/vanilla-masker/vanilla-masker)
 
-`npm test` builds the library, then tests it.
+### Selects
+- [https://github.com/Choices-js/Choices](https://github.com/Choices-js/Choices)
+- [https://github.com/select2/select2](https://github.com/select2/select2)
+- [https://github.com/sergiodlopes/jquery-flexdatalist](https://github.com/sergiodlopes/jquery-flexdatalist)
+- [https://github.com/yairEO/tagify](https://github.com/yairEO/tagify)
 
-## Variations
-
-* [babel](https://github.com/rollup/rollup-starter-lib/tree/babel) — illustrates writing the source code in ES2015 and transpiling it for older environments with [Babel](https://babeljs.io/)
-* [buble](https://github.com/rollup/rollup-starter-lib/tree/buble) — similar, but using [Bublé](https://buble.surge.sh/) which is a faster alternative with less configuration
-* [TypeScript](https://github.com/rollup/rollup-starter-lib/tree/typescript) — uses [TypeScript](https://www.typescriptlang.org/) for type-safe code and transpiling
-
+### FIle uploads
+- [https://github.com/dropzone/dropzone](https://github.com/dropzone/dropzone)
+- [https://github.com/pqina/filepond](https://github.com/pqina/filepond)
+- [https://github.com/ProgerXP/FileDrop](https://github.com/ProgerXP/FileDrop)
+- [https://github.com/transloadit/uppy](https://github.com/transloadit/uppy)
 
 
 ## License
-
-[MIT](LICENSE).
+MIT Licence
