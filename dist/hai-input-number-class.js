@@ -1,5 +1,4 @@
 import {HaiInputText} from './hai-input-text-class.js';
-import {HaiInput} from "./hai-input-class";
 
 /**
  *  Class representing a number input.
@@ -13,6 +12,8 @@ class HaiInputNumber extends HaiInputText
     max = null;
     /** @type {number} - The number value which should by added/subtract from current input value on scroll or arrow up/down.*/
     step = 1;
+    /** @type {boolean} - If input should accept exponent, currently has no effect.*/
+    allowENotation = false;
     /** @type {boolean} - If input should automatically strip leading zeros.*/
     stripLeadingZeros = true;
     /** @type {string} - Decimal separator.*/
@@ -298,21 +299,20 @@ class HaiInputNumber extends HaiInputText
             return superValidity;
         }
 
-        if (isNaN(this.rawValue) === true)
+        if ((isNaN(this.rawValue) === true)
+            || (this.allowENotation === false && this.rawValue.toLowerCase().includes('e')))
         {
-            return {success: false, message: HaiInput.dictionary['value-must-be-a-number']};
+            return {success: false, message: 'Please input valid number'};
         }
 
         if (this.max !== null && Number(this.rawValue) > this.max)
         {
-            return {success: false, message: HaiInput.dictionary['max-value-exceeded']
-                    .replace('{{max}}', this.max)};
+            return {success: false, message: `Number must be lower or same as ${this.max}`};
         }
 
         if (this.min !== null && Number(this.rawValue) < this.min)
         {
-            return {success: false, message: HaiInput.dictionary['min-value-exceeded']
-                    .replace('{{min}}', this.min)};
+            return {success: false, message: `Number must be higher or same as ${this.min}`};
         }
 
         return {success: true};

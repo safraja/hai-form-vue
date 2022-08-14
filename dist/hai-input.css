@@ -8,65 +8,63 @@
     flex-direction: column;
     font-size: 16px;
 }
-.hai-input-element *
+*
 {
     padding: 5px;
     -webkit-tap-highlight-color: transparent;
 }
-.hai-input-element ::placeholder
+::placeholder
 {
     opacity: 0.6;
 }
 
-.hai-input-element label
+label
 {
     display: block;
     text-align: left;
     font-family: "Arial Hebrew", Arial, sans-serif;
 }
-.hai-input-element input
+input
 {
     display: block;
-    background: #ffffff;
-    border: 2px solid #c8c8c8;
+    border: 2px solid;
     width: 100%;
     height: 40px;
     font-size: 16px;
     box-sizing: border-box;
-    color: #3c3838;
 }
-.hai-input-element input[hidden]
+input[hidden]
 {
     display: none;
 }
-.hai-input-element input:invalid
+input:invalid
 {
     color: #ff2f2f;
     border-color: #ff000096;
 }
-.hai-input-element .alert
+label .alert
 {
     color: #ff2f2f;
     font-size: 14px;
     user-select: none;
 }
-.hai-input-element .label-text
+.label-text
 {
     text-align: left;
 }
 
-.hai-input-element .input-wrapper
+.input-wrapper
 {
-    border: 2px solid #c8c8c8;
-    background: #ffffff;
+    border: 2px solid;
+    background: white;
 }
-.hai-input-element .input-wrapper input
+.input-wrapper input
 {
     border: none;
     height: 100%;
 }
 
-.hai-input-element .switch-wrapper
+.switch-wrapper
 {
     display: flex;
     height: 40px;
@@ -74,47 +72,39 @@
     justify-content: center;
     cursor: default;
 }
-.hai-input-element .switch-wrapper.vertical
-{
-    height: auto;
-}
-.hai-input-element .switch-wrapper *
+.switch-wrapper *
 {
     padding: 0;
 }
-.hai-input-element .switch-wrapper .option-group
+.switch-wrapper .option-group
 {
     display: flex;
     position: relative;
     height: 100%;
-    border: 2px solid #c8c8c8;
-    background: #ffffff;
+    border: 2px solid black;
+    background: white;
     cursor: pointer;
     box-sizing: border-box;
 }
-.hai-input-element .switch-wrapper.vertical .option-group
-{
-    flex-direction: column;
-}
-.hai-input-element .switch-wrapper[data-variant='on/off'] .option-group
+.switch-wrapper[data-variant='on/off'] .option-group
 {
     height: auto;
     border: 2px solid blue;
     background: blue;
     transition: background 0.5s, border 0.5s;
 }
-.hai-input-element .switch-wrapper[data-variant='on/off'].inactive .option-group
+.switch-wrapper[data-variant='on/off'].inactive .option-group
 {
     border: 2px solid #7b5fe0;
     background: #7b5fe0;
     cursor: not-allowed;
 }
-.hai-input-element .switch-wrapper[data-variant='on/off'][data-state='off'] .option-group
+.switch-wrapper[data-variant='on/off'][data-state='off'] .option-group
 {
     border: 2px solid gray;
     background: gray;
 }
-.hai-input-element .switch-wrapper .option-group .toggle
+.switch-wrapper .option-group .toggle
 {
     position: absolute;
     top: 0;
@@ -125,11 +115,11 @@
     background: white;
     transition: left 0.5s;
 }
-.hai-input-element .switch-wrapper[data-state='on'] .option-group .toggle
+.switch-wrapper[data-state='on'] .option-group .toggle
 {
     left: calc(100% - 20px);
 }
-.hai-input-element .switch-wrapper label.option
+.switch-wrapper label.option
 {
     display: flex;
     width: auto;
@@ -139,97 +129,87 @@
     align-items: center;
     cursor: pointer;
 }
-.hai-input-element .switch-wrapper.vertical label.option
-{
-    height: 40px;
-    text-align: center;
-}
-.hai-input-element .switch-wrapper.inactive label.option
+.switch-wrapper.inactive label.option
 {
     cursor: not-allowed;
 }
-.hai-input-element .switch-wrapper label.option:hover
+.switch-wrapper label.option:hover
 {
     background: gray;
     color: white;
 }
-.hai-input-element .switch-wrapper[data-variant='on/off'] label.option
+.switch-wrapper[data-variant='on/off'] label.option
 {
     background: transparent;
 }
-.hai-input-element .switch-wrapper[data-variant='on/off'][data-state='off'] label.option
+.switch-wrapper[data-variant='on/off'][data-state='off'] label.option
 {
     background: transparent;
 }
-.hai-input-element .switch-wrapper label.option
+.switch-wrapper label.option.selected
 {
-    background: #ffffff;
-    color: #3c3838;
-}
-.hai-input-element .switch-wrapper label.option.selected
-{
-    background: #848181;
+    background: black;
     color: #ffffff;
 }
-.hai-input-element .switch-wrapper[data-variant='on/off'] label.option
+.switch-wrapper[data-variant='on/off'] label.option
 {
     display: inline-flex;
     width: 20px;
     height: 20px;
     padding: 0;
 }
-.hai-input-element .switch-wrapper[data-variant='on/off'] label.option:hover
+.switch-wrapper[data-variant='on/off'] label.option:hover
 {
     font-weight: inherit;
 }
-.hai-input-element .switch-wrapper input
+.switch-wrapper input
 {
     display: none;
 }
-.hai-input-element .switch-wrapper label.option input:checked+span
+.switch-wrapper label.option input:checked+span
 {
     width: 100%;
 }
-.hai-input-element .switch-wrapper[data-variant='on/off'] label.option input:checked+span
+.switch-wrapper[data-variant='on/off'] label.option input:checked+span
 {
     height: 100%;
 }
 
-.hai-input-element .select-wrapper
+.select-wrapper
 {
     position: relative;
 }
-.hai-input-element .select-wrapper *
+.select-wrapper *
 {
     margin: 0;
 }
-.hai-input-element .select-wrapper .input-field
+.select-wrapper .input-field
 {
     display: flex;
     position: relative;
     background: #ffffff;
-    border: 2px solid #c8c8c8;
+    border: 2px solid #000000;
     min-height: 40px;
-    color: #3c3838;
+    color: #000000;
     box-sizing: border-box;
     cursor: text;
 }
-.hai-input-element .select-wrapper.dialog-display .input-field
+.select-wrapper.dialog-display .input-field
 {
     display: flex;
 }
-.hai-input-element .select-wrapper .input-field .input-text[data-value='']
+.select-wrapper .input-field .input-text[data-value='']
 {
     opacity: 0.6;
 }
-.hai-input-element .select-wrapper .tags
+.select-wrapper .tags
 {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 5px;
     padding: 0;
 }
-.hai-input-element .select-wrapper .tags:empty::after
+.select-wrapper .tags:empty::after
 {
     content: attr(data-placeholder);
     position: absolute;
@@ -243,7 +223,7 @@
     opacity: 0.6;
     box-sizing: border-box;
 }
-.hai-input-element .select-wrapper .tags li
+.select-wrapper .tags li
 {
     display: inline;
     background: #d5d5d5;
@@ -251,7 +231,7 @@
     font-size: 14px;
     cursor: default;
 }
-.hai-input-element .select-wrapper .tags li .remove
+.select-wrapper .tags li .remove
 {
     display: inline;
     border: none;
@@ -262,29 +242,29 @@
     background: none;
     cursor: pointer;
 }
-.hai-input-element .select-wrapper .tags li .remove:hover
+.select-wrapper .tags li .remove:hover
 {
     color: #000000;
 }
-.hai-input-element .select-wrapper .dropdown
+.select-wrapper .dropdown
 {
     display: none;
     position: absolute;
     width: calc(100% - 2*5px); /* Parent minus padding. */
     padding: 0;
     background: #ffffff;
-    border: 2px solid #c8c8c8;
-    color: #3c3838;
+    border: 2px solid #000000;
+    color: #000000;
     box-sizing: border-box;
     cursor: pointer;
     z-index: 100;
     user-select: none;
 }
-.hai-input-element .select-wrapper .dropdown.active
+.select-wrapper .dropdown.active
 {
     display: block;
 }
-.hai-input-element .select-wrapper.dialog-display .dropdown
+.select-wrapper.dialog-display .dropdown
 {
     position: fixed;
     flex-direction: column;
@@ -304,90 +284,90 @@
 }
 @media only screen and (max-height: 360px)
 {
-    .hai-input-element .select-wrapper.dialog-display .dropdown
+    .select-wrapper.dialog-display .dropdown
     {
         min-height: auto;
-        height: 75vh;
+        height: 90vh;
     }
 }
-.hai-input-element .select-wrapper.dialog-display .dropdown.active
+.select-wrapper.dialog-display .dropdown.active
 {
     display: flex;
 }
-.hai-input-element .select-wrapper.dialog-display .dropdown > *
+.select-wrapper.dialog-display .dropdown > *
 {
     margin: 0 10px;
 }
-.hai-input-element .select-wrapper.dialog-display .dropdown .search-container
+.select-wrapper.dialog-display .dropdown .search-container
 {
     padding: 5px 0 15px;
 }
-.hai-input-element .select-wrapper .options-container
+.select-wrapper .options-container
 {
     padding: 0;
     max-height: 200px;
     overflow: auto;
     overscroll-behavior: contain;
 }
-.hai-input-element .select-wrapper.dialog-display .options-container
+.select-wrapper.dialog-display .options-container
 {
     height: 100%;
     max-height: none;
 }
-.hai-input-element .select-wrapper .control-buttons
+.select-wrapper .control-buttons
 {
     display: none;
 }
-.hai-input-element .select-wrapper.dialog-display .control-buttons
+.select-wrapper.dialog-display .control-buttons
 {
     display: block;
     border-top: 1px solid;
     margin: 0;
 }
-.hai-input-element .select-wrapper.dialog-display .control-buttons .button:hover
+.select-wrapper.dialog-display .control-buttons .button:hover
 {
     background: #d5d5d5;
     cursor: pointer;
 }
-.hai-input-element .select-wrapper .options-container .option,
-.hai-input-element .select-wrapper .options-container .option-group-header
+.select-wrapper .options-container .option,
+.select-wrapper .options-container .option-group-header
 {
     padding: 5px;
     list-style: none;
     text-align: left;
 }
-.hai-input-element .select-wrapper .options-container .option-group-header
+.select-wrapper .options-container .option-group-header
 {
     position: sticky;
     top: 0;
     padding-top: 10px;
     background: #ffffff;
 }
-.hai-input-element .select-wrapper .options-container .option-group-header ~ .option
+.select-wrapper .options-container .option-group-header ~ .option
 {
     padding-left: 15px;
 }
-.hai-input-element .select-wrapper.dialog-display .options-container .option
+.select-wrapper.dialog-display .options-container .option
 {
     padding: 10px;
     text-align: center;
 }
-.hai-input-element .select-wrapper .options-container .option:hover
+.select-wrapper .options-container .option:hover
 {
     background: #d5d5d5;
 }
-.hai-input-element .select-wrapper .options-container .option-group-header[data-unselected-options='0'],
-.hai-input-element .select-wrapper .options-container .option.selected
+.select-wrapper .options-container .option-group-header[data-unselected-options='0'],
+.select-wrapper .options-container .option.selected
 {
     display: none;
 }
-.hai-input-element .select-wrapper.dialog-display .options-container .option.selected,
-.hai-input-element .select-wrapper.single .options-container .option.selected
+.select-wrapper.dialog-display .options-container .option.selected,
+.select-wrapper.single .options-container .option.selected
 {
     display: block;
     position: relative;
 }
-.hai-input-element .select-wrapper.dialog-display .options-container .option.selected::before
+.select-wrapper.dialog-display .options-container .option.selected::before
 {
     content: '✓';
     position: absolute;
@@ -397,29 +377,28 @@
     font-weight: bold;
     z-index: 0;
 }
-.hai-input-element .select-wrapper .dropdown .info
+.select-wrapper .dropdown .info
 {
     display: none;
 }
-.hai-input-element .select-wrapper .dropdown .info.active
+.select-wrapper .dropdown .info.active
 {
     display: block;
 }
 
 
-.hai-input-element .file-zone-wrapper
+.file-zone-wrapper
 {
     position: relative;
     min-height: 200px;
     margin: 5px;
-    border: 2px solid #c8c8c8;
-    background: #ffffff;
+    border: 2px solid #000000;
 }
-.hai-input-element .file-zone-wrapper input
+.file-zone-wrapper input
 {
     display: none;
 }
-.hai-input-element .file-zone-wrapper .message
+.file-zone-wrapper .message
 {
     display: none;
     justify-content: center;
@@ -429,12 +408,12 @@
     height: inherit;
     box-sizing: border-box;
 }
-.hai-input-element .file-zone-wrapper .message.active
+.file-zone-wrapper .message.active
 {
     display: flex;
     flex-direction: column;
 }
-.hai-input-element .file-zone-wrapper .files
+.file-zone-wrapper .files
 {
     display: grid;
     justify-content: space-evenly;
@@ -446,12 +425,12 @@
     list-style: none;
     box-sizing: border-box;
 }
-.hai-input-element .file-zone-wrapper .files .file
+.file-zone-wrapper .files .file
 {
     position: relative;
     background: #c7c7c7;
 }
-.hai-input-element .file-zone-wrapper .files .file .close
+.file-zone-wrapper .files .file .close
 {
     display: none;
     position: absolute;
@@ -462,90 +441,35 @@
 }
 @media only screen and (max-width: 768px)
 {
-    .hai-input-element .file-zone-wrapper .files .file .close
+    .file-zone-wrapper .files .file .close
     {
         display: block;
         fill: #ff2f2f;
     }
 }
-.hai-input-element .file-zone-wrapper .files .file .close svg
+.file-zone-wrapper .files .file .close svg
 {
     width: 16px;
     height: 16px;
     padding: 0;
 }
-.hai-input-element .file-zone-wrapper .files .file:hover .close
+.file-zone-wrapper .files .file:hover .close
 {
     display: block;
 }
-.hai-input-element .file-zone-wrapper .files .file .close:hover svg
+.file-zone-wrapper .files .file .close:hover svg
 {
     fill: #ff2f2f;
 }
-.hai-input-element .file-zone-wrapper .files .file .file-preview
+.file-zone-wrapper .files .file .file-preview
 {
     margin: 0;
-    overflow: hidden;
 }
-.hai-input-element .file-zone-wrapper .files .file .file-preview img
+.file-zone-wrapper .files .file .file-preview img
 {
     height: 50px;
 }
-.fi
-{
-    width: 36px;
-    height: 46px;
-    padding: 10px 0 0;
-    position: relative;
-    margin: 0 auto;
-    box-sizing: border-box;
-    font-family: sans-serif;
-    text-decoration: none;
-}
-.fi::before
-{
-    left: 0;
-    top: 0;
-    height: 100%;
-    background-color: #0074d0;
-    right: 10px;
-}
-.fi::before, .fi::after
-{
-    position: absolute;
-    content: '';
-    pointer-events: none;
-}
-.fi-jpg.fi::after
-{
-    border-left-color: #1397ff;
-}
-.fi::after
-{
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 10px 0 0 10px;
-    border-color: transparent transparent transparent #66b0ff;
-    border-left-color: rgb(102, 176, 255);
-    top: 0;
-    right: 0;
-}
-.fi-content
-{
-    background-color: #007bff;
-    top: 10px;
-    color: #fff;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    padding: 16.5px 0.3em 0;
-    font-size: 13px;
-    font-weight: 500;
-    text-align: left;
-}
-.hai-input-element .file-zone-wrapper .files .file .file-preview figcaption
+.file-zone-wrapper .files .file .file-preview figcaption
 {
     padding: 0;
     width: 100%;
@@ -554,79 +478,104 @@
     font-size: 14px;
     box-sizing: border-box;
 }
-.hai-input-element .file-zone-wrapper .files .file .file-preview figcaption :is(.size,.name)
+.file-zone-wrapper .files .file .file-preview figcaption :is(.size,.name)
 {
     padding-bottom: 3px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
-.hai-input-element .file-zone-wrapper .files .file .file-preview figcaption .size
+.file-zone-wrapper .files .file .file-preview figcaption .size
 {
     padding: 0 5px;
     color: #000000a6;
 }
 
-.hai-input-element .textarea-zone-wrapper
+
+
+@media only screen and (prefers-color-scheme: dark)
 {
-    border: 2px solid #c8c8c8;
-    background: #ffffff;
-    padding: 0;
-}
-.hai-input-element .textarea-zone-wrapper .toolbar
-{
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    border-bottom: 2px solid #c8c8c8;
-    background: #b5b5b5;
-    min-height: 25px;
-    color: #3c3838;
-}
-.hai-input-element .textarea-zone-wrapper .toolbar button
-{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #d5d5d5;
-    border: 1px solid #ffffff;
-    cursor: pointer;
-}
-.hai-input-element .textarea-zone-wrapper .toolbar button svg
-{
-    height: 15px;
-    padding: 0;
-    fill: #000000a6;
-}
-.hai-input-element .textarea-zone-wrapper .toolbar button:hover svg
-{
-    fill: #000000;
-}
-.hai-input-element .textarea-zone-wrapper .editor
-{
-    display: flex;
-    height: 200px;
-    overflow: auto;
-    text-align: left;
-    color: #3c3838;
-}
-.hai-input-element .textarea-zone-wrapper .editor .editor-content
-{
-    width: 100%;
-    outline: none;
-}
-.hai-input-element .textarea-zone-wrapper .editor .editor-content:empty::after
-{
-    content: attr(data-placeholder);
-    position: relative;
-    opacity: 0.6;
-}
-.hai-input-element .textarea-zone-wrapper .editor .editor-content *
-{
-    padding: 0;
-}
-.hai-input-element .textarea-zone-wrapper .editor .editor-content ol,
-.hai-input-element .textarea-zone-wrapper .editor .editor-content ul
-{
-    padding-left: 25px;
+    input
+    {
+        background: #313131;
+        border: 2px solid #222121;
+        color: #f2f2f2;
+    }
+
+    .input-wrapper
+    {
+        border: 2px solid #222121;
+        background: #313131;
+    }
+    .input-wrapper input
+    {
+        border: none;
+        height: 100%;
+    }
+
+    .switch-wrapper .option-group
+    {
+        border: 2px solid white;
+        background: #313131;
+    }
+    .switch-wrapper label.option.selected
+    {
+        background: #f2f2f2;
+        color: #313131;
+    }
+
+    .select-wrapper .input-field
+    {
+        background: #313131;
+        border: 2px solid #222121;
+        color: #f2f2f2;
+    }
+    .select-wrapper .tags li
+    {
+        background: #131313;
+    }
+    .select-wrapper .tags li .remove
+    {
+        border-left: 1px solid #f2f2f2;
+        color: #f2f2f2a6;
+    }
+    .select-wrapper .tags li .remove:hover
+    {
+        color: #f2f2f2;
+    }
+    .select-wrapper .dropdown
+    {
+        background: #313131;
+        border: 2px solid #222121;
+        color: #f2f2f2;
+    }
+    .select-wrapper.dialog-display .dropdown
+    {
+        background: #313131;
+    }
+    .select-wrapper .options-container .option-group-header
+    {
+        background: #313131;
+    }
+    .select-wrapper .options-container .option:hover
+    {
+        background: #131313;
+    }
+    .select-wrapper.dialog-display .control-buttons .button:hover
+    {
+        background: #131313;
+    }
+
+    .file-zone-wrapper
+    {
+        border: 2px solid #f2f2f2;
+    }
+    .file-zone-wrapper .files .file
+    {
+        background: #535353;
+    }
+    .file-zone-wrapper .files .file .file-preview figcaption .size
+    {
+        color: #ffffffa6;
+    }
 }

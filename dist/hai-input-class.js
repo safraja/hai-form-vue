@@ -1,5 +1,3 @@
-import defaultDictionary from "./languages/en";
-
 /** Class representing a form field. */
 class HaiInput
 {
@@ -29,8 +27,6 @@ class HaiInput
     disabled = false;
     /** @type {boolean} - Indicates, if field is readonly (can not be changed by user).*/
     readonly = false;
-
-    static dictionary = defaultDictionary;
 
     /**
      * Create HaiInput.
@@ -119,52 +115,10 @@ class HaiInput
                         return haiInput;
                     });
 
-            case 'password':
-                return await import('./hai-input-password-class.js')
-                    .then((module) =>
-                    {
-                        let haiInput = new module.HaiInputPassword(element, parameters);
-                        haiInput.transformElementToHaiInput();
-                        return haiInput;
-                    });
-
-
             default:
                 console.warn(`HaiForm: Selected type "${type}" is not supported.`);
                 return;
         }
-    }
-
-    static async changeLanguage(options)
-    {
-        let promise;
-
-        if(typeof options.newLangCode === 'string')
-        {
-            promise = import(`./languages/${options.newLangCode}.js`);
-        }
-        else if(typeof options.filePath === 'string')
-        {
-            promise = import(options.filePath);
-        }
-        else if(typeof options.dictionary === 'object')
-        {
-            promise = new Promise((resolve) => {resolve({default: options.dictionary})});
-        }
-        else
-        {
-            return;
-        }
-
-        promise.then((module) =>
-            {
-                let dictionary = module.default;
-
-                HaiInput.dictionary = {
-                    ...HaiInput.dictionary,
-                    ...dictionary
-                }
-            });
     }
 
     /**
@@ -206,18 +160,6 @@ class HaiInput
             else
             {
                 this.label = parameters.label;
-            }
-        }
-
-        if (parameters.dictionaryLang !== undefined)
-        {
-            if(typeof parameters.dictionaryLang !== 'string')
-            {
-                console.warn(`HaiForm: Parameter "dictionaryLang" must be a string.`);
-            }
-            else
-            {
-                this.dictionaryLang = parameters.dictionaryLang;
             }
         }
 
@@ -302,7 +244,7 @@ class HaiInput
         if(event.keyCode === 13 || event.code === 'Enter' || event.code === 'NumpadEnter')    // Mobile code for "Enter".
         {
             event.preventDefault();
-            this.twin.form.requestSubmit();
+            this.twin.form.submit();
             return true;
         }
         return false;
@@ -327,7 +269,7 @@ class HaiInput
     {
         if(this.required === true && this.rawValue === '')
         {
-            return {success: false, message: HaiInput.dictionary['value-required']};
+            return {success: false, message: `Please specify a value.`};
         }
 
         return {success: true};
@@ -341,19 +283,10 @@ class HaiInput
     handleFocusOut(event)
     {
         let validity = this.checkValidity();
-        this.updateValidity(validity, event.target);
-    }
-
-    updateValidity(validity, inputElement)
-    {
         if(validity.success === false)
         {
-            inputElement.classList.add('invalid');
-            if(typeof inputElement.setCustomValidity === 'function')
-            {
-                inputElement.setCustomValidity(validity.message);
-            }
-            this.twin.setCustomValidity(validity.message);
+            event.target.classList.add('invalid');
+            event.target.setCustomValidity(validity.message);
             if(this.displayValidityWarnings === true && this.warningElement !== undefined)
             {
                 this.warningElement.textContent = validity.message;
@@ -361,12 +294,8 @@ class HaiInput
         }
         else
         {
-            inputElement.classList.remove('invalid');
-            if(typeof inputElement.setCustomValidity === 'function')
-            {
-                inputElement.setCustomValidity('');
-            }
-            this.twin.setCustomValidity('');
+            event.target.classList.remove('invalid');
+            event.target.setCustomValidity('');
             if(this.warningElement !== undefined)
             {
                 this.warningElement.textContent = '';

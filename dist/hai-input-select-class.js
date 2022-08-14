@@ -1,5 +1,5 @@
 import {HaiInput} from './hai-input-class.js';
-import Fuse from 'fuse.js';
+import Fuse from '../dependencies/fuse.basic.esm.min.js';
 
 /**
  *  Class representing a select.
@@ -194,7 +194,7 @@ class HaiInputSelect extends HaiInput
             searchInputDiv.classList.add('search-container');
 
             let searchInput = document.createElement('input');
-            searchInput.placeholder = HaiInput.dictionary['search-placeholder'];
+            searchInput.placeholder = 'Search...';
             this.searchInput = searchInput;
             searchInputDiv.appendChild(searchInput);
             dropdown.prepend(searchInputDiv);
@@ -233,22 +233,6 @@ class HaiInputSelect extends HaiInput
         if(this.searchInput !== null)
         {
             this.searchInput.removeEventListener('blur', this.hideDropdown);
-        }
-
-
-        let form = twin.form;
-        if(form !== null)
-        {
-            form.addEventListener('submit', (event) =>
-            {
-                let result = this.checkValidity();
-                if(result.success === false)
-                {
-                    event.preventDefault();
-                    return false;
-                }
-                return true;
-            });
         }
     }
 
@@ -635,11 +619,6 @@ class HaiInputSelect extends HaiInput
             this.searchInput.focus();
         }
 
-        if(this.multiple === false)
-        {
-            this.element.querySelector('.dropdown').classList.remove('active');
-            this.element.classList.remove('dialog-display');
-        }
     }
 
     /**
@@ -650,9 +629,7 @@ class HaiInputSelect extends HaiInput
     unselectOption(option)
     {
         if(this.multiple === false)
-        {   // In single select, unselecting practically mean select the same option again, so no action necessary, just close dropdown.
-            this.element.querySelector('.dropdown').classList.remove('active');
-            this.element.classList.remove('dialog-display');
+        {   // In single select, unselecting practically mean select the same option again, so no action necessary.
             return;
         }
         this.selectedOptions.delete(this.generateOptionKey(option));

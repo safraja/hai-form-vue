@@ -102,9 +102,9 @@ class HaiInputFile extends HaiInput
         this.messageContainer = message;
 
         let fileUploadText = document.createElement('strong');
-        fileUploadText.textContent = HaiInput.dictionary['file-drop-placeholder'];
+        fileUploadText.textContent = 'Drop a file here';
         let fileUploadSubtext = document.createElement('small');
-        fileUploadSubtext.textContent = HaiInput.dictionary['file-drop-second-placeholder'];
+        fileUploadSubtext.textContent = 'or click to select';
         message.appendChild(fileUploadText);
         message.appendChild(fileUploadSubtext);
         wrapper.appendChild(message);
@@ -141,22 +141,6 @@ class HaiInputFile extends HaiInput
         });
 
         this.addWrapperEvents(wrapper);
-
-        let form = twin.form;
-        if(form !== null)
-        {
-            form.addEventListener('submit', (event) =>
-            {
-                let validity = this.checkValidity();
-                if(validity.success === false)
-                {
-                    event.preventDefault();
-                    this.updateValidity(validity, this.element);
-                    return false;
-                }
-                return true;
-            });
-        }
     }
 
 
@@ -202,19 +186,25 @@ class HaiInputFile extends HaiInput
      * @param {File} file - Newly selected file.
      * @returns {{success: boolean, message: string}|{success: boolean}} - Object with information about the result of the validity test. In case of a negative result, it also returns an error message.
      */
-    checkFileValidity(file)
+    checkValidity(file)
     {
+        let superValidity = super.checkValidity();
+
+        if(superValidity.success === false)
+        {
+            return superValidity;
+        }
+
         if(this.maxFilesCount !== null && this.maxFilesCount < this.files.size + 1)
         {
-            return {success: false, message: HaiInput.dictionary['max-files-count-exceeded']
-                    .replace('{{maxFilesCount}}', this.maxFilesCount)};
+            return {success: false, message: `The file could not be selected, only ${this.maxFilesCount} files can by selected.`};
         }
 
         if(this.maxFileSize !== null && this.maxFileSize < file.size)
         {
             console.log(file.size, this.maxFileSize, this.formatBytes(file.size), this.formatBytes(this.maxFileSize))
-            return {success: false, message: HaiInput.dictionary['max-file-size-exceeded']
-                    .replace('{{maxFileSize}}', this.formatBytes(this.maxFileSize))};
+            return {success: false, message: `The file could not be selected because it exceeds 
+                the maximum allowed size of ${this.formatBytes(this.maxFileSize)}.`};
         }
 
         let totalFilesSize = file.size;
@@ -225,8 +215,8 @@ class HaiInputFile extends HaiInput
 
         if(this.maxTotalSize !== null && this.maxTotalSize < totalFilesSize)
         {
-            return {success: false, message: HaiInput.dictionary['max-total-files-size-exceeded']
-                    .replace('{{maxTotalSize}}', this.formatBytes(this.maxTotalSize))};
+            return {success: false, message: `The file could not be selected because the total maximum file
+                size of ${this.formatBytes(this.maxTotalSize)} was exceeded.`};
         }
 
         if(this.allowedFileTypes !== null)
@@ -248,19 +238,8 @@ class HaiInputFile extends HaiInput
 
             if (isAllowed === false)
             {
-                return {success: false, message: HaiInput.dictionary['not-allowed-file-type']};
+                return {success: false, message: `The file could not be selected because its type is not allowed.`};
             }
-        }
-
-        return {success: true};
-    }
-
-    /** @override */
-    checkValidity()
-    {
-        if(this.required === true && this.rawValue === '')
-        {
-            return {success: false, message: HaiInput.dictionary['file-required']};
         }
 
         return {success: true};
@@ -273,7 +252,7 @@ class HaiInputFile extends HaiInput
      */
     addFile(file)
     {
-        let validity = this.checkFileValidity(file);
+        let validity = this.checkValidity(file);
         if(validity.success === false)
         {
             this.warningElement.textContent = validity.message;
@@ -314,23 +293,13 @@ class HaiInputFile extends HaiInput
         let filePreview = document.createElement('figure');
         filePreview.classList.add('file-preview');
 
+        let img = document.createElement('img');
+        img.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTYgMGgtMTR2MjRoMjB2LTE4bC02LTZ6bTAgM2wzIDNoLTN2LTN6bS0xMiAxOXYtMjBoMTB2Nmg2djE0aC0xNnoiLz48L3N2Zz4=';
+        filePreview.appendChild(img);
+
         if(file.type.startsWith('image/') === true)
         {
-            let img = document.createElement('img');
-            filePreview.appendChild(img);
             this.loadImageToElement(file, img);
-        }
-        else
-        {
-            let fileImage = document.createElement('div');
-            let extension = file.type.substring(file.type.indexOf('/') + 1); // Extract extension from MIME type.
-            fileImage.classList.add('fi', `fi-${extension}`);
-
-            let fileImageExt = document.createElement('div');
-            fileImageExt.classList.add('fi-content');
-            fileImageExt.textContent = extension;
-            fileImage.appendChild(fileImageExt);
-            filePreview.appendChild(fileImage);
         }
 
         let fileName = document.createElement('figcaption');

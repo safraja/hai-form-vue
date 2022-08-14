@@ -19,8 +19,6 @@ class HaiInputText extends HaiInput
     /** @type {boolean} - Current field validity status.*/
     validByMask;
 
-    buttonSettings = null;
-
     constructor(element = null, parameters = {})
     {
         super(element, parameters);
@@ -109,50 +107,6 @@ class HaiInputText extends HaiInput
         {
             this.handleWheel(event);
         });
-
-        let form = twin.form;
-        if(form !== null)
-        {
-            form.addEventListener('submit', (event) =>
-            {
-                let validity = this.checkValidity();
-                if(validity.success === false)
-                {
-                    event.preventDefault();
-                    this.updateValidity(validity, this.element);
-                    return false;
-                }
-                return true;
-            });
-        }
-    }
-
-    returnSpecialButton()
-    {
-        if(this.buttonSettings === null)
-        {
-            return false;
-        }
-
-        if(this.buttonSettings.type === 'hint')
-        {
-            if(this.buttonSettings.hintText === undefined)
-            {
-                console.warn('HaiForm: The "hint" type requires setting the "buttonSettings.hintText" property.');
-                return false;
-            }
-            if(typeof this.buttonSettings.hintText === 'string')
-            {
-                console.warn('HaiForm: The "buttonSettings.hintText" property must be of the string type.');
-                return false;
-            }
-
-            let button = document.createElement('span');
-            button.innerHTML = ``;
-            return button;
-        }
-
-        return false;
     }
 
     /** @override */
@@ -282,7 +236,6 @@ class HaiInputText extends HaiInput
                 'A': {pattern: /[a-zA-Z0-9]/},
                 'S': {pattern: /[a-zA-Z]/},
                 '!': {escape: true},
-                '?': {optional: true},
                 // 'X': {pattern: /[a-zA-Z0-9]/, transform: (char) => char.toUpperCase()}, // Example of transform function.
             };
         }
@@ -293,7 +246,6 @@ class HaiInputText extends HaiInput
         let valid = true;
         let stringToPrepend = '';
         let escapeMaskChar = false;
-        let optionalMaskChar = false;
         let formattedValue = '';
 
         while(valuePosition < value.length && maskPosition < mask.length)
@@ -331,29 +283,12 @@ class HaiInputText extends HaiInput
                     continue;
                 }
 
-                if(token.optional === true)
-                {
-                    optionalMaskChar = true;
-                    maskPosition++;
-                    continue;
-                }
-
                 let validityResult = token.pattern.test(char)
 
-                if(validityResult === false && optionalMaskChar === false)
+                if(validityResult === false)
                 {
                     valid = false;
                     break;
-                }
-                else if(validityResult === false)
-                {   // Detected optional character, skip to next.
-                    optionalMaskChar = false;
-                    maskPosition++;
-                    continue;
-                }
-                else
-                {
-                    optionalMaskChar = false;
                 }
 
                 formattedValue += stringToPrepend;
@@ -387,27 +322,22 @@ class HaiInputText extends HaiInput
 
         if(superValidity.success === false)
         {
-            return superValidity;
+            return superValidity.success;
         }
 
         if(this.maxLength != null && this.value.length > this.maxLength)
         {
-            return {success: false, message: HaiInput.dictionary['max-length-exceeded'].replace('{{maxLength}}', this.maxLength)};
+            return {success: false, message: `Text length must be shorter or same as ${this.maxLength}`};
         }
 
         if(this.minLength != null && this.value.length < this.minLength)
         {
-            return {success: false, message: HaiInput.dictionary['min-length-exceeded'].replace('{{minLength}}', this.minLength)};
+            return {success: false, message: `Text length must be longer or same as ${this.minLength}`};
         }
 
-        if(this.mask != null)
+        if(this.mask != null && this.rawValue !== '' && this.validByMask === false)
         {
-            this.formatValueByMask();
-
-            if(this.rawValue !== '' && this.validByMask === false)
-            {
-                return {success: false, message: HaiInput.dictionary['mask-not-followed']};
-            }
+            return {success: false, message: `Inserted value does not match the mask.`};
         }
 
         return {success: true};

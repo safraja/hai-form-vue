@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/hai-form.iml" filepath="$PROJECT_DIR$/.idea/hai-form.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/hai-form-vue.iml" filepath="$PROJECT_DIR$/.idea/hai-form-vue.iml" />
     </modules>
   </component>
 </project>

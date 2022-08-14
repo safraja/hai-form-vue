@@ -1,5 +1,4 @@
 import {HaiInputText} from './hai-input-text-class.js';
-import {HaiInput} from "./hai-input-class";
 
 /**
  *  Class representing a url input.
@@ -288,7 +287,7 @@ class HaiInputUrl extends HaiInputText
 
         if(allowedScheme === false)
         {
-            return {success: false, message: HaiInput.dictionary['not-allowed-scheme']};
+            return {success: false, message: 'URL does not starts with allowed scheme.'};
         }
 
         let valueAfterScheme = this.rawValue.replace(/.*?:/i, '');
@@ -361,27 +360,27 @@ class HaiInputUrl extends HaiInputText
 
         if(this.requireHost && hostPart === '')
         {
-            return {success: false, message: HaiInput.dictionary['host-required']};
+            return {success: false, message: 'URL does not contain host address.'};
         }
         if(this.allowPart.userInfo === false && userInfoPart !== '')
         {
-            return {success: false, message: HaiInput.dictionary['userinfo-forbidden']};
+            return {success: false, message: 'URL must not include userinfo.'};
         }
         if(this.allowPart.port === false && portPart !== '')
         {
-            return {success: false, message: HaiInput.dictionary['port-forbidden']};
+            return {success: false, message: 'URL must not specify port.'};
         }
         if(this.allowPart.path === false && pathPart !== '')
         {
-            return {success: false, message: HaiInput.dictionary['path-forbidden']};
+            return {success: false, message: 'URL must not contain path.'};
         }
         if(this.allowPart.query === false && queryPart !== '')
         {
-            return {success: false, message: HaiInput.dictionary['query-forbidden']};
+            return {success: false, message: 'URL must not contain query.'};
         }
         if(this.allowPart.fragment === false && fragmentPart !== '')
         {
-            return {success: false, message: HaiInput.dictionary['fragment-forbidden']};
+            return {success: false, message: 'URL must not contain fragment.'};
         }
 
         return {success: true};

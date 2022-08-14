@@ -181,22 +181,6 @@ class HaiInputSwitch extends HaiInput
         {
             this.handleInput(event);
         });
-
-
-        let form = twin.form;
-        if(form !== null)
-        {
-            form.addEventListener('submit', (event) =>
-            {
-                let result = this.checkValidity();
-                if(result.success === false)
-                {
-                    event.preventDefault();
-                    return false;
-                }
-                return true;
-            });
-        }
     }
 
     /** @override */
