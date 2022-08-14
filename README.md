@@ -1,14 +1,14 @@
 # Hai Form
 Javascript library for custom inputs and selects with additional features.
 
-##[Demo](https://haikner.cz/hai-form/)
+##[Demo](https://haikner.cz/hai-form/demo-vue.php)
 
 ## Supported field types
 | Field type   | Main feature |
 | ------------ | ------------ |
 | Text input   | Text masking |
 | Number input | Numeral formatting |
-| URL input    | Valiadtion by URL parts |
+| URL input    | Validation by URL parts |
 | File input   | Drag and Drop support |
 | Select       | Tagging and search support |
 | Switch       | 2 variants (on/off and multiple)|
@@ -20,17 +20,42 @@ At the same time however, it is not planned to address any field type very deepl
 
 So if you are happy with a somewhat more basic solution (such as text masks) and don't need any more complex functionality for your forms, the Hai Form library may be ideal for you, otherwise I recommend taking a look at many great libraries listed below that served as inspiration for the Hai Form library.
 
-## Instalation
-...
+## Installation
+First you need to import the defineCustomElement() function from Vue and HaiInputElement from the downloaded library. Then create a HaiInput constant and define a new custom element.
 
 ## Usage
-...
+After downloading the library, you first need to import defineCustomElement function from Vue and HaiInputElement from downloaded library. After that, create HaiInput constant and define the new custom element.
+```html
+<script type='module'>
+    import { defineCustomElement } from 'https://cdn.jsdelivr.net/npm/vue@3.2.19/dist/vue.esm-browser.js';
+    import HaiInputElement from '/your-path/hai-input-element.js';
+    
+    const HaiInput = defineCustomElement(HaiInputElement);
+    
+    customElements.define('hai-input', HaiInput);
+</script>
+```
+
+You can then simply start using the hai-input element instead of traditional inputs
+```html
+<hai-input
+        label='Code'
+        type='url'
+        name='code'
+        mask='000 - AAA'
+        placeholder='000 - AAA'>
+</hai-input>
+```
 
 ## Dependencies
 The [Fuse.js](https://github.com/krisk/fuse) library is used for searching (filtering) options in selects.
 
 ## Inspiration and alternatives
 This library was created as part of a thesis, inspiration for its creation was taken from the projects below.
+
+## Vanilla JS version
+The primary version of the Hai Form library is developed for use with vanilla JS and is available here:
+[https://github.com/safraja/hai-form](https://github.com/safraja/hai-form)
 
 ### Masking
 - [https://github.com/nosir/cleave.js](https://github.com/nosir/cleave.js)
