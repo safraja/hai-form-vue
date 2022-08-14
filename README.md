@@ -1,7 +1,7 @@
 # Hai Form
 Javascript library for custom inputs and selects with additional features.
 
-##[Demo](https://haikner.cz/hai-form/demo-vue.php)
+## [Demo](https://haikner.cz/hai-form/demo-vue.php)
 
 ## Supported field types
 | Field type   | Main feature |
