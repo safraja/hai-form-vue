@@ -1,5 +1,5 @@
 import {HaiInput} from './hai-input-class.js';
-import Fuse from '../dependencies/fuse.basic.esm.min.js';
+import Fuse from './fuse.basic.esm.min.js';
 
 /**
  *  Class representing a select.

@@ -139,7 +139,7 @@ export default {
             'type': [String, Number],
         },
     },
-    styles: ["@import './vue/styles.css'"],
+    styles: ["@import './hai-input-vue.css'"],
     data()
     {
         return {
