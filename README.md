@@ -21,7 +21,7 @@ At the same time however, it is not planned to address any field type very deepl
 So if you are happy with a somewhat more basic solution (such as text masks) and don't need any more complex functionality for your forms, the Hai Form library may be ideal for you, otherwise I recommend taking a look at many great libraries listed below that served as inspiration for the Hai Form library.
 
 ## Installation
-First you need to import the defineCustomElement() function from Vue and HaiInputElement from the downloaded library. Then create a HaiInput constant and define a new custom element.
+Download the library files from the 'dist' directory and place them in a directory on your website.
 
 ## Usage
 After downloading the library, you first need to import defineCustomElement function from Vue and HaiInputElement from downloaded library. After that, create HaiInput constant and define the new custom element.
